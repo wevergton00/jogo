@@ -5,21 +5,30 @@ import { Game } from "./game.js";
 
 const canvas = document.getElementById("game");
 const fill = document.getElementById("load-fill");
+const loadLabel = document.querySelector(".load-bar-label");
 
 const sprites = new SpriteBank();
 const audio = new AudioSystem();
 const input = new InputManager();
 
+function hideLoad() {
+  const load = document.getElementById("screen-load");
+  if (load) {
+    load.classList.add("hidden");
+    load.style.display = "none";
+  }
+}
+
 try {
   await sprites.load((p) => {
-    fill.style.width = `${Math.floor(p * 100)}%`;
+    if (fill) fill.style.width = `${Math.floor(p * 100)}%`;
   });
 } catch (err) {
   console.error(err);
-  document.querySelector(".load-bar-label").textContent = "Falha ao carregar assets";
+  if (loadLabel) loadLabel.textContent = "Alguns assets falharam — iniciando mesmo assim";
 }
 
-document.getElementById("screen-load").classList.add("hidden");
+hideLoad();
 const game = new Game(canvas, sprites, audio, input);
 
 const pads = document.getElementById("pads");
@@ -45,7 +54,17 @@ document.getElementById("screen-title").addEventListener("pointerdown", () => {
   game.setMode("menu");
 });
 
-game.setMode("menu");
+game.p1Pick = 0;
+game.p2Pick = 1;
+game.p2cpu = true;
+game.training = false;
+try {
+  game.startFight();
+} catch (err) {
+  console.error(err);
+  game.setMode("menu");
+}
+
 requestAnimationFrame((t) => game.tick(t));
 
 window.addEventListener("pointerdown", () => {

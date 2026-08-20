@@ -72,7 +72,9 @@ export class Game {
       hud.classList.remove("hidden");
       help.classList.remove("hidden");
       pads.classList.remove("hidden");
-      this.audio.playMusic("battle");
+      try {
+        this.audio.playMusic("battle");
+      } catch {}
     }
   }
 

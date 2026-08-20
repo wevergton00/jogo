@@ -5,20 +5,39 @@ export class SpriteBank {
   }
 
   async load(onProgress) {
-    this.manifest = await fetch("assets/sprites/manifest.json").then((r) => r.json());
+    try {
+      this.manifest = await fetch("assets/sprites/manifest.json").then((r) => r.json());
+    } catch {
+      this.manifest = {};
+    }
     const extras = ["stages/rooftop.png", "ui/menu_cenario.png"];
     const keys = [...Object.keys(this.manifest), ...extras];
     let done = 0;
     await Promise.all(
       keys.map(async (rel) => {
-        const img = new Image();
-        const src =
-          rel.startsWith("stages/") || rel.startsWith("ui/")
-            ? "assets/" + rel
-            : "assets/sprites/" + rel;
-        img.src = src;
-        await img.decode();
-        this.images[rel] = img;
+        try {
+          const img = new Image();
+          img.decoding = "async";
+          const src =
+            rel.startsWith("stages/") || rel.startsWith("ui/")
+              ? "assets/" + rel
+              : "assets/sprites/" + rel;
+          img.src = src;
+          await new Promise((resolve, reject) => {
+            const t = setTimeout(() => reject(new Error("timeout " + rel)), 8000);
+            img.onload = () => {
+              clearTimeout(t);
+              resolve();
+            };
+            img.onerror = () => {
+              clearTimeout(t);
+              reject(new Error("fail " + rel));
+            };
+          });
+          this.images[rel] = img;
+        } catch (err) {
+          console.warn(err);
+        }
         done++;
         onProgress?.(done / keys.length);
       })

@@ -15,8 +15,12 @@ export class AudioSystem {
   }
 
   unlock() {
-    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (this.ctx.state === "suspended") this.ctx.resume();
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === "suspended") this.ctx.resume();
+    } catch {
+      this.ctx = null;
+    }
   }
 
   beep(freq, type = "square", dur = 0.12, vol = 0.08, slide = 0) {
@@ -94,13 +98,17 @@ export class AudioSystem {
   }
 
   playMusic(track) {
-    this.unlock();
-    if (this.track === track) return;
-    this.stopMusic();
-    this.track = track;
-    if (!this.ctx || this.muted) return;
-    if (track === "menu") this.loopArp([262, 330, 392, 523, 392, 330], 0.22, "triangle", 0.03);
-    if (track === "battle") this.loopArp([196, 247, 294, 370, 294, 247, 220, 247], 0.18, "square", 0.025);
+    try {
+      this.unlock();
+      if (this.track === track) return;
+      this.stopMusic();
+      this.track = track;
+      if (!this.ctx || this.muted) return;
+      if (track === "menu") this.loopArp([262, 330, 392, 523, 392, 330], 0.22, "triangle", 0.03);
+      if (track === "battle") this.loopArp([196, 247, 294, 370, 294, 247, 220, 247], 0.18, "square", 0.025);
+    } catch {
+      this.track = track;
+    }
   }
 
   loopArp(notes, step, type, vol) {
