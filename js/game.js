@@ -97,7 +97,9 @@ export class Game {
       this.training = choice === "Treinamento";
       this.debugCpu = choice === "Arcade";
       this.p2cpu = choice !== "Versus local";
-      this.setMode("charsel");
+      this.p1Pick = 0;
+      this.p2Pick = 1;
+      this.startFight();
     }
   }
 
@@ -118,6 +120,18 @@ export class Game {
     cpuBtn.onclick = () => {
       this.p2cpu = !this.p2cpu;
       if (this.p2cpu) this.p2Ready = true;
+      this.renderCharSel();
+    };
+    const startBtn = document.getElementById("btn-start");
+    if (startBtn) startBtn.onclick = () => this.startFight();
+    document.getElementById("p1-portrait").onclick = () => {
+      this.p1Pick = (this.p1Pick + 1) % ids.length;
+      this.audio.sfx("select");
+      this.renderCharSel();
+    };
+    document.getElementById("p2-portrait").onclick = () => {
+      this.p2Pick = (this.p2Pick + 1) % ids.length;
+      this.audio.sfx("select");
       this.renderCharSel();
     };
   }
