@@ -1,0 +1,18 @@
+{
+  "id": "nox",
+  "name": "Nox",
+  "archetype": "Pesado",
+  "stats": {
+    "weight": 118,
+    "speed": 3.8,
+    "jump": 12.4,
+    "recovery": "medium"
+  },
+  "specials": {
+    "neutral": "Onda de choque",
+    "side": "Investida",
+    "up": "Uppercut",
+    "down": "Pisão"
+  },
+  "sprites": "../../assets/sprites/nox/"
+}
