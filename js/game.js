@@ -46,8 +46,10 @@ export class Game {
     for (const id of ids) document.getElementById(id).classList.add("hidden");
     const hud = document.getElementById("hud");
     const help = document.getElementById("help");
+    const pads = document.getElementById("pads");
     hud.classList.add("hidden");
     help.classList.add("hidden");
+    pads.classList.add("hidden");
     if (mode === "title") document.getElementById("screen-title").classList.remove("hidden");
     if (mode === "menu") {
       document.getElementById("screen-menu").classList.remove("hidden");
@@ -69,6 +71,7 @@ export class Game {
     if (mode === "fight") {
       hud.classList.remove("hidden");
       help.classList.remove("hidden");
+      pads.classList.remove("hidden");
       this.audio.playMusic("battle");
     }
   }
@@ -400,7 +403,7 @@ export class Game {
     w.frame++;
     const [p1, p2] = w.fighters;
     const i1 = this.input.p1;
-    const i2 = p2.cpu ? makeCpuInput(p2, p1, w, this.aiLevel) : this.input.p2;
+    const i2 = p2.cpu ? makeCpuInput(p2, p1, w, this.aiLevel, { dummy: this.training }) : this.input.p2;
     p1.update(i1, w);
     p2.update(i2, w);
     this.separate(p1, p2);
@@ -473,7 +476,8 @@ export class Game {
   updateHud() {
     const [a, b] = this.world.fighters;
     const set = (n, p) => {
-      document.getElementById(`hud-name-${n}`).textContent = p.char.name + (p.cpu ? " (CPU)" : "");
+      document.getElementById(`hud-name-${n}`).textContent =
+        p.char.name + (p.cpu ? (this.training ? " (dummy)" : " (CPU)") : "");
       const pct = document.getElementById(`hud-pct-${n}`);
       pct.textContent = `${Math.floor(p.percent)}%`;
       pct.style.color = p.percent > 100 ? "#ff4d4d" : p.char.color;

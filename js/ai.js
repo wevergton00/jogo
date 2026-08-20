@@ -5,9 +5,8 @@ const DIFFICULTY = {
   expert: { reaction: 3, aggro: 0.88, shield: 0.4, jump: 0.14 },
 };
 
-export function makeCpuInput(self, foe, world, level = "normal") {
-  const d = DIFFICULTY[level] || DIFFICULTY.normal;
-  const input = {
+export function emptyInput() {
+  return {
     left: false,
     right: false,
     up: false,
@@ -29,8 +28,24 @@ export function makeCpuInput(self, foe, world, level = "normal") {
     grabPressed: false,
     jumpPressed: false,
   };
+}
 
+export function makeCpuInput(self, foe, world, level = "normal", opts = {}) {
+  const input = emptyInput();
   if (!foe || !foe.alive) return input;
+
+  if (opts.dummy) {
+    const offstage =
+      self.x < world.stage.ground.x + 40 || self.x > world.stage.ground.x + world.stage.ground.w - 40;
+    if (offstage || self.y > world.stage.ground.y + 40) {
+      const mid = world.stage.ground.x + world.stage.ground.w / 2;
+      press(input, self.x < mid ? "right" : "left");
+      press(input, "jump");
+    }
+    return input;
+  }
+
+  const d = DIFFICULTY[level] || DIFFICULTY.normal;
   self._aiWait = (self._aiWait || 0) + 1;
   if (self._aiWait < d.reaction && Math.random() > 0.2) return input;
 

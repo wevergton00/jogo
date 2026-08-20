@@ -69,6 +69,7 @@ export class InputManager {
     this.menuOk = false;
     this.menuBack = false;
     this.pausePressed = false;
+    this.virtual = new Set();
 
     window.addEventListener("keydown", (e) => {
       if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
@@ -98,7 +99,7 @@ export class InputManager {
 
   poll() {
     this.pressedThisFrame = new Set([...this.keys].filter((k) => !this.prev.has(k)));
-    this.anyPressed = this.pressedThisFrame.size > 0;
+    this.anyPressed = this.pressedThisFrame.size > 0 || this.virtual.size > 0;
     this.menuUp = this.just("ArrowUp") || this.just("KeyW");
     this.menuDown = this.just("ArrowDown") || this.just("KeyS");
     this.menuOk = this.just("Enter") || this.just("Space") || this.just("KeyJ");
@@ -119,7 +120,8 @@ export class InputManager {
     const binds = this.binds[port];
     const pad = navigator.getGamepads ? navigator.getGamepads()[padIndex] : null;
     for (const a of ACTIONS) {
-      const down = this.keys.has(binds[a]) || this.padDown(pad, a);
+      const down =
+        this.keys.has(binds[a]) || this.padDown(pad, a) || (port === "p1" && this.virtual.has(a));
       state[a + "Pressed"] = down && !state[a];
       state[a + "Released"] = !down && state[a];
       state[a] = down;
