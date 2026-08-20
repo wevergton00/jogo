@@ -6,13 +6,16 @@ export class SpriteBank {
 
   async load(onProgress) {
     this.manifest = await fetch("assets/sprites/manifest.json").then((r) => r.json());
-    const extras = ["stages/rooftop.png"];
+    const extras = ["stages/rooftop.png", "ui/menu_cenario.png"];
     const keys = [...Object.keys(this.manifest), ...extras];
     let done = 0;
     await Promise.all(
       keys.map(async (rel) => {
         const img = new Image();
-        const src = rel.startsWith("stages/") ? "assets/" + rel : "assets/sprites/" + rel;
+        const src =
+          rel.startsWith("stages/") || rel.startsWith("ui/")
+            ? "assets/" + rel
+            : "assets/sprites/" + rel;
         img.src = src;
         await img.decode();
         this.images[rel] = img;

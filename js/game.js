@@ -564,11 +564,11 @@ export class Game {
 
   drawBackdrop() {
     const ctx = this.ctx;
-    const bg = this.sprites.img("stages/rooftop.png");
+    const menu = this.sprites.img("ui/menu_cenario.png");
+    const bg = menu || this.sprites.img("stages/rooftop.png");
     if (bg) {
-      ctx.globalAlpha = 0.55;
-      ctx.drawImage(bg, 0, 0, 1280, 720);
       ctx.globalAlpha = 1;
+      ctx.drawImage(bg, 0, 0, 1280, 720);
     }
   }
 

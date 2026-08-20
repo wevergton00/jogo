@@ -25,9 +25,8 @@ html, body {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(1200px 600px at 50% 110%, #2a1048 0%, transparent 55%),
-    radial-gradient(800px 500px at 80% 0%, #12224a 0%, transparent 50%),
-    #050510;
+    url("../assets/ui/menu_cenario.png") center / cover no-repeat,
+    #4ec3ff;
 }
 
 #game {
@@ -53,6 +52,16 @@ html, body {
   place-items: center;
   pointer-events: auto;
   background: linear-gradient(180deg, rgba(5,5,16,0.35), rgba(5,5,16,0.72));
+}
+
+#screen-load,
+#screen-title,
+#screen-menu,
+#screen-charsel,
+#screen-options {
+  background:
+    linear-gradient(180deg, rgba(10, 30, 50, 0.18), rgba(8, 24, 40, 0.38)),
+    url("../assets/ui/menu_cenario.png") center / cover no-repeat;
 }
 
 .screen.hidden, .hidden { display: none !important; }

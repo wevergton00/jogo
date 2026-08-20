@@ -45,8 +45,7 @@ document.getElementById("screen-title").addEventListener("pointerdown", () => {
   game.setMode("menu");
 });
 
-game.p2cpu = true;
-game.startFight();
+game.setMode("menu");
 requestAnimationFrame((t) => game.tick(t));
 
 window.addEventListener("pointerdown", () => {
