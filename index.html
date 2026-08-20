@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=13" />
+  <link rel="stylesheet" href="css/style.css?v=22" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -114,13 +114,11 @@
         </div>
       </div>
 
-      <p id="help" class="hidden">
+      <p id="help" class="hidden" style="display:none!important">
         P1: WASD mover · J leve · K especial · L forte · I defesa · U agarrão · Esc pausa
-        &nbsp;|&nbsp;
-        P2: setas · 1 leve · 2 especial · 3 forte · 4 defesa · 0 agarrão
       </p>
 
-      <div id="pads" class="hidden">
+      <div id="pads" class="hidden" style="display:none!important;visibility:hidden!important;opacity:0;pointer-events:none" hidden>
         <div class="pad-col">
           <button type="button" data-act="left">◀</button>
           <button type="button" data-act="up">▲ pulo</button>
@@ -136,6 +134,6 @@
       </div>
     </div>
   </div>
-  <script type="module" src="js/main.js?v=12"></script>
+  <script type="module" src="js/main.js?v=22"></script>
 </body>
 </html>

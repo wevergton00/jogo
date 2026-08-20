@@ -47,9 +47,10 @@ export class Game {
     const hud = document.getElementById("hud");
     const help = document.getElementById("help");
     const pads = document.getElementById("pads");
-    hud.classList.add("hidden");
-    help.classList.add("hidden");
-    pads.classList.add("hidden");
+    hud?.classList.add("hidden");
+    help?.classList.add("hidden");
+    pads?.classList.add("hidden");
+    document.body.classList.remove("pvp-fight");
     if (mode === "title") document.getElementById("screen-title").classList.remove("hidden");
     if (mode === "menu") {
       document.getElementById("screen-menu").classList.remove("hidden");
@@ -69,9 +70,15 @@ export class Game {
     if (mode === "pause") document.getElementById("screen-pause").classList.remove("hidden");
     if (mode === "results") document.getElementById("screen-results").classList.remove("hidden");
     if (mode === "fight") {
-      hud.classList.remove("hidden");
-      help.classList.remove("hidden");
-      pads.classList.remove("hidden");
+      hud?.classList.remove("hidden");
+      help?.classList.add("hidden");
+      pads?.classList.add("hidden");
+      if (help) help.style.cssText = "display:none!important";
+      if (pads) {
+        pads.classList.add("hidden");
+        pads.setAttribute("hidden", "");
+        pads.style.cssText = "display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important";
+      }
       try {
         this.audio.playMusic("battle");
       } catch {}

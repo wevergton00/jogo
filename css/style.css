@@ -258,28 +258,18 @@ html, body {
 }
 #hud-timer { color: var(--muted); margin-top: 6px; }
 
-#help {
-  position: absolute;
-  bottom: 92px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: rgba(244,241,255,0.72);
-  font-size: 12px;
-  pointer-events: none;
+#help,
+#pads,
+#pads.hidden,
+body.pvp-fight #pads,
+body.pvp-fight #help {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
-
-#pads {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  pointer-events: auto;
-  z-index: 20;
-}
-#pads.hidden { display: none !important; }
 .pad-col { display: flex; gap: 8px; flex-wrap: wrap; max-width: 48%; }
 #pads button {
   min-width: 64px;
