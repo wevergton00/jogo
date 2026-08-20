@@ -13,7 +13,7 @@ python3 -m http.server 8080
 ### Elenco
 
 - **Fernanda** — lutadora técnica. Especiais com os gatos Didi e Tom e projétil de coração.
-- **Nox** — lutador pesado. Socos fortes, investida e uppercut de recuperação.
+- **Evertinho** — peão. Laço giratório, arremesso, laço mágico, ataque montado e laço do trovão.
 
 ### Modos
 

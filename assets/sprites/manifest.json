@@ -232,5 +232,107 @@
     "h": 916,
     "anchorX": 0.5,
     "anchorY": 0.5
+  },
+  "evertinho/idle_0.png": {
+    "w": 194,
+    "h": 338,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/idle_1.png": {
+    "w": 142,
+    "h": 337,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/walk_0.png": {
+    "w": 202,
+    "h": 335,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/walk_1.png": {
+    "w": 192,
+    "h": 338,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/run.png": {
+    "w": 276,
+    "h": 307,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/jump.png": {
+    "w": 244,
+    "h": 296,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/punch.png": {
+    "w": 382,
+    "h": 289,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/hurt.png": {
+    "w": 281,
+    "h": 293,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/spin.png": {
+    "w": 412,
+    "h": 454,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/throw.png": {
+    "w": 629,
+    "h": 411,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/mount.png": {
+    "w": 625,
+    "h": 478,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/point.png": {
+    "w": 347,
+    "h": 443,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/lasso_magic.png": {
+    "w": 460,
+    "h": 307,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/lasso_loop.png": {
+    "w": 461,
+    "h": 312,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/horse.png": {
+    "w": 565,
+    "h": 393,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/lasso_thunder.png": {
+    "w": 483,
+    "h": 409,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "ui/portrait_evertinho.png": {
+    "w": 1254,
+    "h": 1254,
+    "anchorX": 0.5,
+    "anchorY": 0.5
   }
 }

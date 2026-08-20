@@ -595,6 +595,7 @@ function applyProj(owner, victim, pr, world) {
     angle: pr.angle,
     hitstun: 16,
     hitlag: 6,
+    pull: pr.pull,
   };
   owner.facing = pr.facing;
   applyHit(owner, victim, move, world);

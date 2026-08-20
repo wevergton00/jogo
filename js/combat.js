@@ -45,6 +45,11 @@ export function applyHit(attacker, victim, move, world) {
     victim.vx = 1.2 * dir;
     victim.vy = Math.max(8, kb * 0.35);
   }
+  if (move.pull) {
+    victim.x = attacker.x + attacker.facing * 46;
+    victim.vx = 3.2 * attacker.facing;
+    victim.vy = -4;
+  }
   const stun = Math.min(64, (move.hitstun ?? 12) + victim.percent * 0.12);
   victim.hitlag = move.hitlag ?? 6;
   attacker.hitlag = Math.max(0, (move.hitlag ?? 6) - 2);
