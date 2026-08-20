@@ -79,30 +79,37 @@ export class Game {
   }
 
   renderMenu() {
-    const nav = document.getElementById("main-nav");
-    nav.innerHTML = MENU.map(
-      (label, i) => `<button class="menu-item ${i === this.menuIndex ? "active" : ""}" data-i="${i}">${label}</button>`
-    ).join("");
-    nav.querySelectorAll(".menu-item").forEach((btn) => {
-      btn.onclick = () => {
-        this.menuIndex = +btn.dataset.i;
-        this.confirmMenu();
+    document.querySelectorAll("[data-hub]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.launch(btn.getAttribute("data-hub"));
       };
     });
   }
 
   confirmMenu() {
-    this.audio.sfx("confirm");
     const choice = MENU[this.menuIndex];
-    if (choice === "Opções") this.setMode("options");
-    else {
-      this.training = choice === "Treinamento";
-      this.debugCpu = choice === "Arcade";
-      this.p2cpu = choice !== "Versus local";
-      this.p1Pick = 0;
-      this.p2Pick = 1;
-      this.startFight();
+    if (choice === "Opções") this.launch("opcoes");
+    else if (choice === "Treinamento") this.launch("treino");
+    else if (choice === "Arcade") this.launch("arcade");
+    else this.launch("versus");
+  }
+
+  launch(kind) {
+    try {
+      this.audio.sfx("confirm");
+    } catch {}
+    this.p1Pick = 0;
+    this.p2Pick = 1;
+    if (kind === "opcoes") {
+      this.setMode("options");
+      return;
     }
+    this.training = kind === "treino";
+    this.debugCpu = kind === "arcade";
+    this.p2cpu = kind !== "versus";
+    this.startFight();
   }
 
   renderCharSel() {
@@ -513,6 +520,7 @@ export class Game {
     const ctx = this.ctx;
     const w = this.canvas.width;
     const h = this.canvas.height;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, w, h);
     if (!this.world) {
       this.drawBackdrop();
@@ -580,12 +588,9 @@ export class Game {
 
   drawBackdrop() {
     const ctx = this.ctx;
-    const menu = this.sprites.img("ui/menu_cenario.png");
+    const menu = this.sprites.img("ui/menu_barretos.png") || this.sprites.img("ui/menu_cenario.png");
     const bg = menu || this.sprites.img("stages/rooftop.png");
-    if (bg) {
-      ctx.globalAlpha = 1;
-      ctx.drawImage(bg, 0, 0, 1280, 720);
-    }
+    if (bg) ctx.drawImage(bg, 0, 0, this.canvas.width, this.canvas.height);
   }
 
   drawBoxes() {

@@ -51,4 +51,4 @@ O combate usa hurtbox/hitbox separados, porcentagem, knockback, pulo duplo, defe
 
 ## Arte
 
-Personagens e palco gerados para este protótipo. Fernanda é a lutadora pedida pelo projeto, com Didi (gato laranja) e Tom (gato preto) nos especiais.
+Personagens e palco gerados para este protótipo. Fernanda usa Didi e Tom; Evertinho usa laço e cavalo.

@@ -56,13 +56,22 @@ document.getElementById("screen-title").addEventListener("pointerdown", () => {
 
 game.p1Pick = 0;
 game.p2Pick = 1;
-game.p2cpu = true;
-game.training = false;
-try {
-  game.startFight();
-} catch (err) {
-  console.error(err);
-  game.setMode("menu");
+game.setMode("menu");
+
+document.querySelectorAll("[data-hub]").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    audio.unlock();
+    game.launch(btn.getAttribute("data-hub"));
+  });
+});
+const optBack = document.getElementById("opt-back");
+if (optBack) {
+  optBack.addEventListener("click", () => {
+    audio.unlock();
+    game.setMode("menu");
+  });
 }
 
 requestAnimationFrame((t) => game.tick(t));

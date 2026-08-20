@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aurora Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=7" />
+  <title>Barretos Clash</title>
+  <link rel="stylesheet" href="css/style.css?v=13" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -32,11 +32,12 @@
       </section>
 
       <section class="screen hidden" id="screen-menu">
-        <div class="menu-card">
-          <h2>Menu</h2>
-          <nav id="main-nav" class="menu-list"></nav>
-          <p class="hint">Clique em Versus, Treinamento ou Arcade para jogar</p>
-        </div>
+        <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
+          <button type="button" class="hub-hit" data-hub="versus" aria-label="Versus local"></button>
+          <button type="button" class="hub-hit" data-hub="treino" aria-label="Treinamento"></button>
+          <button type="button" class="hub-hit" data-hub="arcade" aria-label="Arcade"></button>
+          <button type="button" class="hub-hit" data-hub="opcoes" aria-label="Opções"></button>
+        </nav>
       </section>
 
       <section class="screen hidden" id="screen-charsel">
@@ -69,7 +70,8 @@
         <div class="menu-card wide">
           <h2>Opções</h2>
           <div id="options-body"></div>
-          <p class="hint">Clique uma ação e pressione a nova tecla · Esc volta</p>
+          <p class="hint">Clique uma ação e pressione a nova tecla</p>
+          <button type="button" id="opt-back" class="menu-item active">Voltar ao menu</button>
         </div>
       </section>
 
@@ -134,6 +136,6 @@
       </div>
     </div>
   </div>
-  <script type="module" src="js/main.js?v=7"></script>
+  <script type="module" src="js/main.js?v=12"></script>
 </body>
 </html>

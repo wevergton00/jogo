@@ -13,6 +13,8 @@
 html, body {
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: Outfit, system-ui, sans-serif;
@@ -25,11 +27,9 @@ html, body {
   position: relative;
   width: min(100vw, calc(100vh * 16 / 9));
   height: min(100vh, calc(100vw * 9 / 16));
-  display: grid;
-  place-items: center;
   background:
     url("../assets/ui/menu_cenario.png") center / cover no-repeat,
-    #4ec3ff;
+    #050510;
 }
 
 #game {
@@ -37,6 +37,7 @@ html, body {
   height: 100%;
   display: block;
   background: #000;
+  outline: none;
 }
 
 #overlay {
@@ -58,13 +59,44 @@ html, body {
 
 #screen-load,
 #screen-title,
-#screen-menu,
 #screen-charsel,
 #screen-options {
   background:
     linear-gradient(180deg, rgba(10, 30, 50, 0.18), rgba(8, 24, 40, 0.38)),
     url("../assets/ui/menu_cenario.png") center / cover no-repeat;
 }
+
+#screen-menu {
+  background: url("../assets/ui/menu_barretos.png") center / cover no-repeat;
+  display: block;
+}
+#screen-menu.hidden { display: none !important; }
+
+.hub-nav {
+  position: absolute;
+  left: 3%;
+  top: 36%;
+  width: 38%;
+  height: 52%;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2%;
+  pointer-events: auto;
+  z-index: 5;
+}
+.hub-hit {
+  position: relative;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.hub-hit:hover, .hub-hit.active { background: rgba(255, 210, 70, 0.16); }
+.hub-hit:active { background: rgba(255, 210, 70, 0.28); }
 
 .screen.hidden, .hidden { display: none !important; }
 
