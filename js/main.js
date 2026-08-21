@@ -77,33 +77,71 @@ if (optBack) {
 // Botão de tela cheia (canto inferior direito)
 const fsBtn = document.getElementById("btn-fullscreen");
 const fsLabel = document.getElementById("fs-label");
-function isFullscreen() {
-  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+const fsToast = document.getElementById("fs-toast");
+let fsToastTimer = null;
+
+function fsElement() {
+  return (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    null
+  );
+}
+function showFsToast(msg) {
+  if (!fsToast) return;
+  fsToast.textContent = msg;
+  fsToast.classList.add("show");
+  clearTimeout(fsToastTimer);
+  fsToastTimer = setTimeout(() => fsToast.classList.remove("show"), 3500);
 }
 function updateFsLabel() {
-  if (fsLabel) fsLabel.textContent = isFullscreen() ? "Sair da tela cheia" : "Tela cheia";
+  if (fsLabel) fsLabel.textContent = fsElement() ? "Sair da tela cheia" : "Tela cheia";
+}
+async function enterFullscreen() {
+  const el = document.documentElement;
+  const req =
+    el.requestFullscreen ||
+    el.webkitRequestFullscreen ||
+    el.mozRequestFullScreen ||
+    el.msRequestFullscreen;
+  if (!req) throw new Error("API de tela cheia indisponível");
+  const r = req.call(el, { navigationUI: "hide" });
+  if (r && r.then) await r;
+}
+async function exitFullscreen() {
+  const ex =
+    document.exitFullscreen ||
+    document.webkitExitFullscreen ||
+    document.mozCancelFullScreen ||
+    document.msExitFullscreen;
+  if (ex) {
+    const r = ex.call(document);
+    if (r && r.then) await r;
+  }
+}
+async function toggleFullscreen() {
+  audio.unlock();
+  try {
+    if (fsElement()) await exitFullscreen();
+    else await enterFullscreen();
+  } catch (err) {
+    console.warn("Tela cheia bloqueada:", err);
+    showFsToast("O navegador bloqueou a tela cheia aqui. Abra o jogo em uma aba própria e tente de novo.");
+  }
+  updateFsLabel();
 }
 if (fsBtn) {
-  fsBtn.addEventListener("click", async (e) => {
+  fsBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
+  fsBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    audio.unlock();
-    try {
-      if (isFullscreen()) {
-        if (document.exitFullscreen) await document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      } else {
-        const el = document.documentElement;
-        if (el.requestFullscreen) await el.requestFullscreen();
-        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      }
-    } catch (err) {
-      console.warn("Tela cheia indisponível:", err);
-    }
-    updateFsLabel();
+    toggleFullscreen();
   });
-  document.addEventListener("fullscreenchange", updateFsLabel);
-  document.addEventListener("webkitfullscreenchange", updateFsLabel);
+  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) =>
+    document.addEventListener(ev, updateFsLabel)
+  );
   updateFsLabel();
 }
 
