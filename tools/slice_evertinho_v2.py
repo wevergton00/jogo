@@ -1,44 +1,53 @@
 #!/usr/bin/env python3
-"""Fatia o novo sprite sheet do Evertinho (fundo PRETO) em frames individuais.
-
-Uso: python3 tools/slice_evertinho_v2.py assets/raw/evertinho_v2.png
-
-Diferente do slice_sprites.py (fundo magenta), este remove fundo preto
-preservando os brilhos do laço (dourado/azul) via alpha por luminância
-nas bordas do recorte.
-"""
+"""Fatia os sheets novos do Evertinho (fundo BRANCO) em frames."""
 from __future__ import annotations
 
-import json
 import sys
+from collections import deque
 from pathlib import Path
 
 from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "assets" / "sprites" / "evertinho"
-MANIFEST = ROOT / "assets" / "sprites" / "manifest.json"
 
 
-def black_key(im: Image.Image, thresh: int = 26) -> Image.Image:
-    """Transforma fundo preto em transparente; pixels escuros de borda viram semi-transparentes."""
+def white_key(im: Image.Image, tol: int = 232) -> Image.Image:
+    """Remove fundo branco conectado às bordas (preserva branco interno dos brilhos)."""
     im = im.convert("RGBA")
-    px = im.load()
     w, h = im.size
+    px = im.load()
+    bg = bytearray(w * h)
+    q = deque()
+
+    def near_white(x, y):
+        r, g, b, a = px[x, y]
+        return r >= tol and g >= tol and b >= tol
+
+    for x in range(w):
+        for y in (0, h - 1):
+            if near_white(x, y) and not bg[y * w + x]:
+                bg[y * w + x] = 1
+                q.append((x, y))
     for y in range(h):
+        for x in (0, w - 1):
+            if near_white(x, y) and not bg[y * w + x]:
+                bg[y * w + x] = 1
+                q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if 0 <= nx < w and 0 <= ny < h and not bg[ny * w + nx] and near_white(nx, ny):
+                bg[ny * w + nx] = 1
+                q.append((nx, ny))
+    for y in range(h):
+        row = y * w
         for x in range(w):
-            r, g, b, a = px[x, y]
-            lum = max(r, g, b)
-            if lum <= thresh:
+            if bg[row + x]:
                 px[x, y] = (0, 0, 0, 0)
-            elif lum <= thresh * 3:
-                # borda suave: alpha proporcional à luminância
-                alpha = int(255 * (lum - thresh) / (thresh * 2))
-                px[x, y] = (r, g, b, min(a, alpha))
     return im
 
 
-def connected_boxes(mask: Image.Image, min_area: int = 900):
+def components(mask: Image.Image, min_area: int = 700):
     w, h = mask.size
     px = mask.load()
     seen = bytearray(w * h)
@@ -56,59 +65,60 @@ def connected_boxes(mask: Image.Image, min_area: int = 900):
             seen[i] = 1
             minx = maxx = x0
             miny = maxy = y0
-            count = 0
+            n = 0
             while stack:
                 x, y = stack.pop()
-                count += 1
-                if x < minx: minx = x
-                if x > maxx: maxx = x
-                if y < miny: miny = y
-                if y > maxy: maxy = y
-                for nx, ny in ((x-1, y), (x+1, y), (x, y-1), (x, y+1)):
+                n += 1
+                minx = min(minx, x); maxx = max(maxx, x)
+                miny = min(miny, y); maxy = max(maxy, y)
+                for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
                     if 0 <= nx < w and 0 <= ny < h:
                         j = ny * w + nx
                         if not seen[j] and px[nx, ny] >= 20:
                             seen[j] = 1
                             stack.append((nx, ny))
-            if count >= min_area:
+            if n >= min_area:
                 boxes.append((minx, miny, maxx + 1, maxy + 1))
     return boxes
 
 
-def rows_of(boxes, gap=40):
-    """Agrupa caixas por linha (ordena por y, depois x)."""
+def tight_box(im: Image.Image, box):
+    crop = im.crop(box)
+    bbox = crop.split()[-1].getbbox()
+    if not bbox:
+        return None
+    return (box[0] + bbox[0], box[1] + bbox[1], box[0] + bbox[2], box[1] + bbox[3])
+
+
+def slice_sheet(src: Path, outdir: Path, dilate: int = 25):
+    im = white_key(Image.open(src))
+    mask = im.split()[-1].point(lambda v: 255 if v > 25 else 0)
+    big = mask.filter(ImageFilter.MaxFilter(dilate))
+    boxes = components(big)
+    # agrupa por linha
     rows: list[list] = []
-    for box in sorted(boxes, key=lambda b: (b[1] + b[3]) / 2):
-        cy = (box[1] + box[3]) / 2
-        placed = False
+    for b in sorted(boxes, key=lambda b: (b[1] + b[3]) / 2):
+        cy = (b[1] + b[3]) / 2
         for r in rows:
-            rcy = sum((b[1] + b[3]) / 2 for b in r) / len(r)
-            if abs(cy - rcy) < gap * 2.5:
-                r.append(box)
-                placed = True
+            rcy = sum((x[1] + x[3]) / 2 for x in r) / len(r)
+            if abs(cy - rcy) < 130:
+                r.append(b)
                 break
-        if not placed:
-            rows.append([box])
-    return [sorted(r, key=lambda b: b[0]) for r in rows]
-
-
-def main():
-    src = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "assets" / "raw" / "evertinho_v2.png"
-    im = black_key(Image.open(src))
-    mask = im.split()[-1].point(lambda v: 255 if v > 30 else 0)
-    mask = mask.filter(ImageFilter.MaxFilter(9))  # une brilhos próximos ao corpo
-    rows = rows_of(connected_boxes(mask))
-    print(f"{len(rows)} linhas detectadas")
-    for i, r in enumerate(rows):
-        print(f"  linha {i}: {len(r)} frames -> {[b[0] for b in r]}")
-    # O mapeamento frame->animação é feito manualmente depois de inspecionar
-    outdir = ROOT / "assets" / "raw" / "evertinho_v2_frames"
+        else:
+            rows.append([b])
+    rows = [sorted(r, key=lambda b: b[0]) for r in rows]
     outdir.mkdir(parents=True, exist_ok=True)
+    for f in outdir.glob("*.png"):
+        f.unlink()
     for ri, r in enumerate(rows):
-        for ci, (x0, y0, x1, y1) in enumerate(r):
-            im.crop((x0, y0, x1, y1)).save(outdir / f"r{ri}_c{ci}.png")
-    print(f"frames salvos em {outdir}")
+        for ci, b in enumerate(r):
+            tb = tight_box(im, b)
+            if tb:
+                im.crop(tb).save(outdir / f"r{ri}_c{ci}.png")
+    print(f"{src.name}: {len(rows)} linhas -> {[len(r) for r in rows]}")
+    return rows
 
 
 if __name__ == "__main__":
-    main()
+    slice_sheet(ROOT / "assets/raw/evertinho_v2.png", ROOT / "assets/raw/ev2_frames")
+    slice_sheet(ROOT / "assets/raw/evertinho_v2_extra.png", ROOT / "assets/raw/ev2_extra")
