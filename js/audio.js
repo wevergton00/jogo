@@ -92,6 +92,38 @@ export class AudioSystem {
       case "whoosh":
         this.noise(0.1, 0.04, 1400);
         break;
+      case "lasso":
+        this.beep(300, "square", 0.08, 0.05, 120);
+        this.noise(0.09, 0.04, 1600);
+        break;
+      case "snare":
+        this.beep(240, "triangle", 0.12, 0.06, -40);
+        this.beep(480, "square", 0.07, 0.04);
+        break;
+      case "thunder":
+        this.beep(90, "sawtooth", 0.22, 0.08, 40);
+        this.beep(620, "square", 0.08, 0.05, 200);
+        this.noise(0.18, 0.07, 500);
+        break;
+      case "explode":
+        this.beep(70, "sawtooth", 0.28, 0.1, -30);
+        this.noise(0.22, 0.08, 280);
+        break;
+      case "magic":
+        this.beep(440, "triangle", 0.16, 0.06, 280);
+        this.beep(660, "sine", 0.2, 0.05, 120);
+        break;
+      case "horse":
+        this.beep(140, "sawtooth", 0.14, 0.07, -20);
+        this.noise(0.12, 0.05, 180);
+        break;
+      case "countdown":
+        this.beep(392, "square", 0.12, 0.07);
+        break;
+      case "lute":
+        this.beep(523, "square", 0.1, 0.07);
+        this.beep(784, "square", 0.16, 0.06);
+        break;
       default:
         break;
     }

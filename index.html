@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=43" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -17,7 +17,7 @@
       <section class="screen" id="screen-load">
         <div class="logo-wrap">
           <p class="logo-kicker">platform fighter</p>
-          <h1 class="logo">AURORA<br/>CLASH</h1>
+          <h1 class="logo">BARRETOS<br/>CLASH</h1>
           <p class="load-bar-label">Carregando arena…</p>
           <div class="load-bar"><div id="load-fill"></div></div>
         </div>
@@ -25,53 +25,137 @@
 
       <section class="screen hidden" id="screen-title">
         <div class="logo-wrap">
-          <p class="logo-kicker">versus · protótipo</p>
-          <h1 class="logo">AURORA<br/>CLASH</h1>
-          <p class="blink" id="press-start">Pressione qualquer tecla</p>
+          <p class="logo-kicker">versus · pvp</p>
+          <h1 class="logo">BARRETOS<br/>CLASH</h1>
+          <p class="blink" id="press-start">Pressione ENTER</p>
         </div>
       </section>
 
       <section class="screen hidden" id="screen-menu">
-        <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
-          <button type="button" class="hub-hit" data-hub="versus" aria-label="Versus local"></button>
-          <button type="button" class="hub-hit" data-hub="treino" aria-label="Treinamento"></button>
-          <button type="button" class="hub-hit" data-hub="arcade" aria-label="Arcade"></button>
-          <button type="button" class="hub-hit" data-hub="opcoes" aria-label="Opções"></button>
+        <nav id="main-nav" class="hub-map" aria-label="Menu principal">
+          <div class="hub-col">
+            <button type="button" class="hub-hit active" data-hub="versus" aria-label="Versus local"></button>
+            <button type="button" class="hub-hit" data-hub="treino" aria-label="Treinamento"></button>
+            <button type="button" class="hub-hit" data-hub="arcade" aria-label="Arcade"></button>
+            <button type="button" class="hub-hit" data-hub="opcoes" aria-label="Opções"></button>
+          </div>
+          <button type="button" class="hub-extra" data-hub="dicas">Dicas</button>
+          <button type="button" class="hub-extra sair" data-hub="sair">Sair</button>
         </nav>
+      </section>
+
+      <section class="screen hidden" id="screen-dicas">
+        <div class="tips-card">
+          <p class="kicker gold">Barretos Clash</p>
+          <h2>Dicas</h2>
+          <div class="tips-cols">
+            <div>
+              <h3>Dicas de controle</h3>
+              <ul class="tips-keys">
+                <li><kbd>A</kbd> / <kbd>D</kbd> — Movimentar</li>
+                <li><kbd>W</kbd> — Pular</li>
+                <li><kbd>S</kbd> — Abaixar</li>
+                <li><kbd>J</kbd> — Ataque</li>
+                <li><kbd>K</kbd> — Ataque forte</li>
+                <li><kbd>L</kbd> — Especial</li>
+                <li><kbd>I</kbd> — Defesa</li>
+                <li><kbd>U</kbd> — Agarrão</li>
+                <li><kbd>ENTER</kbd> — Confirmar / iniciar luta</li>
+                <li><kbd>ESC</kbd> — Voltar / pausar</li>
+                <li><kbd>ALT</kbd>+<kbd>ENTER</kbd> — Tela cheia</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Como jogar</h3>
+              <ul class="tips-how">
+                <li>Aumente a porcentagem do adversário.</li>
+                <li>Use golpes diferentes para criar combos.</li>
+                <li>Utilize o laço para prender e puxar o adversário.</li>
+                <li>Use o cavalo para aumentar velocidade e força.</li>
+                <li>Jogue o adversário para fora da arena para vencer.</li>
+              </ul>
+              <h3>Evertinho</h3>
+              <ul class="tips-how">
+                <li><kbd>J</kbd> laço · <kbd>↓J</kbd> giratório</li>
+                <li><kbd>K</kbd> arremesso · <kbd>↓K</kbd> explosivo</li>
+                <li><kbd>L</kbd> mágico · segurar <kbd>L</kbd> giratório</li>
+                <li><kbd>→L</kbd> montado · <kbd>↑L</kbd> cavalo · <kbd>↓L</kbd> trovão</li>
+              </ul>
+            </div>
+          </div>
+          <button type="button" id="dicas-back" class="menu-item active gold-btn">Voltar</button>
+          <p class="hint">ESC também volta ao menu</p>
+        </div>
       </section>
 
       <section class="screen hidden" id="screen-charsel">
         <div class="charsel">
+          <p class="kicker gold">Elenco</p>
           <h2>Escolha os lutadores</h2>
           <div class="charsel-grid">
             <div class="slot" id="slot-p1">
               <p class="slot-tag p1">P1</p>
-              <div class="portrait" id="p1-portrait"></div>
-              <h3 id="p1-name">Fernanda</h3>
-              <p class="archetype" id="p1-arch">Técnica</p>
-              <p class="slot-ctrl">A D trocar · J confirmar</p>
+              <button type="button" class="portrait" id="p1-portrait" aria-label="Trocar P1">
+                <img id="p1-idle" class="slot-idle" alt="" />
+              </button>
+              <h3 id="p1-name">Evertinho</h3>
+              <p class="archetype" id="p1-arch">Peão</p>
+              <p class="slot-ctrl">A D trocar</p>
             </div>
             <div class="vs-badge">VS</div>
             <div class="slot" id="slot-p2">
               <p class="slot-tag p2">P2</p>
-              <div class="portrait" id="p2-portrait"></div>
-              <h3 id="p2-name">Evertinho</h3>
-              <p class="archetype" id="p2-arch">Peão</p>
-              <p class="slot-ctrl">← → trocar · 1 confirmar</p>
+              <button type="button" class="portrait" id="p2-portrait" aria-label="Trocar P2">
+                <img id="p2-idle" class="slot-idle" alt="" />
+              </button>
+              <h3 id="p2-name">Fernanda</h3>
+              <p class="archetype" id="p2-arch">Técnica</p>
+              <p class="slot-ctrl">← → trocar</p>
               <button type="button" id="btn-cpu">P2: Humano</button>
             </div>
           </div>
-          <button type="button" id="btn-start" class="menu-item active" style="margin: 16px auto 0; display:inline-block;">Começar luta</button>
-          <p class="hint">Clique no retrato para trocar · Começar luta inicia a partida · Esc volta</p>
+          <div class="roster-soon" id="roster-soon"></div>
+          <button type="button" id="btn-start" class="menu-item active gold-btn charsel-go">Começar luta · ENTER</button>
+          <p class="hint">Clique no retrato para trocar · ENTER vai para a arena · Esc volta</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-arena">
+        <div class="arena-layout">
+          <div>
+            <p class="kicker gold">Palco</p>
+            <h2>Escolha a arena</h2>
+            <div class="arena-list" id="arena-list"></div>
+            <p class="hint">↑ ↓ escolher · ENTER confirmar · ESC voltar</p>
+          </div>
+          <aside class="arena-big">
+            <div class="arena-hero" id="arena-hero"></div>
+            <h3 id="arena-name">Parque de Barretos</h3>
+            <p id="arena-desc" class="hint"></p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-matchload">
+        <div class="logo-wrap">
+          <p class="logo-kicker">carregando partida</p>
+          <h1 class="logo load-small">LUTE!</h1>
+          <p class="load-bar-label" id="matchload-label">Preparando arena…</p>
+          <div class="load-bar"><div id="matchload-fill"></div></div>
         </div>
       </section>
 
       <section class="screen hidden" id="screen-options">
-        <div class="menu-card wide">
+        <div class="menu-card wide gold-card">
           <h2>Opções</h2>
+          <div class="opt-block">
+            <p class="opt-title">Tela cheia</p>
+            <button type="button" id="opt-fs" class="fs-toggle">☐ DESATIVADA</button>
+            <p class="hint">Atalho: Alt + Enter · a imagem permanece 16:9</p>
+          </div>
           <div id="options-body"></div>
-          <p class="hint">Clique uma ação e pressione a nova tecla</p>
-          <button type="button" id="opt-back" class="menu-item active">Voltar ao menu</button>
+          <p class="hint">Clique uma ação e pressione a nova tecla · P1: WASD · J básico · K forte · L especial · I defesa · U agarrão</p>
+          <button type="button" id="opt-back" class="menu-item active gold-btn">Voltar ao menu</button>
         </div>
       </section>
 
@@ -114,26 +198,27 @@
         </div>
       </div>
 
-      <p id="help" class="hidden" style="display:none!important">
-        P1: WASD mover · J leve · K especial · L forte · I defesa · U agarrão · Esc pausa
-      </p>
+      <div id="move-callout" class="hidden"></div>
+      <div id="intro-banner" class="hidden"></div>
 
-      <div id="pads" class="hidden" style="display:none!important;visibility:hidden!important;opacity:0;pointer-events:none" hidden>
-        <div class="pad-col">
-          <button type="button" data-act="left">◀</button>
-          <button type="button" data-act="up">▲ pulo</button>
-          <button type="button" data-act="right">▶</button>
-          <button type="button" data-act="down">▼</button>
-        </div>
-        <div class="pad-col">
-          <button type="button" data-act="light">leve</button>
-          <button type="button" data-act="special">especial</button>
-          <button type="button" data-act="strong">forte</button>
-          <button type="button" data-act="shield">defesa</button>
-        </div>
-      </div>
+      <aside id="train-panel" class="hidden">
+        <p class="train-title">TREINO</p>
+        <p>Golpe: <span id="tr-move">—</span></p>
+        <p>Dano: <span id="tr-dmg">0</span></p>
+        <p>Combo: <span id="tr-combo">0</span> · Max: <span id="tr-max">0</span></p>
+        <p>Hitstun: <span id="tr-stun">0</span>f</p>
+        <p>Recovery: <span id="tr-rec">0</span>f</p>
+        <p>Lançamento: <span id="tr-kb">0</span></p>
+        <p>Cavalo: <span id="tr-horse">não</span></p>
+        <p class="train-hint">R reset · H hitboxes · Esc pausa</p>
+        <p class="train-hint">J laço · ↓J giratório · K arremesso · ↓K explosivo</p>
+        <p class="train-hint">L mágico · segura L giratório · →L montado · ↑L cavalo · ↓L trovão · U agarrão</p>
+      </aside>
+
+      <p id="help" class="hidden" style="display:none!important"></p>
+      <div id="pads" class="hidden" hidden></div>
     </div>
   </div>
-  <script type="module" src="js/main.js?v=22"></script>
+  <script type="module" src="js/main.js?v=43"></script>
 </body>
 </html>

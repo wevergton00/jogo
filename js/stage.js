@@ -1,12 +1,9 @@
-export const STAGES = {
-  rooftop: {
-    id: "rooftop",
-    name: "Terraço Neon",
-    bg: "stages/rooftop.png",
+function layout(bg, extra = {}) {
+  return {
     width: 1600,
     height: 900,
     ground: { x: 180, y: 560, w: 1240, h: 40 },
-    platforms: [
+    platforms: extra.platforms || [
       { x: 390, y: 390, w: 260, h: 18, pass: true },
       { x: 950, y: 390, w: 260, h: 18, pass: true },
     ],
@@ -19,8 +16,47 @@ export const STAGES = {
       { x: 520, y: 560 },
       { x: 1080, y: 560 },
     ],
+    bg,
+    thumb: bg,
+  };
+}
+
+export const STAGES = {
+  parque: {
+    id: "parque",
+    name: "Parque de Barretos",
+    desc: "O coração do rodeio. Poeira, bandeiras e o sol caindo no parque.",
+    ...layout("stages/parque.png"),
+  },
+  rodeio: {
+    id: "rodeio",
+    name: "Arena do Rodeio",
+    desc: "A raias de terra e os holofotes. Quem cair, cai na arena.",
+    ...layout("stages/rodeio.png", {
+      platforms: [{ x: 670, y: 400, w: 260, h: 18, pass: true }],
+    }),
+  },
+  fazenda: {
+    id: "fazenda",
+    name: "Fazenda",
+    desc: "Pátio de terra, celeiro ao fundo. Espaço aberto para o laço.",
+    ...layout("stages/fazenda.png"),
+  },
+  campo: {
+    id: "campo",
+    name: "Campo Aberto",
+    desc: "Céu enorme, chão seco. Distância e velocidade mandam aqui.",
+    ...layout("stages/campo.png", { platforms: [] }),
+  },
+  noturna: {
+    id: "noturna",
+    name: "Arena Noturna",
+    desc: "Terraço neon depois do show. Luzes baixas, blast zones altas.",
+    ...layout("stages/rooftop.png"),
   },
 };
+
+export const STAGE_IDS = ["parque", "rodeio", "fazenda", "campo", "noturna"];
 
 export function collideStage(p, stage) {
   const boxes = [stage.ground, ...stage.platforms];

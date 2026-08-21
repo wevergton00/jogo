@@ -7,8 +7,8 @@ export const DEFAULT_BINDS = {
     up: "KeyW",
     down: "KeyS",
     light: "KeyJ",
-    special: "KeyK",
-    strong: "KeyL",
+    strong: "KeyK",
+    special: "KeyL",
     shield: "KeyI",
     grab: "KeyU",
   },
@@ -18,8 +18,8 @@ export const DEFAULT_BINDS = {
     up: "ArrowUp",
     down: "ArrowDown",
     light: "Digit1",
-    special: "Digit2",
-    strong: "Digit3",
+    strong: "Digit2",
+    special: "Digit3",
     shield: "Digit4",
     grab: "Digit0",
   },
@@ -30,12 +30,12 @@ const PAD_MAP = {
   right: "right",
   up: "up",
   down: "down",
-  light: 2, // X / square
-  special: 1, // B / circle
-  strong: 3, // Y / triangle
-  shield: 6, // LT
-  grab: 5, // RB
-  jump: 0, // A
+  light: 2,
+  special: 1,
+  strong: 3,
+  shield: 6,
+  grab: 5,
+  jump: 0,
 };
 
 function emptyState() {
@@ -44,17 +44,20 @@ function emptyState() {
     s[a] = false;
     s[a + "Pressed"] = false;
     s[a + "Released"] = false;
+    s[a + "Hold"] = 0;
   }
   s.jump = false;
   s.jumpPressed = false;
   return s;
 }
 
+const STORE_KEY = "aurora-binds-v2";
+
 export class InputManager {
   constructor() {
     this.binds = structuredClone(DEFAULT_BINDS);
     try {
-      const saved = localStorage.getItem("aurora-binds");
+      const saved = localStorage.getItem(STORE_KEY);
       if (saved) this.binds = { ...DEFAULT_BINDS, ...JSON.parse(saved) };
     } catch {}
     this.keys = new Set();
@@ -70,8 +73,13 @@ export class InputManager {
     this.menuBack = false;
     this.pausePressed = false;
     this.virtual = new Set();
+    this.enterPressed = false;
 
     window.addEventListener("keydown", (e) => {
+      if (e.code === "Enter" && e.altKey) {
+        e.preventDefault();
+        return;
+      }
       if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
         e.preventDefault();
       }
@@ -90,7 +98,7 @@ export class InputManager {
   }
 
   save() {
-    localStorage.setItem("aurora-binds", JSON.stringify(this.binds));
+    localStorage.setItem(STORE_KEY, JSON.stringify(this.binds));
   }
 
   remap(port, action) {
@@ -102,14 +110,29 @@ export class InputManager {
     this.anyPressed = this.pressedThisFrame.size > 0 || this.virtual.size > 0;
     this.menuUp = this.just("ArrowUp") || this.just("KeyW");
     this.menuDown = this.just("ArrowDown") || this.just("KeyS");
-    this.menuOk = this.just("Enter") || this.just("Space") || this.just("KeyJ");
+    this.menuLeft = this.just("ArrowLeft") || this.just("KeyA");
+    this.menuRight = this.just("ArrowRight") || this.just("KeyD");
+    this.menuOk = this.just("Enter") || this.just("Space");
     this.menuBack = this.just("Escape") || this.just("Backspace");
     this.pausePressed = this.just("Escape") || this.just("KeyP");
+    this.enterPressed = this.just("Enter");
 
     this.fillPort("p1", this.p1, 0);
     this.fillPort("p2", this.p2, 1);
 
     this.prev = new Set(this.keys);
+  }
+
+  consume() {
+    this.enterPressed = false;
+    this.menuOk = false;
+    this.menuUp = false;
+    this.menuDown = false;
+    this.menuLeft = false;
+    this.menuRight = false;
+    this.menuBack = false;
+    this.pausePressed = false;
+    this.anyPressed = false;
   }
 
   just(code) {
@@ -125,6 +148,7 @@ export class InputManager {
       state[a + "Pressed"] = down && !state[a];
       state[a + "Released"] = !down && state[a];
       state[a] = down;
+      state[a + "Hold"] = down ? (state[a + "Hold"] || 0) + 1 : 0;
     }
     state.jump = state.up;
     state.jumpPressed = state.upPressed;
