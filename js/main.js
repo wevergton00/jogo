@@ -121,14 +121,32 @@ async function exitFullscreen() {
     if (r && r.then) await r;
   }
 }
+function fullscreenAllowed() {
+  if (document.fullscreenEnabled === false) return false;
+  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === false) return false;
+  return true;
+}
 async function toggleFullscreen() {
   audio.unlock();
+  if (fsElement()) {
+    try {
+      await exitFullscreen();
+    } catch {}
+    updateFsLabel();
+    return;
+  }
+  // Dentro de iframe (prévia) o navegador costuma bloquear: abre o jogo em aba própria
+  if (!fullscreenAllowed()) {
+    showFsToast("Tela cheia bloqueada aqui — abrindo o jogo em uma aba própria…");
+    window.open(window.location.href, "_blank", "noopener");
+    return;
+  }
   try {
-    if (fsElement()) await exitFullscreen();
-    else await enterFullscreen();
+    await enterFullscreen();
   } catch (err) {
     console.warn("Tela cheia bloqueada:", err);
-    showFsToast("O navegador bloqueou a tela cheia aqui. Abra o jogo em uma aba própria e tente de novo.");
+    showFsToast("Tela cheia bloqueada aqui — abrindo o jogo em uma aba própria…");
+    window.open(window.location.href, "_blank", "noopener");
   }
   updateFsLabel();
 }

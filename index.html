@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=24" />
+  <link rel="stylesheet" href="css/style.css?v=25" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -59,11 +59,12 @@
 
       <section class="screen hidden" id="screen-charsel">
         <div class="charsel">
+          <p class="charsel-kicker">quem vai lutar?</p>
           <h2>Escolha os lutadores</h2>
           <div class="charsel-grid">
             <div class="slot" id="slot-p1">
               <p class="slot-tag p1">P1</p>
-              <div class="portrait" id="p1-portrait"></div>
+              <div class="portrait" id="p1-portrait" title="Clique para trocar"></div>
               <h3 id="p1-name">Fernanda</h3>
               <p class="archetype" id="p1-arch">Técnica</p>
               <p class="slot-ctrl">A D trocar · J confirmar</p>
@@ -71,15 +72,15 @@
             <div class="vs-badge">VS</div>
             <div class="slot" id="slot-p2">
               <p class="slot-tag p2">P2</p>
-              <div class="portrait" id="p2-portrait"></div>
+              <div class="portrait" id="p2-portrait" title="Clique para trocar"></div>
               <h3 id="p2-name">Evertinho</h3>
               <p class="archetype" id="p2-arch">Peão</p>
               <p class="slot-ctrl">← → trocar · 1 confirmar</p>
               <button type="button" id="btn-cpu">P2: Humano</button>
             </div>
           </div>
-          <button type="button" id="btn-start" class="menu-item active" style="margin: 16px auto 0; display:inline-block;">Começar luta</button>
-          <p class="hint">Clique no retrato para trocar · Começar luta inicia a partida · Esc volta</p>
+          <button type="button" id="btn-start" class="cta-btn">⚔️ Começar luta</button>
+          <p class="hint">Clique no retrato para trocar de lutador · Esc volta ao menu</p>
         </div>
       </section>
 
@@ -153,6 +154,6 @@
     <button type="button" id="btn-fullscreen" title="Alternar tela cheia" aria-label="Tela cheia">⛶ <span id="fs-label">Tela cheia</span></button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=24"></script>
+  <script type="module" src="js/main.js?v=25"></script>
 </body>
 </html>
