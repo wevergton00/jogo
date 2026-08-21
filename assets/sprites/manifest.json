@@ -1,0 +1,338 @@
+{
+  "fernanda/idle_0.png": {
+    "w": 190,
+    "h": 361,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/idle_1.png": {
+    "w": 190,
+    "h": 360,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/walk_0.png": {
+    "w": 211,
+    "h": 350,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/walk_1.png": {
+    "w": 211,
+    "h": 351,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/run.png": {
+    "w": 237,
+    "h": 340,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/jump.png": {
+    "w": 222,
+    "h": 323,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/punch.png": {
+    "w": 303,
+    "h": 332,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/hurt.png": {
+    "w": 272,
+    "h": 324,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/special.png": {
+    "w": 568,
+    "h": 414,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/crouch.png": {
+    "w": 260,
+    "h": 332,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/win.png": {
+    "w": 296,
+    "h": 433,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fernanda/down.png": {
+    "w": 546,
+    "h": 174,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/idle_0.png": {
+    "w": 156,
+    "h": 308,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/idle_1.png": {
+    "w": 150,
+    "h": 308,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/walk.png": {
+    "w": 191,
+    "h": 308,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/run.png": {
+    "w": 254,
+    "h": 289,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/jump.png": {
+    "w": 203,
+    "h": 294,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/punch.png": {
+    "w": 343,
+    "h": 276,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/charge.png": {
+    "w": 290,
+    "h": 238,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "nox/hurt.png": {
+    "w": 243,
+    "h": 276,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/didi_sit.png": {
+    "w": 205,
+    "h": 229,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/didi_run.png": {
+    "w": 256,
+    "h": 188,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/didi_fire.png": {
+    "w": 331,
+    "h": 242,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/tom_sit.png": {
+    "w": 200,
+    "h": 224,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/tom_run.png": {
+    "w": 256,
+    "h": 188,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/tom_orb.png": {
+    "w": 314,
+    "h": 237,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/didi_sleep.png": {
+    "w": 259,
+    "h": 218,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "cats/tom_sleep.png": {
+    "w": 250,
+    "h": 193,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "fx/heart.png": {
+    "w": 314,
+    "h": 229,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/fire.png": {
+    "w": 317,
+    "h": 222,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/orb.png": {
+    "w": 279,
+    "h": 309,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/burst.png": {
+    "w": 258,
+    "h": 278,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/shield.png": {
+    "w": 305,
+    "h": 294,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/dust.png": {
+    "w": 298,
+    "h": 261,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/sparkle.png": {
+    "w": 335,
+    "h": 262,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fx/explode.png": {
+    "w": 326,
+    "h": 301,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "fernanda/ref.png": {
+    "w": 618,
+    "h": 1107,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "ui/portrait_fernanda.png": {
+    "w": 858,
+    "h": 916,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "ui/portrait_nox.png": {
+    "w": 859,
+    "h": 916,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/idle_0.png": {
+    "w": 194,
+    "h": 338,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/idle_1.png": {
+    "w": 142,
+    "h": 337,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/walk_0.png": {
+    "w": 202,
+    "h": 335,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/walk_1.png": {
+    "w": 192,
+    "h": 338,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/run.png": {
+    "w": 276,
+    "h": 307,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/jump.png": {
+    "w": 244,
+    "h": 296,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/punch.png": {
+    "w": 382,
+    "h": 289,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/hurt.png": {
+    "w": 281,
+    "h": 293,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/spin.png": {
+    "w": 412,
+    "h": 454,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/throw.png": {
+    "w": 629,
+    "h": 411,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/mount.png": {
+    "w": 625,
+    "h": 478,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/point.png": {
+    "w": 347,
+    "h": 443,
+    "anchorX": 0.5,
+    "anchorY": 1.0
+  },
+  "evertinho/lasso_magic.png": {
+    "w": 460,
+    "h": 307,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/lasso_loop.png": {
+    "w": 461,
+    "h": 312,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/horse.png": {
+    "w": 565,
+    "h": 393,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "evertinho/lasso_thunder.png": {
+    "w": 483,
+    "h": 409,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  },
+  "ui/portrait_evertinho.png": {
+    "w": 1254,
+    "h": 1254,
+    "anchorX": 0.5,
+    "anchorY": 0.5
+  }
+}

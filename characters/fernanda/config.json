@@ -1,0 +1,18 @@
+{
+  "id": "fernanda",
+  "name": "Fernanda",
+  "archetype": "Técnica",
+  "stats": {
+    "weight": 86,
+    "speed": 5.4,
+    "jump": 13.6,
+    "recovery": "high"
+  },
+  "specials": {
+    "neutral": "Projétil de coração",
+    "side": "Didi — investida de fogo",
+    "up": "Tom — recuperação",
+    "down": "Tom — orbe sombrio"
+  },
+  "sprites": "../../assets/sprites/fernanda/"
+}

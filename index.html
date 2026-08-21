@@ -1,455 +1,139 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Invaders</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: #0a0a1a;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Courier New', monospace;
-      color: #0f0;
-      overflow: hidden;
-    }
-    #game-container {
-      position: relative;
-      border: 3px solid #0f0;
-      box-shadow: 0 0 20px #0f0, inset 0 0 20px rgba(0, 255, 0, 0.1);
-    }
-    canvas {
-      display: block;
-      background: #000;
-    }
-    #ui {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 18px;
-      pointer-events: none;
-      text-shadow: 0 0 5px #0f0;
-    }
-    #game-over {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 10;
-    }
-    #game-over h1 {
-      font-size: 48px;
-      color: #f00;
-      text-shadow: 0 0 15px #f00;
-      margin-bottom: 20px;
-    }
-    #menu {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      z-index: 20;
-    }
-    #menu h1 {
-      font-size: 52px;
-      color: #0f0;
-      text-shadow: 0 0 20px #0f0;
-      margin-bottom: 15px;
-      letter-spacing: 4px;
-    }
-    #menu p {
-      font-size: 16px;
-      color: #0a0;
-      margin-bottom: 30px;
-      line-height: 1.8;
-    }
-    .menu-btn {
-      padding: 14px 40px;
-      font-size: 20px;
-      font-family: 'Courier New', monospace;
-      background: #000;
-      color: #0f0;
-      border: 2px solid #0f0;
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: all 0.2s;
-      margin-top: 10px;
-    }
-    .menu-btn:hover {
-      background: #0f0;
-      color: #000;
-      box-shadow: 0 0 15px #0f0;
-    }
-    #game-over p {
-      font-size: 22px;
-      margin-bottom: 30px;
-    }
-    #restart-btn {
-      padding: 12px 30px;
-      font-size: 18px;
-      font-family: 'Courier New', monospace;
-      background: #000;
-      color: #0f0;
-      border: 2px solid #0f0;
-      cursor: pointer;
-      text-transform: uppercase;
-      transition: all 0.2s;
-    }
-    #restart-btn:hover {
-      background: #0f0;
-      color: #000;
-      box-shadow: 0 0 15px #0f0;
-    }
-    .instructions {
-      position: absolute;
-      bottom: -40px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 14px;
-      color: #0a0;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barretos Clash</title>
+  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div id="game-container">
-    <canvas id="gameCanvas" width="600" height="700"></canvas>
-    <div id="ui">
-      <div>Pontuação: <span id="score">0</span></div>
-      <div>Nível: <span id="level">1</span></div>
+  <div id="app">
+    <canvas id="game" width="1280" height="720" tabindex="0"></canvas>
+
+    <div id="overlay">
+      <section class="screen" id="screen-load">
+        <div class="logo-wrap">
+          <p class="logo-kicker">platform fighter</p>
+          <h1 class="logo">AURORA<br/>CLASH</h1>
+          <p class="load-bar-label">Carregando arena…</p>
+          <div class="load-bar"><div id="load-fill"></div></div>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-title">
+        <div class="logo-wrap">
+          <p class="logo-kicker">versus · protótipo</p>
+          <h1 class="logo">AURORA<br/>CLASH</h1>
+          <p class="blink" id="press-start">Pressione qualquer tecla</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-menu">
+        <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
+          <button type="button" class="hub-hit" data-hub="versus" aria-label="Versus local"></button>
+          <button type="button" class="hub-hit" data-hub="treino" aria-label="Treinamento"></button>
+          <button type="button" class="hub-hit" data-hub="arcade" aria-label="Arcade"></button>
+          <button type="button" class="hub-hit" data-hub="opcoes" aria-label="Opções"></button>
+        </nav>
+      </section>
+
+      <section class="screen hidden" id="screen-charsel">
+        <div class="charsel">
+          <h2>Escolha os lutadores</h2>
+          <div class="charsel-grid">
+            <div class="slot" id="slot-p1">
+              <p class="slot-tag p1">P1</p>
+              <div class="portrait" id="p1-portrait"></div>
+              <h3 id="p1-name">Fernanda</h3>
+              <p class="archetype" id="p1-arch">Técnica</p>
+              <p class="slot-ctrl">A D trocar · J confirmar</p>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="slot" id="slot-p2">
+              <p class="slot-tag p2">P2</p>
+              <div class="portrait" id="p2-portrait"></div>
+              <h3 id="p2-name">Evertinho</h3>
+              <p class="archetype" id="p2-arch">Peão</p>
+              <p class="slot-ctrl">← → trocar · 1 confirmar</p>
+              <button type="button" id="btn-cpu">P2: Humano</button>
+            </div>
+          </div>
+          <button type="button" id="btn-start" class="menu-item active" style="margin: 16px auto 0; display:inline-block;">Começar luta</button>
+          <p class="hint">Clique no retrato para trocar · Começar luta inicia a partida · Esc volta</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-options">
+        <div class="menu-card wide">
+          <h2>Opções</h2>
+          <div id="options-body"></div>
+          <p class="hint">Clique uma ação e pressione a nova tecla</p>
+          <button type="button" id="opt-back" class="menu-item active">Voltar ao menu</button>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-pause">
+        <div class="menu-card">
+          <h2>Pausa</h2>
+          <nav id="pause-nav" class="menu-list"></nav>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-results">
+        <div class="menu-card">
+          <p class="kicker" id="result-kicker">K.O.</p>
+          <h2 id="result-title">Vitória</h2>
+          <p id="result-sub"></p>
+          <nav id="result-nav" class="menu-list"></nav>
+        </div>
+      </section>
+
+      <div id="hud" class="hidden">
+        <div class="hud-card p1">
+          <div class="hud-face" id="hud-face-1"></div>
+          <div>
+            <p class="hud-name" id="hud-name-1">Fernanda</p>
+            <p class="hud-pct" id="hud-pct-1">0%</p>
+            <div class="stocks" id="hud-stocks-1"></div>
+          </div>
+        </div>
+        <div class="hud-center">
+          <p id="hud-combo"></p>
+          <p id="hud-timer">∞</p>
+        </div>
+        <div class="hud-card p2">
+          <div>
+            <p class="hud-name" id="hud-name-2">Evertinho</p>
+            <p class="hud-pct" id="hud-pct-2">0%</p>
+            <div class="stocks" id="hud-stocks-2"></div>
+          </div>
+          <div class="hud-face" id="hud-face-2"></div>
+        </div>
+      </div>
+
+      <p id="help" class="hidden" style="display:none!important">
+        P1: WASD mover · J leve · K especial · L forte · I defesa · U agarrão · Esc pausa
+      </p>
+
+      <div id="pads" class="hidden" style="display:none!important;visibility:hidden!important;opacity:0;pointer-events:none" hidden>
+        <div class="pad-col">
+          <button type="button" data-act="left">◀</button>
+          <button type="button" data-act="up">▲ pulo</button>
+          <button type="button" data-act="right">▶</button>
+          <button type="button" data-act="down">▼</button>
+        </div>
+        <div class="pad-col">
+          <button type="button" data-act="light">leve</button>
+          <button type="button" data-act="special">especial</button>
+          <button type="button" data-act="strong">forte</button>
+          <button type="button" data-act="shield">defesa</button>
+        </div>
+      </div>
     </div>
-    <div id="menu">
-      <h1>SPACE INVADERS</h1>
-      <p>← → Mover a nave<br>Espaço para atirar<br>Destrua todos os invasores!</p>
-      <button id="start-btn" class="menu-btn">Iniciar Jogo</button>
-    </div>
-    <div id="game-over">
-      <h1>GAME OVER</h1>
-      <p>Pontuação final: <span id="final-score">0</span></p>
-      <button id="restart-btn" class="menu-btn">Jogar Novamente</button>
-      <button id="menu-btn" class="menu-btn">Menu Principal</button>
-    </div>
-    <div class="instructions">← → Mover | Espaço Atirar</div>
   </div>
-
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const levelEl = document.getElementById('level');
-    const gameOverScreen = document.getElementById('game-over');
-    const finalScoreEl = document.getElementById('final-score');
-    const restartBtn = document.getElementById('restart-btn');
-    const menuScreen = document.getElementById('menu');
-    const startBtn = document.getElementById('start-btn');
-    const menuBtn = document.getElementById('menu-btn');
-
-    // Configurações
-    const PLAYER_WIDTH = 40;
-    const PLAYER_HEIGHT = 30;
-    const PLAYER_SPEED = 6;
-    const BULLET_WIDTH = 4;
-    const BULLET_HEIGHT = 12;
-    const BULLET_SPEED = 8;
-    const ENEMY_ROWS = 4;
-    const ENEMY_COLS = 8;
-    const ENEMY_WIDTH = 35;
-    const ENEMY_HEIGHT = 25;
-    const ENEMY_PADDING = 15;
-
-    let player, bullets, enemies, enemyBullets, score, level, gameRunning, keys, enemyDirection, enemySpeed, lastEnemyShot;
-
-    function init() {
-      player = {
-        x: canvas.width / 2 - PLAYER_WIDTH / 2,
-        y: canvas.height - 60,
-        width: PLAYER_WIDTH,
-        height: PLAYER_HEIGHT
-      };
-      bullets = [];
-      enemies = [];
-      enemyBullets = [];
-      score = 0;
-      level = 1;
-      gameRunning = true;
-      keys = {};
-      enemyDirection = 1;
-      enemySpeed = 1;
-      lastEnemyShot = 0;
-
-      createEnemies();
-      scoreEl.textContent = score;
-      levelEl.textContent = level;
-      gameOverScreen.style.display = 'none';
-    }
-
-    function createEnemies() {
-      enemies = [];
-      const startX = 50;
-      const startY = 50;
-      for (let row = 0; row < ENEMY_ROWS; row++) {
-        for (let col = 0; col < ENEMY_COLS; col++) {
-          enemies.push({
-            x: startX + col * (ENEMY_WIDTH + ENEMY_PADDING),
-            y: startY + row * (ENEMY_HEIGHT + ENEMY_PADDING),
-            width: ENEMY_WIDTH,
-            height: ENEMY_HEIGHT,
-            alive: true
-          });
-        }
-      }
-    }
-
-    // Controles
-    window.addEventListener('keydown', (e) => {
-      keys[e.code] = true;
-      if (e.code === 'Space') {
-        e.preventDefault();
-        if (gameRunning) shoot();
-      }
-    });
-    window.addEventListener('keyup', (e) => {
-      keys[e.code] = false;
-    });
-
-    function shoot() {
-      // Limita a quantidade de tiros simultâneos
-      if (bullets.length < 4) {
-        bullets.push({
-          x: player.x + player.width / 2 - BULLET_WIDTH / 2,
-          y: player.y,
-          width: BULLET_WIDTH,
-          height: BULLET_HEIGHT
-        });
-      }
-    }
-
-    function update() {
-      if (!gameRunning) return;
-
-      // Movimento do jogador
-      if (keys['ArrowLeft'] && player.x > 0) {
-        player.x -= PLAYER_SPEED;
-      }
-      if (keys['ArrowRight'] && player.x + player.width < canvas.width) {
-        player.x += PLAYER_SPEED;
-      }
-
-      // Atualiza tiros do jogador
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        bullets[i].y -= BULLET_SPEED;
-        if (bullets[i].y + bullets[i].height < 0) {
-          bullets.splice(i, 1);
-        }
-      }
-
-      // Movimento dos inimigos
-      let hitEdge = false;
-      let lowestY = 0;
-      enemies.forEach(enemy => {
-        if (!enemy.alive) return;
-        enemy.x += enemySpeed * enemyDirection;
-        if (enemy.x <= 0 || enemy.x + enemy.width >= canvas.width) {
-          hitEdge = true;
-        }
-        if (enemy.y + enemy.height > lowestY) {
-          lowestY = enemy.y + enemy.height;
-        }
-      });
-
-      if (hitEdge) {
-        enemyDirection *= -1;
-        enemies.forEach(enemy => {
-          if (enemy.alive) enemy.y += 20;
-        });
-      }
-
-      // Tiros dos inimigos (aleatório)
-      const now = Date.now();
-      if (now - lastEnemyShot > 800 - level * 50) {
-        const aliveEnemies = enemies.filter(e => e.alive);
-        if (aliveEnemies.length > 0) {
-          const shooter = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
-          enemyBullets.push({
-            x: shooter.x + shooter.width / 2 - 2,
-            y: shooter.y + shooter.height,
-            width: 4,
-            height: 12
-          });
-          lastEnemyShot = now;
-        }
-      }
-
-      // Atualiza tiros inimigos
-      for (let i = enemyBullets.length - 1; i >= 0; i--) {
-        enemyBullets[i].y += 4 + level * 0.5;
-        if (enemyBullets[i].y > canvas.height) {
-          enemyBullets.splice(i, 1);
-        }
-      }
-
-      // Colisão: tiro do jogador x inimigo
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        for (let j = 0; j < enemies.length; j++) {
-          const e = enemies[j];
-          if (!e.alive) continue;
-          if (rectsCollide(bullets[i], e)) {
-            e.alive = false;
-            bullets.splice(i, 1);
-            score += 10 * level;
-            scoreEl.textContent = score;
-            break;
-          }
-        }
-      }
-
-      // Colisão: tiro inimigo x jogador
-      for (let i = enemyBullets.length - 1; i >= 0; i--) {
-        if (rectsCollide(enemyBullets[i], player)) {
-          gameOver();
-          return;
-        }
-      }
-
-      // Colisão: inimigo toca o jogador
-      for (let e of enemies) {
-        if (e.alive && rectsCollide(e, player)) {
-          gameOver();
-          return;
-        }
-        // Se os inimigos chegarem muito baixo
-        if (e.alive && e.y + e.height >= player.y) {
-          gameOver();
-          return;
-        }
-      }
-
-      // Verifica se todos os inimigos foram destruídos
-      if (enemies.every(e => !e.alive)) {
-        level++;
-        levelEl.textContent = level;
-        enemySpeed = 1 + level * 0.3;
-        createEnemies();
-        bullets = [];
-        enemyBullets = [];
-      }
-    }
-
-    function rectsCollide(a, b) {
-      return a.x < b.x + b.width &&
-             a.x + a.width > b.x &&
-             a.y < b.y + b.height &&
-             a.y + a.height > b.y;
-    }
-
-    function draw() {
-      // Fundo
-      ctx.fillStyle = '#000';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Estrelas de fundo (simples)
-      ctx.fillStyle = '#fff';
-      for (let i = 0; i < 50; i++) {
-        const x = (i * 97) % canvas.width;
-        const y = (i * 53 + Date.now() / 50) % canvas.height;
-        ctx.fillRect(x, y, 1, 1);
-      }
-
-      if (!gameRunning) return;
-
-      // Jogador (nave)
-      ctx.fillStyle = '#0f0';
-      ctx.beginPath();
-      ctx.moveTo(player.x + player.width / 2, player.y);
-      ctx.lineTo(player.x, player.y + player.height);
-      ctx.lineTo(player.x + player.width / 4, player.y + player.height - 8);
-      ctx.lineTo(player.x + player.width * 3 / 4, player.y + player.height - 8);
-      ctx.lineTo(player.x + player.width, player.y + player.height);
-      ctx.closePath();
-      ctx.fill();
-
-      // Tiros do jogador
-      ctx.fillStyle = '#0ff';
-      bullets.forEach(b => {
-        ctx.fillRect(b.x, b.y, b.width, b.height);
-      });
-
-      // Inimigos
-      enemies.forEach(e => {
-        if (!e.alive) return;
-        ctx.fillStyle = '#f0f';
-        // Corpo
-        ctx.fillRect(e.x, e.y + 5, e.width, e.height - 10);
-        // "Olhos"
-        ctx.fillStyle = '#0f0';
-        ctx.fillRect(e.x + 6, e.y + 10, 8, 6);
-        ctx.fillRect(e.x + e.width - 14, e.y + 10, 8, 6);
-        // Antenas
-        ctx.fillStyle = '#f0f';
-        ctx.fillRect(e.x + 5, e.y, 4, 8);
-        ctx.fillRect(e.x + e.width - 9, e.y, 4, 8);
-      });
-
-      // Tiros inimigos
-      ctx.fillStyle = '#f00';
-      enemyBullets.forEach(b => {
-        ctx.fillRect(b.x, b.y, b.width, b.height);
-      });
-    }
-
-    function gameOver() {
-      gameRunning = false;
-      finalScoreEl.textContent = score;
-      gameOverScreen.style.display = 'flex';
-    }
-
-    function gameLoop() {
-      update();
-      draw();
-      requestAnimationFrame(gameLoop);
-    }
-
-    restartBtn.addEventListener('click', () => {
-      init();
-    });
-
-    startBtn.addEventListener('click', () => {
-      menuScreen.style.display = 'none';
-      init();
-    });
-
-    menuBtn.addEventListener('click', () => {
-      gameOverScreen.style.display = 'none';
-      menuScreen.style.display = 'flex';
-    });
-
-    // Mostra o menu e inicia o loop (o jogo só começa ao clicar em Iniciar)
-    gameRunning = false;
-    gameLoop();
-  </script>
+  <script type="module" src="js/main.js?v=22"></script>
 </body>
 </html>

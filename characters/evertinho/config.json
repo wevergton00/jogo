@@ -1,0 +1,18 @@
+{
+  "id": "evertinho",
+  "name": "Evertinho",
+  "archetype": "Peão",
+  "stats": {
+    "weight": 104,
+    "speed": 4.6,
+    "jump": 13.0,
+    "recovery": "high"
+  },
+  "specials": {
+    "neutral": "Laço mágico",
+    "side": "Ataque montado",
+    "up": "Invocar cavalo",
+    "down": "Laço do trovão"
+  },
+  "sprites": "../../assets/sprites/evertinho/"
+}
