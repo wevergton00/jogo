@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barretos Clash</title>
+  <link rel="stylesheet" href="css/style.css?v=28" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="1280" height="720" tabindex="0"></canvas>
+
+    <div id="overlay">
+      <section class="screen" id="screen-load">
+        <div class="logo-wrap">
+          <p class="logo-kicker">platform fighter</p>
+          <h1 class="logo">AURORA<br/>CLASH</h1>
+          <p class="load-bar-label">Carregando arena…</p>
+          <div class="load-bar"><div id="load-fill"></div></div>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-title">
+        <div class="logo-wrap">
+          <p class="logo-kicker">versus · protótipo</p>
+          <h1 class="logo">AURORA<br/>CLASH</h1>
+          <p class="blink" id="press-start">Pressione qualquer tecla</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-menu">
+        <div class="hub-panel">
+          <p class="hub-kicker">platform fighter</p>
+          <h2 class="hub-title">Menu Principal</h2>
+          <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
+            <button type="button" class="hub-btn" data-hub="versus">
+              <span class="hub-ico">⚔️</span>
+              <span class="hub-txt"><strong>Versus</strong><small>2 jogadores locais</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="treino">
+              <span class="hub-ico">🥊</span>
+              <span class="hub-txt"><strong>Treinamento</strong><small>pratique seus golpes</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="arcade">
+              <span class="hub-ico">🕹️</span>
+              <span class="hub-txt"><strong>Arcade</strong><small>enfrente a CPU</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="opcoes">
+              <span class="hub-ico">⚙️</span>
+              <span class="hub-txt"><strong>Opções</strong><small>controles e teclas</small></span>
+            </button>
+          </nav>
+          <p class="hint">↑ ↓ navegar · Enter confirmar</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-charsel">
+        <div class="charsel">
+          <p class="charsel-kicker">quem vai lutar?</p>
+          <h2>Escolha os lutadores</h2>
+          <div class="charsel-grid">
+            <div class="slot" id="slot-p1">
+              <p class="slot-tag p1">P1</p>
+              <div class="portrait" id="p1-portrait" title="Clique para trocar"></div>
+              <h3 id="p1-name">Fernanda</h3>
+              <p class="archetype" id="p1-arch">Técnica</p>
+              <p class="slot-ctrl">A D trocar · J confirmar</p>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="slot" id="slot-p2">
+              <p class="slot-tag p2">P2</p>
+              <div class="portrait" id="p2-portrait" title="Clique para trocar"></div>
+              <h3 id="p2-name">Evertinho</h3>
+              <p class="archetype" id="p2-arch">Peão</p>
+              <p class="slot-ctrl">← → trocar · 1 confirmar</p>
+              <button type="button" id="btn-cpu">P2: Humano</button>
+            </div>
+          </div>
+          <button type="button" id="btn-start" class="cta-btn">⚔️ Começar luta</button>
+          <p class="hint">Clique no retrato para trocar de lutador · Esc volta ao menu</p>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-options">
+        <div class="menu-card wide">
+          <h2>Opções</h2>
+          <div id="options-body"></div>
+          <p class="hint">Clique uma ação e pressione a nova tecla</p>
+          <button type="button" id="opt-back" class="menu-item active">Voltar ao menu</button>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-pause">
+        <div class="menu-card">
+          <h2>Pausa</h2>
+          <nav id="pause-nav" class="menu-list"></nav>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="screen-results">
+        <div class="menu-card">
+          <p class="kicker" id="result-kicker">K.O.</p>
+          <h2 id="result-title">Vitória</h2>
+          <p id="result-sub"></p>
+          <nav id="result-nav" class="menu-list"></nav>
+        </div>
+      </section>
+
+      <div id="hud" class="hidden">
+        <div class="hud-card p1">
+          <div class="hud-face" id="hud-face-1"></div>
+          <div>
+            <p class="hud-name" id="hud-name-1">Fernanda</p>
+            <p class="hud-pct" id="hud-pct-1">0%</p>
+            <div class="stocks" id="hud-stocks-1"></div>
+          </div>
+        </div>
+        <div class="hud-center">
+          <p id="hud-combo"></p>
+          <p id="hud-timer">∞</p>
+        </div>
+        <div class="hud-card p2">
+          <div>
+            <p class="hud-name" id="hud-name-2">Evertinho</p>
+            <p class="hud-pct" id="hud-pct-2">0%</p>
+            <div class="stocks" id="hud-stocks-2"></div>
+          </div>
+          <div class="hud-face" id="hud-face-2"></div>
+        </div>
+      </div>
+
+      <p id="help" class="hidden" style="display:none!important">
+        P1: WASD mover · J leve · K especial · L forte · I defesa · U agarrão · Esc pausa
+      </p>
+
+      <div id="pads" class="hidden" style="display:none!important;visibility:hidden!important;opacity:0;pointer-events:none" hidden>
+        <div class="pad-col">
+          <button type="button" data-act="left">◀</button>
+          <button type="button" data-act="up">▲ pulo</button>
+          <button type="button" data-act="right">▶</button>
+          <button type="button" data-act="down">▼</button>
+        </div>
+        <div class="pad-col">
+          <button type="button" data-act="light">leve</button>
+          <button type="button" data-act="special">especial</button>
+          <button type="button" data-act="strong">forte</button>
+          <button type="button" data-act="shield">defesa</button>
+        </div>
+      </div>
+    </div>
+    <button type="button" id="btn-fullscreen" title="Alternar tela cheia" aria-label="Tela cheia">⛶ <span id="fs-label">Tela cheia</span></button>
+    <p id="fs-toast" role="status"></p>
+  </div>
+  <script type="module" src="js/main.js?v=28"></script>
+</body>
+</html>
