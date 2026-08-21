@@ -148,6 +148,10 @@ html, body {
   bottom: clamp(8px, 1vw, 14px);
   z-index: 50;
   pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
   background: linear-gradient(180deg, #8a5a2e, #573316);
   border: 2px solid #b98a52;
   color: #ffe9c9;

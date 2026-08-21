@@ -76,7 +76,6 @@ if (optBack) {
 
 // Botão de tela cheia (canto inferior direito)
 const fsBtn = document.getElementById("btn-fullscreen");
-const fsLabel = document.getElementById("fs-label");
 const fsToast = document.getElementById("fs-toast");
 let fsToastTimer = null;
 
@@ -94,10 +93,17 @@ function showFsToast(msg) {
   fsToast.textContent = msg;
   fsToast.classList.add("show");
   clearTimeout(fsToastTimer);
-  fsToastTimer = setTimeout(() => fsToast.classList.remove("show"), 3500);
+  fsToastTimer = setTimeout(() => fsToast.classList.remove("show"), 4500);
+}
+function fullscreenAllowed() {
+  if (document.fullscreenEnabled === false) return false;
+  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === false) return false;
+  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === undefined) return false;
+  return true;
 }
 function updateFsLabel() {
-  if (fsLabel) fsLabel.textContent = fsElement() ? "Sair da tela cheia" : "Tela cheia";
+  const label = document.getElementById("fs-label");
+  if (label) label.textContent = fsElement() ? "Sair da tela cheia" : "Tela cheia";
 }
 async function enterFullscreen() {
   const el = document.documentElement;
@@ -121,46 +127,58 @@ async function exitFullscreen() {
     if (r && r.then) await r;
   }
 }
-function fullscreenAllowed() {
-  if (document.fullscreenEnabled === false) return false;
-  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === false) return false;
-  return true;
-}
 async function toggleFullscreen() {
   audio.unlock();
-  if (fsElement()) {
-    try {
-      await exitFullscreen();
-    } catch {}
-    updateFsLabel();
-    return;
-  }
-  // Dentro de iframe (prévia) o navegador costuma bloquear: abre o jogo em aba própria
-  if (!fullscreenAllowed()) {
-    showFsToast("Tela cheia bloqueada aqui — abrindo o jogo em uma aba própria…");
-    window.open(window.location.href, "_blank", "noopener");
-    return;
-  }
   try {
-    await enterFullscreen();
+    if (fsElement()) await exitFullscreen();
+    else await enterFullscreen();
   } catch (err) {
-    console.warn("Tela cheia bloqueada:", err);
-    showFsToast("Tela cheia bloqueada aqui — abrindo o jogo em uma aba própria…");
-    window.open(window.location.href, "_blank", "noopener");
+    console.warn("Tela cheia falhou:", err);
+    showFsToast("O navegador bloqueou a tela cheia. Abra o jogo em uma aba própria (botão ⧉).");
   }
   updateFsLabel();
 }
+
 if (fsBtn) {
-  fsBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
-  fsBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleFullscreen();
-  });
-  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) =>
-    document.addEventListener(ev, updateFsLabel)
-  );
-  updateFsLabel();
+  const embedded = (() => {
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true; // acesso negado ao topo = com certeza está em iframe
+    }
+  })();
+
+  if (embedded && !fullscreenAllowed()) {
+    // Dentro da prévia (iframe) com tela cheia bloqueada:
+    // o botão vira um LINK de verdade que abre o jogo em aba própria —
+    // links diretos nunca são bloqueados pelo navegador.
+    const a = document.createElement("a");
+    a.id = "btn-fullscreen";
+    a.href = window.location.href;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.title = "A prévia bloqueia tela cheia — abrir o jogo em aba própria";
+    a.innerHTML = '⧉ <span id="fs-label">Abrir em aba própria</span>';
+    fsBtn.replaceWith(a);
+    a.addEventListener("click", () => {
+      showFsToast("Na aba nova, use o botão ⛶ Tela cheia — lá funciona!");
+    });
+  } else {
+    fsBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
+    fsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFullscreen();
+    });
+    // Atalho: tecla F alterna tela cheia
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "KeyF" && !input.waiting) toggleFullscreen();
+    });
+    ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((ev) =>
+      document.addEventListener(ev, updateFsLabel)
+    );
+    updateFsLabel();
+  }
 }
 
 requestAnimationFrame((t) => game.tick(t));
