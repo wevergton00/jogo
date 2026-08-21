@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -32,12 +32,29 @@
       </section>
 
       <section class="screen hidden" id="screen-menu">
-        <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
-          <button type="button" class="hub-hit" data-hub="versus" aria-label="Versus local"></button>
-          <button type="button" class="hub-hit" data-hub="treino" aria-label="Treinamento"></button>
-          <button type="button" class="hub-hit" data-hub="arcade" aria-label="Arcade"></button>
-          <button type="button" class="hub-hit" data-hub="opcoes" aria-label="Opções"></button>
-        </nav>
+        <div class="hub-panel">
+          <p class="hub-kicker">platform fighter</p>
+          <h2 class="hub-title">Menu Principal</h2>
+          <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
+            <button type="button" class="hub-btn" data-hub="versus">
+              <span class="hub-ico">⚔️</span>
+              <span class="hub-txt"><strong>Versus</strong><small>2 jogadores locais</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="treino">
+              <span class="hub-ico">🥊</span>
+              <span class="hub-txt"><strong>Treinamento</strong><small>pratique seus golpes</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="arcade">
+              <span class="hub-ico">🕹️</span>
+              <span class="hub-txt"><strong>Arcade</strong><small>enfrente a CPU</small></span>
+            </button>
+            <button type="button" class="hub-btn" data-hub="opcoes">
+              <span class="hub-ico">⚙️</span>
+              <span class="hub-txt"><strong>Opções</strong><small>controles e teclas</small></span>
+            </button>
+          </nav>
+          <p class="hint">↑ ↓ navegar · Enter confirmar</p>
+        </div>
       </section>
 
       <section class="screen hidden" id="screen-charsel">
@@ -133,7 +150,8 @@
         </div>
       </div>
     </div>
+    <button type="button" id="btn-fullscreen" title="Alternar tela cheia" aria-label="Tela cheia">⛶ <span id="fs-label">Tela cheia</span></button>
   </div>
-  <script type="module" src="js/main.js?v=22"></script>
+  <script type="module" src="js/main.js?v=23"></script>
 </body>
 </html>

@@ -86,10 +86,17 @@ export class Game {
   }
 
   renderMenu() {
-    document.querySelectorAll("[data-hub]").forEach((btn) => {
+    const btns = document.querySelectorAll("[data-hub]");
+    btns.forEach((btn, i) => {
+      btn.classList.toggle("active", i === this.menuIndex);
+      btn.onmouseenter = () => {
+        this.menuIndex = i;
+        btns.forEach((b, j) => b.classList.toggle("active", j === this.menuIndex));
+      };
       btn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        this.menuIndex = i;
         this.launch(btn.getAttribute("data-hub"));
       };
     });
@@ -107,8 +114,6 @@ export class Game {
     try {
       this.audio.sfx("confirm");
     } catch {}
-    this.p1Pick = 0;
-    this.p2Pick = 1;
     if (kind === "opcoes") {
       this.setMode("options");
       return;
@@ -116,7 +121,8 @@ export class Game {
     this.training = kind === "treino";
     this.debugCpu = kind === "arcade";
     this.p2cpu = kind !== "versus";
-    this.startFight();
+    // Todos os modos passam pela seleção de personagem
+    this.setMode("charsel");
   }
 
   renderCharSel() {

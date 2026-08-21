@@ -74,6 +74,39 @@ if (optBack) {
   });
 }
 
+// Botão de tela cheia (canto inferior direito)
+const fsBtn = document.getElementById("btn-fullscreen");
+const fsLabel = document.getElementById("fs-label");
+function isFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+function updateFsLabel() {
+  if (fsLabel) fsLabel.textContent = isFullscreen() ? "Sair da tela cheia" : "Tela cheia";
+}
+if (fsBtn) {
+  fsBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    audio.unlock();
+    try {
+      if (isFullscreen()) {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } else {
+        const el = document.documentElement;
+        if (el.requestFullscreen) await el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      }
+    } catch (err) {
+      console.warn("Tela cheia indisponível:", err);
+    }
+    updateFsLabel();
+  });
+  document.addEventListener("fullscreenchange", updateFsLabel);
+  document.addEventListener("webkitfullscreenchange", updateFsLabel);
+  updateFsLabel();
+}
+
 requestAnimationFrame((t) => game.tick(t));
 
 window.addEventListener("pointerdown", () => {
