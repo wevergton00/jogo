@@ -161,7 +161,7 @@ if (fsBtn) {
     a.innerHTML = '⧉ <span id="fs-label">Abrir em aba própria</span>';
     fsBtn.replaceWith(a);
     a.addEventListener("click", () => {
-      showFsToast("Na aba nova, use o botão ⛶ Tela cheia — lá funciona!");
+      showFsToast("Na aba nova, o primeiro clique já deixa o jogo em tela cheia!");
     });
   } else {
     fsBtn.addEventListener("pointerdown", (e) => e.stopPropagation());
@@ -178,6 +178,25 @@ if (fsBtn) {
       document.addEventListener(ev, updateFsLabel)
     );
     updateFsLabel();
+
+    // Tela cheia automática: o PRIMEIRO clique (ou tecla) na aba já ativa
+    let autoFsDone = false;
+    try {
+      autoFsDone = sessionStorage.getItem("auto-fs") === "1";
+    } catch {}
+    const autoFs = async () => {
+      if (autoFsDone || fsElement()) return;
+      autoFsDone = true;
+      try {
+        sessionStorage.setItem("auto-fs", "1");
+      } catch {}
+      try {
+        await enterFullscreen();
+      } catch {}
+      updateFsLabel();
+    };
+    window.addEventListener("pointerdown", autoFs);
+    window.addEventListener("keydown", autoFs);
   }
 }
 
