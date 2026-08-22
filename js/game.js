@@ -6,13 +6,13 @@ import { makeCpuInput } from "./ai.js";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
-  { id: "historia", label: "História", icon: "📖", sub: "A Lenda da Ferradura da Aurora" },
-  { id: "arcade", label: "Arcade", icon: "🕹️", sub: "Sequência de lutas e chefes" },
-  { id: "eight_sec", label: "8 Segundos", icon: "⏱️", sub: "Desafio de sobrevivência e glória" },
-  { id: "lasso_target", label: "Tiro de Laço", icon: "🎯", sub: "Minigame de precisão com alvos" },
-  { id: "treino", label: "Treinamento", icon: "🥊", sub: "Movelist, comandos e combos" },
-  { id: "custom", label: "Armário do Peão", icon: "🤠", sub: "Chapéus, laços e fivelas" },
-  { id: "opcoes", label: "Opções", icon: "⚙️", sub: "Controles e teclas" },
+  { id: "historia", label: "História", icon: "📖", sub: "A Lenda da Aurora" },
+  { id: "arcade", label: "Arcade", icon: "🕹️", sub: "Sequência & Chefes" },
+  { id: "eight_sec", label: "8 Segundos", icon: "⏱️", sub: "Desafio do Rodeio" },
+  { id: "lasso_target", label: "Tiro de Laço", icon: "🎯", sub: "Precisão com Alvos" },
+  { id: "treino", label: "Treinamento", icon: "🥊", sub: "Comandos & Combos" },
+  { id: "custom", label: "Armário", icon: "🤠", sub: "Chapéus & Laços" },
+  { id: "opcoes", label: "Opções", icon: "⚙️", sub: "Controles & Teclas" },
 ];
 
 const STORY_CHAPTERS = [
@@ -23,7 +23,7 @@ const STORY_CHAPTERS = [
     playerChar: "evertinho",
     enemyChar: "fernanda",
     enemyName: "Fernanda",
-    intro: "Everttinho chega a Barretos para a lendária Festa do Peão, mas é desafiado por Fernanda, a maga técnica e guardiã dos felinos misticos!",
+    intro: "Everttinho chega a Barretos para a lendária Festa do Peão, mas é desafiado por Fernanda, a maga técnica e guardiã dos felinos místicos!",
     dialogue: [
       { speaker: "Everttinho", text: "Com meu laço firme e a fé no peito, nenhum desafio em Barretos me assusta!" },
       { speaker: "Fernanda", text: "Vamos ver se o seu laço é mais rápido que a velocidade mágica do Didi e do Tom!" },
@@ -138,6 +138,20 @@ export class Game {
 
     this.narratorBanner = "";
     this.narratorTimer = 0;
+
+    this.setupGlobalEvents();
+  }
+
+  setupGlobalEvents() {
+    const btnEnterTitle = document.getElementById("btn-enter-title");
+    if (btnEnterTitle) {
+      btnEnterTitle.onclick = (e) => {
+        e.preventDefault();
+        this.audio.unlock();
+        this.audio.sfx("confirm");
+        this.setMode("menu");
+      };
+    }
   }
 
   setMode(mode) {
@@ -230,6 +244,7 @@ export class Game {
       };
       btn.onclick = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         this.menuIndex = i;
         this.launchMenuChoice(btn.getAttribute("data-hub"));
       };
@@ -309,37 +324,81 @@ export class Game {
     document.getElementById("slot-p1")?.classList.toggle("ready", this.p1Ready);
     document.getElementById("slot-p2")?.classList.toggle("ready", this.p2Ready);
 
-    const stageSelect = document.getElementById("stage-select-name");
-    if (stageSelect) {
-      const stg = STAGES[STAGE_IDS[this.stagePick]];
-      stageSelect.textContent = `Arena: ${stg.name} (${stg.subtitle})`;
-    }
+    const stg = STAGES[STAGE_IDS[this.stagePick]];
+    const stageNameEl = document.getElementById("stage-name-display");
+    const stageSubEl = document.getElementById("stage-sub-display");
+    if (stageNameEl) stageNameEl.textContent = stg.name;
+    if (stageSubEl) stageSubEl.textContent = stg.subtitle;
 
     const cpuBtn = document.getElementById("btn-cpu");
     if (cpuBtn) {
       cpuBtn.textContent = this.p2cpu ? "P2: CPU" : "P2: Humano";
-      cpuBtn.onclick = () => {
+      cpuBtn.onclick = (e) => {
+        e.preventDefault();
         this.p2cpu = !this.p2cpu;
         if (this.p2cpu) this.p2Ready = true;
+        this.audio.sfx("select");
+        this.renderCharSel();
+      };
+    }
+
+    const swapP1 = (e) => {
+      e?.preventDefault();
+      this.p1Pick = (this.p1Pick + 1) % ids.length;
+      this.audio.sfx("select");
+      this.renderCharSel();
+    };
+
+    const swapP2 = (e) => {
+      e?.preventDefault();
+      this.p2Pick = (this.p2Pick + 1) % ids.length;
+      this.audio.sfx("select");
+      this.renderCharSel();
+    };
+
+    if (p1Port) p1Port.onclick = swapP1;
+    const btnP1Swap = document.getElementById("btn-p1-swap");
+    if (btnP1Swap) btnP1Swap.onclick = swapP1;
+
+    if (p2Port) p2Port.onclick = swapP2;
+    const btnP2Swap = document.getElementById("btn-p2-swap");
+    if (btnP2Swap) btnP2Swap.onclick = swapP2;
+
+    const btnStagePrev = document.getElementById("btn-stage-prev");
+    if (btnStagePrev) {
+      btnStagePrev.onclick = (e) => {
+        e.preventDefault();
+        this.stagePick = (this.stagePick + STAGE_IDS.length - 1) % STAGE_IDS.length;
+        this.audio.sfx("select");
+        this.renderCharSel();
+      };
+    }
+
+    const btnStageNext = document.getElementById("btn-stage-next");
+    if (btnStageNext) {
+      btnStageNext.onclick = (e) => {
+        e.preventDefault();
+        this.stagePick = (this.stagePick + 1) % STAGE_IDS.length;
+        this.audio.sfx("select");
         this.renderCharSel();
       };
     }
 
     const startBtn = document.getElementById("btn-start");
-    if (startBtn) startBtn.onclick = () => this.startFight();
-
-    if (p1Port) {
-      p1Port.onclick = () => {
-        this.p1Pick = (this.p1Pick + 1) % ids.length;
-        this.audio.sfx("select");
-        this.renderCharSel();
+    if (startBtn) {
+      startBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.audio.sfx("berrante");
+        this.startFight();
       };
     }
-    if (p2Port) {
-      p2Port.onclick = () => {
-        this.p2Pick = (this.p2Pick + 1) % ids.length;
-        this.audio.sfx("select");
-        this.renderCharSel();
+
+    const backBtn = document.getElementById("btn-charsel-back");
+    if (backBtn) {
+      backBtn.onclick = (e) => {
+        e.preventDefault();
+        this.setMode("menu");
       };
     }
   }
@@ -371,9 +430,18 @@ export class Game {
 
     const startBtn = document.getElementById("btn-story-start");
     if (startBtn) {
-      startBtn.onclick = () => {
+      startBtn.onclick = (e) => {
+        e.preventDefault();
         this.audio.sfx("berrante");
         this.startStoryBattle(ch);
+      };
+    }
+
+    const backBtn = document.getElementById("btn-story-back");
+    if (backBtn) {
+      backBtn.onclick = (e) => {
+        e.preventDefault();
+        this.setMode("menu");
       };
     }
   }
@@ -393,9 +461,17 @@ export class Game {
   renderEightSecScreen() {
     const startBtn = document.getElementById("btn-eight-sec-start");
     if (startBtn) {
-      startBtn.onclick = () => {
+      startBtn.onclick = (e) => {
+        e.preventDefault();
         this.audio.sfx("eight_seconds_horn");
         this.startEightSecFight();
+      };
+    }
+    const backBtn = document.getElementById("btn-eight-sec-back");
+    if (backBtn) {
+      backBtn.onclick = (e) => {
+        e.preventDefault();
+        this.setMode("menu");
       };
     }
   }
@@ -674,7 +750,7 @@ export class Game {
       active: true,
       p1: f1,
       p2: f2,
-      meter: 0.5, // 0.5 é centro, 0 = p2 vence, 1 = p1 vence
+      meter: 0.5,
       timer: 160,
       maxTimer: 160,
       p1Count: 0,
@@ -769,7 +845,7 @@ export class Game {
       }
     }
 
-    nav.querySelectorAll(".menu-item").forEach((btn, i) => {
+    nav.querySelectorAll(".menu-item").forEach((btn) => {
       btn.onclick = () => this.confirmResultAction(btn.dataset.res);
     });
   }
@@ -845,54 +921,72 @@ export class Game {
         this.audio.sfx("ui");
         this.renderMenu();
       }
+      if (this.input.menuLeft) {
+        this.menuIndex = (this.menuIndex + MENU.length - 2) % MENU.length;
+        this.audio.sfx("ui");
+        this.renderMenu();
+      }
+      if (this.input.menuRight) {
+        this.menuIndex = (this.menuIndex + 2) % MENU.length;
+        this.audio.sfx("ui");
+        this.renderMenu();
+      }
       if (this.input.menuOk) this.confirmMenu();
       return;
     }
 
     if (this.mode === "charsel") {
       const ids = CHARACTER_IDS;
+      let changed = false;
+
       if (this.input.p1.leftPressed && !this.p1Ready) {
         this.p1Pick = (this.p1Pick + ids.length - 1) % ids.length;
         this.audio.sfx("select");
-        this.renderCharSel();
+        changed = true;
       }
       if (this.input.p1.rightPressed && !this.p1Ready) {
         this.p1Pick = (this.p1Pick + 1) % ids.length;
         this.audio.sfx("select");
-        this.renderCharSel();
+        changed = true;
       }
-      if (this.input.p1.lightPressed) {
-        this.p1Ready = !this.p1Ready;
-        this.audio.sfx("confirm");
-        this.renderCharSel();
-      }
-
       if (this.input.p1.upPressed) {
         this.stagePick = (this.stagePick + 1) % STAGE_IDS.length;
         this.audio.sfx("select");
-        this.renderCharSel();
+        changed = true;
+      }
+      if (this.input.p1.downPressed) {
+        this.stagePick = (this.stagePick + STAGE_IDS.length - 1) % STAGE_IDS.length;
+        this.audio.sfx("select");
+        changed = true;
       }
 
       if (!this.p2cpu) {
         if (this.input.p2.leftPressed && !this.p2Ready) {
           this.p2Pick = (this.p2Pick + ids.length - 1) % ids.length;
           this.audio.sfx("select");
-          this.renderCharSel();
+          changed = true;
         }
         if (this.input.p2.rightPressed && !this.p2Ready) {
           this.p2Pick = (this.p2Pick + 1) % ids.length;
           this.audio.sfx("select");
-          this.renderCharSel();
-        }
-        if (this.input.p2.lightPressed) {
-          this.p2Ready = !this.p2Ready;
-          this.audio.sfx("confirm");
-          this.renderCharSel();
+          changed = true;
         }
       }
 
-      if (this.input.menuBack) this.setMode("menu");
-      if (this.p1Ready && this.p2Ready) this.startFight();
+      if (this.input.menuOk || this.input.p1.lightPressed) {
+        this.audio.sfx("berrante");
+        this.startFight();
+        return;
+      }
+
+      if (this.input.menuBack) {
+        this.setMode("menu");
+        return;
+      }
+
+      if (changed) {
+        this.renderCharSel();
+      }
       return;
     }
 

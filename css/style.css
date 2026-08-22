@@ -6,7 +6,7 @@
   --p2: #ff74b1;
   --neon: #6ef0ff;
   --gold: #ffd700;
-  --card: rgba(35, 20, 10, 0.92);
+  --card: rgba(32, 18, 10, 0.94);
   --border: #a5713d;
 }
 
@@ -25,6 +25,28 @@ html, body {
   place-items: center;
 }
 
+/* Modo Tela Cheia / Janela Cheia */
+body.fullscreen-mode {
+  background: #000;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.fullscreen-mode #app {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  z-index: 99999 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
 #app {
   position: relative;
   width: min(100vw, calc(100vh * 16 / 9));
@@ -33,6 +55,8 @@ html, body {
     url("../assets/ui/menu_barretos.png") center / cover no-repeat,
     url("../assets/ui/menu_cenario.png") center / cover no-repeat,
     #120806;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
 }
 
 #game {
@@ -57,7 +81,7 @@ html, body {
   display: grid;
   place-items: center;
   pointer-events: auto;
-  background: linear-gradient(180deg, rgba(14, 8, 4, 0.55), rgba(10, 5, 2, 0.85));
+  background: linear-gradient(180deg, rgba(14, 8, 4, 0.65), rgba(10, 5, 2, 0.92));
 }
 
 #screen-load,
@@ -69,56 +93,146 @@ html, body {
 
 #screen-menu {
   background:
-    linear-gradient(90deg, rgba(12, 6, 2, 0.92) 0%, rgba(12, 6, 2, 0.65) 55%, rgba(12, 6, 2, 0.25) 100%),
+    linear-gradient(90deg, rgba(12, 6, 2, 0.94) 0%, rgba(12, 6, 2, 0.75) 55%, rgba(12, 6, 2, 0.35) 100%),
     url("../assets/ui/menu_barretos.png") center / cover no-repeat;
-  display: grid;
-  place-items: center start;
+  padding: clamp(10px, 2vh, 24px);
 }
 
-.hub-panel {
-  margin-left: 5%;
-  padding: clamp(14px, 2vw, 24px) clamp(16px, 2.2vw, 28px);
-  background: linear-gradient(180deg, rgba(62, 38, 18, 0.95), rgba(35, 18, 8, 0.98));
+/* ==========================================================================
+   MENU PRINCIPAL - LAYOUT PROPORCIONADO E EQUILIBRADO
+   ========================================================================== */
+.menu-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: clamp(12px, 2vw, 24px);
+  width: min(1140px, 94vw);
+  max-height: 90vh;
+  align-items: center;
+}
+
+.menu-hero-card {
+  background: linear-gradient(180deg, rgba(55, 30, 14, 0.95), rgba(30, 15, 6, 0.98));
   border: 2px solid #b98a52;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.7), inset 0 0 24px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  border-radius: 14px;
-  width: clamp(300px, 34vw, 450px);
+  border-radius: 12px;
+  padding: clamp(14px, 1.8vw, 24px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 210, 122, 0.15);
+  border: 1px solid #ffd27a;
+  color: #ffd27a;
+  font-size: clamp(8px, 0.75vw, 10px);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.menu-hero-logo {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(20px, 2.4vw, 34px);
+  line-height: 1.15;
+  color: #ffe9c9;
+  text-shadow: 0 0 16px #ff9900, 3px 3px 0 #3a1a05;
+}
+
+.menu-hero-sub {
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(9px, 0.9vw, 12px);
+  color: #ffd27a;
+  letter-spacing: 0.2em;
+  margin-top: 6px;
+}
+
+.menu-hero-quote {
+  font-style: italic;
+  color: #fce7c8;
+  font-size: clamp(11.5px, 1.05vw, 14px);
+  line-height: 1.4;
+  margin: 12px 0;
+  border-left: 3px solid #b98a52;
+  padding-left: 10px;
+}
+
+.menu-quick-ctrls {
+  background: rgba(18, 9, 4, 0.85);
+  border: 1px solid #8a5a2e;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+}
+
+.ctrls-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: #ffd27a;
+  margin-bottom: 6px;
+}
+
+.ctrls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  font-size: clamp(10px, 0.9vw, 12px);
+  color: #eedcc6;
+}
+
+.ctrls-grid strong {
+  color: #ffd27a;
+  background: #351c0d;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
+/* Painel de Navegação de Modos */
+.menu-nav-card {
+  background: linear-gradient(180deg, rgba(62, 38, 18, 0.96), rgba(35, 18, 8, 0.98));
+  border: 2px solid #b98a52;
+  border-radius: 12px;
+  padding: clamp(12px, 1.6vw, 20px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), inset 0 0 24px rgba(0, 0, 0, 0.4);
+}
+
+.nav-card-header {
+  margin-bottom: 10px;
+  text-align: left;
 }
 
 .hub-kicker, .charsel-kicker, .story-kicker {
-  letter-spacing: 0.45em;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
   color: #e8b87a;
-  font-size: clamp(9px, 0.85vw, 11px);
-  margin-bottom: 6px;
+  font-size: clamp(8.5px, 0.8vw, 11px);
+  margin-bottom: 4px;
 }
 
 .hub-title {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(12px, 1.4vw, 17px);
+  font-size: clamp(12px, 1.3vw, 16px);
   color: #ffe9c9;
-  text-shadow: 2px 2px 0 #3a2210, 0 0 14px rgba(255, 180, 90, 0.5);
-  margin-bottom: clamp(10px, 1.4vw, 18px);
+  text-shadow: 2px 2px 0 #3a2210, 0 0 12px rgba(255, 180, 90, 0.5);
 }
 
-.hub-nav {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(5px, 0.75vw, 9px);
-  pointer-events: auto;
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(6px, 0.8vw, 10px);
 }
 
 .hub-btn {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 1vw, 12px);
-  width: 100%;
-  padding: clamp(6px, 0.9vw, 10px) clamp(8px, 1.2vw, 14px);
+  gap: clamp(6px, 0.8vw, 10px);
+  padding: clamp(7px, 0.8vw, 11px) clamp(8px, 1vw, 12px);
   background: linear-gradient(180deg, #784820 0%, #573316 55%, #42240d 100%);
-  border: 2px solid #a5713d;
+  border: 1.5px solid #a5713d;
   border-radius: 8px;
-  box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.3), 0 2px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.25), 0 2px 5px rgba(0, 0, 0, 0.4);
   color: #ffe9c9;
   cursor: pointer;
   text-align: left;
@@ -126,14 +240,14 @@ html, body {
 }
 
 .hub-btn .hub-ico {
-  font-size: clamp(15px, 1.6vw, 20px);
-  width: clamp(20px, 2vw, 26px);
+  font-size: clamp(14px, 1.5vw, 19px);
+  width: clamp(18px, 1.8vw, 24px);
   text-align: center;
 }
 
 .hub-btn .hub-txt strong {
-  font: 700 clamp(13px, 1.35vw, 17px) Outfit, sans-serif;
-  letter-spacing: 0.03em;
+  font: 700 clamp(12px, 1.25vw, 15px) Outfit, sans-serif;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #ffe9c9;
   display: block;
@@ -141,48 +255,71 @@ html, body {
 
 .hub-btn .hub-txt small {
   color: #d9b285;
-  font-size: clamp(9.5px, 0.85vw, 11.5px);
+  font-size: clamp(9px, 0.8vw, 11px);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
 }
 
 .hub-btn:hover, .hub-btn.active {
   border-color: #ffd27a;
   background: linear-gradient(180deg, #a5713d 0%, #855327 55%, #6b421f 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 230, 180, 0.5), 0 0 16px rgba(255, 190, 90, 0.35);
-  transform: translateX(4px);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 180, 0.5), 0 0 14px rgba(255, 190, 90, 0.35);
+  transform: translateY(-2px);
 }
 .hub-btn:hover .hub-txt strong, .hub-btn.active .hub-txt strong { color: #ffd27a; }
 
+.menu-hint-footer {
+  margin-top: 10px;
+  color: #d4b896;
+  font-size: clamp(9.5px, 0.85vw, 12px);
+  text-align: center;
+}
+
+/* ==========================================================================
+   TELA DE TÍTULO
+   ========================================================================== */
 .logo-wrap { text-align: center; }
 .logo-kicker {
-  letter-spacing: 0.45em;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
   color: #ffd27a;
-  font-size: clamp(11px, 1.1vw, 14px);
-  margin-bottom: 12px;
+  font-size: clamp(10px, 1vw, 13px);
+  margin-bottom: 10px;
   text-shadow: 0 0 10px rgba(255, 210, 122, 0.6);
 }
 .logo {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(28px, 4.8vw, 56px);
+  font-size: clamp(26px, 4.4vw, 52px);
   line-height: 1.2;
   color: #ffe9c9;
   text-shadow: 0 0 20px #ff9900, 4px 4px 0 #3a1a05;
 }
 .logo-tagline {
-  margin-top: 14px;
+  margin-top: 12px;
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(10px, 1.1vw, 14px);
+  font-size: clamp(9px, 1vw, 13px);
   color: #ffd27a;
   letter-spacing: 0.15em;
 }
 .logo-quote, .logo-sub {
-  margin-top: 10px;
+  margin-top: 8px;
   font-style: italic;
   color: #fce7c8;
-  font-size: clamp(13px, 1.3vw, 17px);
+  font-size: clamp(12px, 1.2vw, 15px);
 }
 
-.blink { margin-top: 28px; color: #e8b87a; animation: blink 1.2s steps(2) infinite; font-size: 14px; }
+.blink-btn {
+  animation: pulse-glow 1.5s infinite alternate;
+}
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 10px rgba(255, 190, 90, 0.4); transform: scale(1); }
+  100% { box-shadow: 0 0 24px rgba(255, 190, 90, 0.85); transform: scale(1.04); }
+}
+
+.blink { margin-top: 16px; color: #e8b87a; animation: blink 1.2s steps(2) infinite; font-size: 13px; }
 @keyframes blink { 50% { opacity: 0.25; } }
 
 .load-bar {
@@ -193,179 +330,268 @@ html, body {
   background: #140806;
 }
 #load-fill { height: 100%; width: 8%; background: linear-gradient(90deg, #ff9900, #ffd27a); }
-.load-bar-label { margin-top: 24px; color: #d9b285; font-size: 13px; }
+.load-bar-label { margin-top: 20px; color: #d9b285; font-size: 13px; }
 
-/* Seleção de Personagens */
-.charsel { width: min(980px, 94vw); text-align: center; pointer-events: auto; }
-.charsel h2 {
+/* ==========================================================================
+   SELEÇÃO DE PERSONAGENS & ARENAS
+   ========================================================================== */
+.charsel-wrap {
+  width: min(1060px, 95vw);
+  text-align: center;
+  pointer-events: auto;
+}
+.charsel-header h2 {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(12px, 1.5vw, 18px);
-  margin-bottom: clamp(12px, 1.5vw, 20px);
+  font-size: clamp(11px, 1.4vw, 17px);
+  margin-bottom: clamp(8px, 1.2vw, 16px);
   color: #ffe9c9;
-  text-shadow: 2px 2px 0 #3a2210, 0 0 14px rgba(255, 180, 90, 0.5);
+  text-shadow: 2px 2px 0 #3a2210, 0 0 12px rgba(255, 180, 90, 0.5);
 }
 .charsel-grid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: clamp(10px, 1.5vw, 20px);
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: clamp(8px, 1.4vw, 18px);
   align-items: center;
 }
+
 .slot {
-  background: linear-gradient(180deg, rgba(62, 38, 18, 0.94), rgba(41, 24, 11, 0.96));
+  background: linear-gradient(180deg, rgba(62, 38, 18, 0.95), rgba(35, 18, 8, 0.98));
   border: 2px solid #b98a52;
   border-radius: 12px;
-  padding: clamp(10px, 1.2vw, 16px);
-  min-height: clamp(270px, 36vw, 380px);
+  padding: clamp(8px, 1.1vw, 14px);
   box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.25), 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 .slot.ready {
   border-color: #7dff9a;
-  box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.25), 0 0 22px rgba(125, 255, 154, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.25), 0 0 20px rgba(125, 255, 154, 0.45);
 }
 .slot.ready::after {
   content: "PRONTO!";
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: "Press Start 2P", monospace;
-  font-size: 10px;
+  font-size: 9px;
   color: #7dff9a;
 }
 .slot-tag {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(10px, 1vw, 12px);
-  margin-bottom: 8px;
+  font-size: clamp(9px, 0.9vw, 11px);
+  margin-bottom: 6px;
 }
 .slot-tag.p1 { color: #ffd27a; }
 .slot-tag.p2 { color: #ff74b1; }
+
 .portrait {
-  height: clamp(140px, 19vw, 210px);
+  height: clamp(120px, 16vw, 180px);
   background: radial-gradient(circle at 50% 35%, #2b1a0d, #14090a 75%) center/cover no-repeat;
-  border: 3px solid #b98a52;
+  border: 2px solid #b98a52;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.15s, border-color 0.15s;
+  transition: transform 0.12s, border-color 0.12s;
 }
-.portrait:hover { transform: scale(1.03); border-color: #ffd27a; }
+.portrait:hover { transform: scale(1.02); border-color: #ffd27a; }
+
 .slot h3 {
-  margin-top: 8px;
-  font-size: clamp(16px, 1.8vw, 24px);
+  margin-top: 6px;
+  font-size: clamp(14px, 1.6vw, 20px);
   color: #ffe9c9;
 }
 .archetype {
   color: #d9b285;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.1em;
+  font-size: clamp(8.5px, 0.8vw, 10.5px);
+  margin-bottom: 6px;
 }
-.slot-ctrl { margin-top: 6px; color: #b8946a; font-size: clamp(10px, 0.85vw, 11.5px); }
 
+.swap-btn, .cpu-toggle-btn {
+  background: rgba(45, 24, 11, 0.9);
+  border: 1px solid #a5713d;
+  color: #ffe9c9;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font: 600 clamp(10px, 0.9vw, 12px) Outfit, sans-serif;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.swap-btn:hover, .cpu-toggle-btn:hover { border-color: #ffd27a; color: #ffd27a; background: #573316; }
+
+.p2-actions-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Coluna Central VS e Seletor de Arena */
 .vs-center-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 .vs-badge {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(18px, 2.2vw, 28px);
+  font-size: clamp(16px, 2vw, 26px);
   color: #ffd27a;
   text-shadow: 2px 2px 0 #3a2210, 0 0 16px rgba(255, 190, 90, 0.8);
 }
-.stage-btn {
-  background: rgba(30, 16, 8, 0.9);
-  border: 1px solid #b98a52;
-  color: #ffe9c9;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font: 600 12px Outfit, sans-serif;
-  cursor: pointer;
-}
-.stage-btn:hover { border-color: #ffd27a; color: #ffd27a; }
 
-#btn-cpu, .cta-btn {
+.stage-selector-box {
+  background: rgba(25, 13, 6, 0.92);
+  border: 2px solid #b98a52;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 100%;
+}
+.stage-label {
+  display: block;
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  color: #ffd27a;
+  margin-bottom: 4px;
+}
+.stage-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stage-arrow-btn {
+  background: #573316;
+  border: 1px solid #b98a52;
+  color: #ffd27a;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.stage-arrow-btn:hover { background: #784820; border-color: #ffd27a; }
+
+.stage-info-text strong {
+  display: block;
+  font-size: clamp(11px, 1.1vw, 14px);
+  color: #ffe9c9;
+}
+.stage-info-text small {
+  color: #d9b285;
+  font-size: clamp(9px, 0.85vw, 11px);
+}
+
+.start-fight-btn {
+  width: 100%;
+  font-size: clamp(13px, 1.4vw, 17px) !important;
+  padding: clamp(9px, 1.1vw, 13px) clamp(16px, 2vw, 28px) !important;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid rgba(185, 138, 82, 0.5);
+  color: #d9b285;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font: 600 clamp(11px, 1vw, 13px) Outfit, sans-serif;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.ghost-btn:hover { border-color: #ffd27a; color: #ffd27a; }
+
+.cta-btn {
+  display: inline-block;
   background: linear-gradient(180deg, #ffd27a 0%, #e8a84d 55%, #c9853a 100%);
   color: #3a2210;
   border: 2px solid #ffe9c9;
   border-radius: 8px;
-  font: 800 clamp(14px, 1.4vw, 18px) Outfit, sans-serif;
+  font: 800 clamp(13px, 1.35vw, 17px) Outfit, sans-serif;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
-  padding: clamp(8px, 1vw, 12px) clamp(18px, 2.4vw, 36px);
-  margin-top: 14px;
+  padding: clamp(8px, 1vw, 12px) clamp(18px, 2vw, 32px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 16px rgba(255, 190, 90, 0.4);
   transition: transform 0.12s, filter 0.15s;
 }
 .cta-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
 .cta-btn:active { transform: translateY(0); }
 
-/* Story / 8 Seconds Cards */
+/* ==========================================================================
+   STORY / 8 SECONDS CARDS
+   ========================================================================== */
 .story-card {
-  width: min(760px, 92vw);
-  padding: clamp(18px, 2.4vw, 32px);
+  width: min(740px, 92vw);
+  max-height: 88vh;
+  padding: clamp(14px, 2vw, 24px);
   background: linear-gradient(180deg, rgba(62, 38, 18, 0.96), rgba(35, 18, 8, 0.98));
   border: 2px solid #b98a52;
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
   text-align: center;
+  overflow-y: auto;
 }
 .story-card h2 {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(12px, 1.4vw, 18px);
+  font-size: clamp(11px, 1.3vw, 16px);
   color: #ffe9c9;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .story-desc {
   color: #f5dfc6;
-  font-size: clamp(13px, 1.2vw, 16px);
-  line-height: 1.5;
-  margin-bottom: 16px;
+  font-size: clamp(12px, 1.1vw, 14.5px);
+  line-height: 1.45;
+  margin-bottom: 12px;
   text-align: left;
 }
 .story-dialogue-box {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-bottom: 14px;
   text-align: left;
 }
 .dialogue-line {
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
   background: rgba(20, 10, 5, 0.7);
   border-left: 4px solid #b98a52;
-  font-size: 14px;
+  font-size: 13px;
   color: #fff4e3;
 }
 .dialogue-line.player { border-left-color: #ffd27a; background: rgba(80, 50, 20, 0.5); }
 .dialogue-line.enemy { border-left-color: #ff74b1; background: rgba(80, 20, 50, 0.5); }
 
+.card-btn-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
 /* Customizer */
 .custom-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 14px;
+  gap: 14px;
+  margin-top: 12px;
 }
 .custom-sec h3 {
-  font-size: 15px;
+  font-size: 14px;
   color: #ffd27a;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   text-align: left;
 }
 .custom-opts {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 .opt-btn {
   background: rgba(40, 22, 10, 0.85);
   border: 1px solid #8a5a2e;
   color: #ffe9c9;
-  padding: 8px 12px;
+  padding: 7px 10px;
   border-radius: 6px;
   cursor: pointer;
   text-align: left;
-  font: 600 13px Outfit, sans-serif;
+  font: 600 12.5px Outfit, sans-serif;
   transition: all 0.12s;
 }
 .opt-btn:hover, .opt-btn.active {
@@ -376,27 +602,29 @@ html, body {
 
 /* Menu Card / Generic */
 .menu-card {
-  min-width: 360px;
-  padding: 24px 28px;
+  min-width: 340px;
+  padding: 20px 24px;
   background: var(--card);
   border: 2px solid #b98a52;
   box-shadow: 0 0 35px rgba(0,0,0,0.7);
   border-radius: 12px;
+  max-height: 88vh;
+  overflow-y: auto;
 }
-.menu-card.wide { min-width: min(740px, 92vw); }
+.menu-card.wide { min-width: min(720px, 92vw); }
 .menu-card h2 {
   font-family: "Press Start 2P", monospace;
-  font-size: 15px;
-  margin-bottom: 14px;
+  font-size: 14px;
+  margin-bottom: 12px;
   color: #ffe9c9;
 }
-.menu-list { display: flex; flex-direction: column; gap: 8px; }
+.menu-list { display: flex; flex-direction: column; gap: 6px; }
 .menu-item {
   text-align: left;
   background: transparent;
   border: 1px solid transparent;
   color: var(--ink);
-  font: 600 16px Outfit, sans-serif;
+  font: 600 15px Outfit, sans-serif;
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 6px;
@@ -407,12 +635,14 @@ html, body {
   background: rgba(255, 210, 122, 0.12);
 }
 
-/* HUD */
+/* ==========================================================================
+   HUD
+   ========================================================================== */
 #hud {
   position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 14px;
+  left: 16px;
+  right: 16px;
+  top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -420,28 +650,28 @@ html, body {
 }
 .hud-card {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  background: rgba(15, 8, 4, 0.85);
+  background: rgba(15, 8, 4, 0.88);
   border: 2px solid #b98a52;
   border-radius: 8px;
-  padding: 8px 12px;
-  min-width: 230px;
+  padding: 6px 10px;
+  min-width: 210px;
 }
 .hud-card.p1 { border-color: #ffd27a; }
 .hud-card.p2 { border-color: #ff74b1; text-align: right; }
 .hud-face {
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   background: #1a0e08 center/cover;
   border-radius: 6px;
   border: 1px solid #b98a52;
 }
-.hud-name { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #d4b896; }
+.hud-name { font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: #d4b896; }
 .hud-pct {
   font-family: "Press Start 2P", monospace;
-  font-size: 20px;
-  margin: 4px 0;
+  font-size: 18px;
+  margin: 3px 0;
 }
 .hud-card.p1 .hud-pct { color: #ffd27a; }
 .hud-card.p2 .hud-pct { color: #ff74b1; }
@@ -449,18 +679,18 @@ html, body {
 .super-bar-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 4px 0;
+  gap: 5px;
+  margin: 3px 0;
 }
 .hud-card.p2 .super-bar-wrap { justify-content: flex-end; }
 .super-label {
   font-family: "Press Start 2P", monospace;
-  font-size: 8px;
+  font-size: 7.5px;
   color: #ffd27a;
 }
 .super-bar {
-  width: 100px;
-  height: 8px;
+  width: 90px;
+  height: 7px;
   background: #24140a;
   border: 1px solid #b98a52;
   border-radius: 4px;
@@ -480,57 +710,57 @@ html, body {
 .stocks { display: flex; gap: 4px; }
 .hud-card.p2 .stocks { justify-content: flex-end; }
 .stock {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: #ffd27a;
   box-shadow: 0 0 6px #ffd27a;
 }
 
-.hud-center { text-align: center; min-height: 48px; }
+.hud-center { text-align: center; min-height: 44px; }
 #hud-combo {
   font-family: "Press Start 2P", monospace;
   color: #ffd700;
-  font-size: 14px;
+  font-size: 13px;
   text-shadow: 0 0 10px #ff9900;
 }
 #hud-timer {
   font-family: "Press Start 2P", monospace;
   color: #ffe9c9;
-  font-size: 13px;
-  margin-top: 4px;
+  font-size: 12px;
+  margin-top: 3px;
 }
 
 /* Training HUD */
 #training-hud {
   position: absolute;
-  left: 20px;
-  bottom: 20px;
+  left: 16px;
+  bottom: 16px;
   pointer-events: none;
 }
 .training-card {
-  background: rgba(20, 10, 5, 0.88);
+  background: rgba(20, 10, 5, 0.9);
   border: 1px solid #b98a52;
   border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
+  padding: 8px 12px;
+  font-size: 11.5px;
   color: #ffe9c9;
-  max-width: 520px;
-  line-height: 1.4;
+  max-width: 500px;
+  line-height: 1.35;
 }
 .training-card h4 {
   font-family: "Press Start 2P", monospace;
-  font-size: 10px;
+  font-size: 9px;
   color: #ffd27a;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
-/* Fullscreen */
+/* Fullscreen Button */
 #btn-fullscreen {
   position: absolute;
-  right: 14px;
-  bottom: 12px;
-  z-index: 50;
+  right: 12px;
+  bottom: 10px;
+  z-index: 60;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
@@ -542,20 +772,22 @@ html, body {
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all 0.12s;
 }
-#btn-fullscreen:hover { border-color: #ffd27a; color: #ffd27a; }
+#btn-fullscreen:hover { border-color: #ffd27a; color: #ffd27a; background: #8a5a2e; }
 
 #fs-toast {
   position: absolute;
-  right: 14px;
-  bottom: 48px;
-  z-index: 50;
-  padding: 8px 12px;
+  right: 12px;
+  bottom: 46px;
+  z-index: 60;
+  padding: 6px 12px;
   background: rgba(30, 15, 8, 0.95);
   border: 1px solid #b98a52;
   border-radius: 6px;
   color: #ffe9c9;
-  font: 500 12px Outfit, sans-serif;
+  font: 500 11.5px Outfit, sans-serif;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
@@ -563,23 +795,23 @@ html, body {
 #fs-toast.show { opacity: 1; }
 
 .screen.hidden, .hidden { display: none !important; }
-.hint { margin-top: 14px; color: #d4b896; font-size: 12px; }
+.hint { margin-top: 12px; color: #d4b896; font-size: 11.5px; }
 
 .bind-row {
   display: grid;
   grid-template-columns: 140px 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  margin-bottom: 6px;
-  font-size: 13px;
+  margin-bottom: 5px;
+  font-size: 12px;
 }
 .bind-row button {
   background: #1c0e08;
   color: #ffe9c9;
   border: 1px solid #8a5a2e;
-  padding: 6px 8px;
+  padding: 5px 8px;
   cursor: pointer;
-  font: 13px Outfit, sans-serif;
+  font: 12px Outfit, sans-serif;
   border-radius: 4px;
 }
 .bind-row button.waiting { border-color: #ffd27a; color: #ffd27a; }

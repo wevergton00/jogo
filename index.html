@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=29" />
+  <link rel="stylesheet" href="css/style.css?v=30" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div id="app">
@@ -17,7 +17,7 @@
       <!-- Tela de Carregamento -->
       <section class="screen" id="screen-load">
         <div class="logo-wrap">
-          <p class="logo-kicker">O Jogo de Luta Brasileiro de Rodeio</p>
+          <p class="logo-kicker">Platform Fighter Brasileiro</p>
           <h1 class="logo">BARRETOS<br/>CLASH</h1>
           <p class="logo-sub">“Onde o laço é sua arma e o cavalo é seu parceiro.”</p>
           <p class="load-bar-label">Carregando a arena de rodeio…</p>
@@ -32,50 +32,100 @@
           <h1 class="logo">BARRETOS<br/>CLASH</h1>
           <p class="logo-tagline">A LENDA DA FERRADURA DA AURORA</p>
           <p class="logo-quote">“O laço é sua arma. O cavalo é seu parceiro.”</p>
-          <p class="blink" id="press-start">Pressione qualquer tecla ou clique para entrar</p>
+          <button type="button" id="btn-enter-title" class="cta-btn blink-btn">🤠 Entrar no Rodeio</button>
+          <p class="blink hint" id="press-start">Clique ou pressione qualquer tecla</p>
         </div>
       </section>
 
-      <!-- Menu Principal -->
+      <!-- Menu Principal Bem Proporcionado -->
       <section class="screen hidden" id="screen-menu">
-        <div class="hub-panel">
-          <p class="hub-kicker">Barretos Clash</p>
-          <h2 class="hub-title">Menu Principal</h2>
-          <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
-            <!-- Gerado via js/game.js -->
-          </nav>
-          <p class="hint">↑ ↓ navegar · Enter confirmar</p>
-        </div>
-      </section>
-
-      <!-- Seleção de Personagens -->
-      <section class="screen hidden" id="screen-charsel">
-        <div class="charsel">
-          <p class="charsel-kicker">Duelo de Peões</p>
-          <h2>Escolha os Lutadores</h2>
-          <div class="charsel-grid">
-            <div class="slot" id="slot-p1">
-              <p class="slot-tag p1">P1</p>
-              <div class="portrait" id="p1-portrait" title="Clique para trocar"></div>
-              <h3 id="p1-name">Everttinho</h3>
-              <p class="archetype" id="p1-arch">Peão · O Laçador Lendário</p>
-              <p class="slot-ctrl">A / D trocar · J confirmar</p>
-            </div>
-            <div class="vs-center-col">
-              <div class="vs-badge">VS</div>
-              <button type="button" id="stage-select-name" class="stage-btn">Arena: Barretos (W / S trocar)</button>
-            </div>
-            <div class="slot" id="slot-p2">
-              <p class="slot-tag p2">P2</p>
-              <div class="portrait" id="p2-portrait" title="Clique para trocar"></div>
-              <h3 id="p2-name">Fernanda</h3>
-              <p class="archetype" id="p2-arch">Técnica · Feiticeira Felina</p>
-              <p class="slot-ctrl">← / → trocar · 1 confirmar</p>
-              <button type="button" id="btn-cpu">P2: Humano</button>
+        <div class="menu-layout">
+          <!-- Coluna Esquerda: Apresentação e Identidade -->
+          <div class="menu-hero-card">
+            <div class="hero-badge">⭐ PLATFORM FIGHTER BRASILEIRO ⭐</div>
+            <h1 class="menu-hero-logo">BARRETOS<br/>CLASH</h1>
+            <p class="menu-hero-sub">A LENDA DO LAÇO</p>
+            <p class="menu-hero-quote">“O jogo de luta brasileiro em que o laço é sua arma e o cavalo é seu parceiro.”</p>
+            
+            <div class="menu-quick-ctrls">
+              <p class="ctrls-title">COMANDOS RÁPIDOS (P1)</p>
+              <div class="ctrls-grid">
+                <span><strong>WASD</strong> Mover / Pular</span>
+                <span><strong>J</strong> Laço / Ataque Leve</span>
+                <span><strong>L</strong> Tiro de Laço Forte</span>
+                <span><strong>K</strong> Laço Mágico</span>
+                <span><strong>O</strong> Cavalo Assistência</span>
+                <span><strong>H</strong> Super Golpe da Aurora</span>
+              </div>
             </div>
           </div>
-          <button type="button" id="btn-start" class="cta-btn">⚔️ Entrar na Arena</button>
-          <p class="hint">Clique no retrato para trocar · Esc volta ao menu</p>
+
+          <!-- Coluna Direita: Grid de Opções de Jogo -->
+          <div class="menu-nav-card">
+            <div class="nav-card-header">
+              <p class="hub-kicker">Festa do Peão</p>
+              <h2 class="hub-title">Selecione o Modo</h2>
+            </div>
+            
+            <nav id="main-nav" class="hub-grid" aria-label="Menu principal">
+              <!-- Gerado dinamicamente via js/game.js -->
+            </nav>
+            
+            <p class="menu-hint-footer">↑ ↓ ← → Navegar · Enter / Clique Selecionar</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seleção de Personagens e Arenas -->
+      <section class="screen hidden" id="screen-charsel">
+        <div class="charsel-wrap">
+          <div class="charsel-header">
+            <p class="charsel-kicker">Duelo de Peões</p>
+            <h2>Escolha os Lutadores & Arena</h2>
+          </div>
+
+          <div class="charsel-grid">
+            <!-- Slot P1 -->
+            <div class="slot" id="slot-p1">
+              <p class="slot-tag p1">JOGADOR 1</p>
+              <div class="portrait" id="p1-portrait" title="Clique para trocar lutador"></div>
+              <h3 id="p1-name">Everttinho</h3>
+              <p class="archetype" id="p1-arch">Peão · O Laçador Lendário</p>
+              <button type="button" id="btn-p1-swap" class="swap-btn">Trocar Lutador (A / D)</button>
+            </div>
+
+            <!-- Coluna Central: VS e Seletor de Arena -->
+            <div class="vs-center-col">
+              <div class="vs-badge">VS</div>
+              
+              <div class="stage-selector-box">
+                <span class="stage-label">ARENA DE COMBATE</span>
+                <div class="stage-nav-row">
+                  <button type="button" id="btn-stage-prev" class="stage-arrow-btn" title="Arena anterior">◀</button>
+                  <div class="stage-info-text">
+                    <strong id="stage-name-display">Arena Barretos</strong>
+                    <small id="stage-sub-display">Festa do Peão</small>
+                  </div>
+                  <button type="button" id="btn-stage-next" class="stage-arrow-btn" title="Próxima arena">▶</button>
+                </div>
+              </div>
+
+              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ ENTRAR NA ARENA ⚔️</button>
+              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar ao Menu</button>
+            </div>
+
+            <!-- Slot P2 -->
+            <div class="slot" id="slot-p2">
+              <p class="slot-tag p2">JOGADOR 2 / CPU</p>
+              <div class="portrait" id="p2-portrait" title="Clique para trocar lutador"></div>
+              <h3 id="p2-name">Fernanda</h3>
+              <p class="archetype" id="p2-arch">Técnica · Feiticeira Felina</p>
+              <div class="p2-actions-row">
+                <button type="button" id="btn-p2-swap" class="swap-btn">Trocar (← / →)</button>
+                <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -86,8 +136,10 @@
           <h2 id="story-title">Capítulo 1: O Desafio em Barretos</h2>
           <p id="story-desc" class="story-desc"></p>
           <div id="story-dialogue-box" class="story-dialogue-box"></div>
-          <button type="button" id="btn-story-start" class="cta-btn">🤠 Iniciar Batalha</button>
-          <button type="button" onclick="window.gameInstance.setMode('menu')" class="menu-item">Voltar ao Menu</button>
+          <div class="card-btn-row">
+            <button type="button" id="btn-story-start" class="cta-btn">🤠 Iniciar Batalha</button>
+            <button type="button" id="btn-story-back" class="ghost-btn">Voltar ao Menu</button>
+          </div>
         </div>
       </section>
 
@@ -99,10 +151,12 @@
           <p class="story-desc">
             No rodeio brasileiro, aguentar 8 segundos sobre a fera é o que separa um peão comum de uma lenda viva!<br/><br/>
             <strong>Regras:</strong> Sobreviva a todas as investidas furiosas do <strong>Touro de Ferro</strong> por exatamente <strong>8.00 segundos</strong> sem cair da arena.<br/>
-            Ao soar a buzina dos 8 segundos, você receberá a <strong>Super Fúria da Aurora</strong> com poder multiplicado para o contra-ataque da vitória!
+            Ao soar a buzina dos 8 segundos, você receberá a <strong>Super Fúria da Aurora</strong> para o contra-ataque da vitória!
           </p>
-          <button type="button" id="btn-eight-sec-start" class="cta-btn">🐂 Montar e Sobreviver!</button>
-          <button type="button" onclick="window.gameInstance.setMode('menu')" class="menu-item">Voltar ao Menu</button>
+          <div class="card-btn-row">
+            <button type="button" id="btn-eight-sec-start" class="cta-btn">🐂 Montar e Sobreviver!</button>
+            <button type="button" id="btn-eight-sec-back" class="ghost-btn">Voltar ao Menu</button>
+          </div>
         </div>
       </section>
 
@@ -117,7 +171,7 @@
       <section class="screen hidden" id="screen-custom">
         <div class="menu-card wide">
           <h2>🤠 Armário do Peão</h2>
-          <p class="kicker">Personalize o estilo de Everttinho</p>
+          <p class="kicker">Personalize o estilo e efeitos de Everttinho</p>
           
           <div class="custom-grid">
             <div class="custom-sec">
@@ -141,7 +195,7 @@
             </div>
           </div>
 
-          <button type="button" id="btn-custom-back" class="menu-item active" style="margin-top:20px;">Salvar e Voltar</button>
+          <button type="button" id="btn-custom-back" class="cta-btn" style="margin-top:20px;">Salvar e Voltar</button>
         </div>
       </section>
 
@@ -152,7 +206,7 @@
           <p class="kicker">Mapeamento de Teclas</p>
           <div id="options-body"></div>
           <p class="hint">Clique em uma ação e pressione a nova tecla no teclado</p>
-          <button type="button" id="opt-back" class="menu-item active">Voltar ao Menu</button>
+          <button type="button" id="opt-back" class="cta-btn" style="margin-top:16px;">Voltar ao Menu</button>
         </div>
       </section>
 
@@ -223,9 +277,12 @@
       </div>
     </div>
 
-    <button type="button" id="btn-fullscreen" title="Alternar tela cheia" aria-label="Tela cheia">⛶ <span id="fs-label">Tela cheia</span></button>
+    <!-- Botão de Tela Cheia / Maximizar -->
+    <button type="button" id="btn-fullscreen" title="Alternar tela cheia (F)" aria-label="Tela cheia">
+      <span id="fs-icon">⛶</span> <span id="fs-label">Tela cheia</span>
+    </button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=29"></script>
+  <script type="module" src="js/main.js?v=30"></script>
 </body>
 </html>
