@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=30" />
+  <link rel="stylesheet" href="css/style.css?v=35" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -32,7 +32,7 @@
           <h1 class="logo">BARRETOS<br/>CLASH</h1>
           <p class="logo-tagline">A LENDA DA FERRADURA DA AURORA</p>
           <p class="logo-quote">“O laço é sua arma. O cavalo é seu parceiro.”</p>
-          <button type="button" id="btn-enter-title" class="cta-btn blink-btn">🤠 Entrar no Rodeio</button>
+          <button type="button" id="btn-enter-title" class="cta-btn blink-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">🤠 Entrar no Rodeio</button>
           <p class="blink hint" id="press-start">Clique ou pressione qualquer tecla</p>
         </div>
       </section>
@@ -103,15 +103,15 @@
                 <div class="stage-nav-row">
                   <button type="button" id="btn-stage-prev" class="stage-arrow-btn" title="Arena anterior">◀</button>
                   <div class="stage-info-text">
-                    <strong id="stage-name-display">Arena Barretos</strong>
-                    <small id="stage-sub-display">Festa do Peão</small>
+                    <strong id="stage-name-display">Parque do Peão de Barretos</strong>
+                    <small id="stage-sub-display">Arena de Rodeio · Oscar Niemeyer</small>
                   </div>
                   <button type="button" id="btn-stage-next" class="stage-arrow-btn" title="Próxima arena">▶</button>
                 </div>
               </div>
 
-              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ ENTRAR NA ARENA ⚔️</button>
-              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar ao Menu</button>
+              <button type="button" id="btn-start" class="cta-btn start-fight-btn" onclick="window.gameInstance && window.gameInstance.startFight()">⚔️ ENTRAR NA ARENA ⚔️</button>
+              <button type="button" id="btn-charsel-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
             </div>
 
             <!-- Slot P2 -->
@@ -138,7 +138,7 @@
           <div id="story-dialogue-box" class="story-dialogue-box"></div>
           <div class="card-btn-row">
             <button type="button" id="btn-story-start" class="cta-btn">🤠 Iniciar Batalha</button>
-            <button type="button" id="btn-story-back" class="ghost-btn">Voltar ao Menu</button>
+            <button type="button" id="btn-story-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
           </div>
         </div>
       </section>
@@ -154,8 +154,8 @@
             Ao soar a buzina dos 8 segundos, você receberá a <strong>Super Fúria da Aurora</strong> para o contra-ataque da vitória!
           </p>
           <div class="card-btn-row">
-            <button type="button" id="btn-eight-sec-start" class="cta-btn">🐂 Montar e Sobreviver!</button>
-            <button type="button" id="btn-eight-sec-back" class="ghost-btn">Voltar ao Menu</button>
+            <button type="button" id="btn-eight-sec-start" class="cta-btn" onclick="window.gameInstance && window.gameInstance.startEightSecFight()">🐂 Montar e Sobreviver!</button>
+            <button type="button" id="btn-eight-sec-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
           </div>
         </div>
       </section>
@@ -195,7 +195,7 @@
             </div>
           </div>
 
-          <button type="button" id="btn-custom-back" class="cta-btn" style="margin-top:20px;">Salvar e Voltar</button>
+          <button type="button" id="btn-custom-back" class="cta-btn" style="margin-top:20px;" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Salvar e Voltar</button>
         </div>
       </section>
 
@@ -206,7 +206,7 @@
           <p class="kicker">Mapeamento de Teclas</p>
           <div id="options-body"></div>
           <p class="hint">Clique em uma ação e pressione a nova tecla no teclado</p>
-          <button type="button" id="opt-back" class="cta-btn" style="margin-top:16px;">Voltar ao Menu</button>
+          <button type="button" id="opt-back" class="cta-btn" style="margin-top:16px;" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
         </div>
       </section>
 
@@ -283,6 +283,6 @@
     </button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=30"></script>
+  <script type="module" src="js/main.js?v=35"></script>
 </body>
 </html>

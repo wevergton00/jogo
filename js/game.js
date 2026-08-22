@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js";
-import { Fighter } from "./player.js";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js";
-import { hurtbox, worldHitbox, aabb, applyHit } from "./combat.js";
-import { makeCpuInput } from "./ai.js";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=35";
+import { Fighter } from "./player.js?v=35";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=35";
+import { hurtbox, worldHitbox, aabb, applyHit } from "./combat.js?v=35";
+import { makeCpuInput } from "./ai.js?v=35";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -23,7 +23,7 @@ const STORY_CHAPTERS = [
     playerChar: "evertinho",
     enemyChar: "fernanda",
     enemyName: "Fernanda",
-    intro: "Everttinho chega a Barretos para a lendária Festa do Peão, mas é desafiado por Fernanda, a maga técnica e guardiã dos felinos místicos!",
+    intro: "Everttinho chega ao Parque do Peão de Barretos para a lendária Festa do Peão, mas é desafiado por Fernanda, a maga técnica e guardiã dos felinos místicos!",
     dialogue: [
       { speaker: "Everttinho", text: "Com meu laço firme e a fé no peito, nenhum desafio em Barretos me assusta!" },
       { speaker: "Fernanda", text: "Vamos ver se o seu laço é mais rápido que a velocidade mágica do Didi e do Tom!" },
@@ -109,7 +109,7 @@ export class Game {
     this.p2cpu = false;
     this.aiLevel = "normal";
 
-    this.gameSubMode = "versus"; // "versus", "historia", "arcade", "eight_sec", "treino"
+    this.gameSubMode = "versus";
     this.storyChapterIndex = 0;
     this.arcadeStageIndex = 0;
     this.arcadeScore = 0;
@@ -175,13 +175,9 @@ export class Game {
     }
 
     const hud = document.getElementById("hud");
-    const help = document.getElementById("help");
-    const pads = document.getElementById("pads");
     const trainingHud = document.getElementById("training-hud");
 
     hud?.classList.add("hidden");
-    help?.classList.add("hidden");
-    pads?.classList.add("hidden");
     trainingHud?.classList.add("hidden");
 
     if (mode === "title") {
@@ -218,6 +214,7 @@ export class Game {
     } else if (mode === "fight") {
       hud?.classList.remove("hidden");
       if (this.training) trainingHud?.classList.remove("hidden");
+      this.canvas?.focus();
       try {
         const stage = this.world?.stage;
         const track = stage?.theme === "storm" || stage?.id === "arena_aurora" ? "boss" : "rodeo";
@@ -389,6 +386,7 @@ export class Game {
       startBtn.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        this.audio.unlock();
         this.audio.sfx("berrante");
         this.startFight();
       };
@@ -432,6 +430,7 @@ export class Game {
     if (startBtn) {
       startBtn.onclick = (e) => {
         e.preventDefault();
+        this.audio.unlock();
         this.audio.sfx("berrante");
         this.startStoryBattle(ch);
       };
@@ -463,6 +462,7 @@ export class Game {
     if (startBtn) {
       startBtn.onclick = (e) => {
         e.preventDefault();
+        this.audio.unlock();
         this.audio.sfx("eight_seconds_horn");
         this.startEightSecFight();
       };
@@ -648,7 +648,7 @@ export class Game {
   startFight() {
     const ids = CHARACTER_IDS;
     const stageKey = STAGE_IDS[this.stagePick] || "barretos";
-    const stage = cloneStage(STAGES[stageKey]);
+    const stage = cloneStage(STAGES[stageKey] || STAGES.barretos);
 
     const p1Char = CHARACTERS[ids[this.p1Pick]] || CHARACTERS.evertinho;
     const p2Char = CHARACTERS[ids[this.p2Pick]] || CHARACTERS.fernanda;
@@ -974,6 +974,7 @@ export class Game {
       }
 
       if (this.input.menuOk || this.input.p1.lightPressed) {
+        this.audio.unlock();
         this.audio.sfx("berrante");
         this.startFight();
         return;
@@ -1178,7 +1179,6 @@ export class Game {
   updateProjectiles() {
     const w = this.world;
 
-    // Detecção de colisão entre 2 projéteis de laço -> Ativa Duelo de Laço!
     if (w.projectiles.length >= 2) {
       for (let i = 0; i < w.projectiles.length; i++) {
         for (let j = i + 1; j < w.projectiles.length; j++) {
@@ -1395,7 +1395,6 @@ export class Game {
         scale: as.scale || 0.32,
         anchorY: 1,
       });
-      // Rastro de poeira e relâmpago
       this.spawnFx("dust", as.x - as.facing * 30, as.y - 10, as.facing);
     }
 
@@ -1480,7 +1479,6 @@ export class Game {
     ctx.quadraticCurveTo(midX, midY, f2.x + f2.facing * 20, f2.y - 50);
     ctx.stroke();
 
-    // Faíscas elétricas no nó central
     ctx.fillStyle = "#fff";
     ctx.beginPath();
     ctx.arc(midX, midY, 8 + Math.sin(this.world.frame * 0.5) * 4, 0, Math.PI * 2);
@@ -1505,7 +1503,6 @@ export class Game {
     ctx.textAlign = "center";
     ctx.fillText("⚡ DISPUTA DE LAÇO: ESMAGUE [J] / [1]! ⚡", cx, cy - 20);
 
-    // Barra de Cabo de Guerra
     ctx.fillStyle = "#221108";
     ctx.fillRect(cx - 180, cy, 360, 24);
     ctx.strokeStyle = "#a5713d";
@@ -1547,14 +1544,11 @@ export class Game {
     ctx.fillStyle = "#1e1024";
     ctx.fillRect(0, 0, 1280, 720);
 
-    // Cenário de tiro de laço
     ctx.fillStyle = "#6b4123";
     ctx.fillRect(0, 560, 1280, 160);
 
-    // Jogador Everttinho
     this.sprites.draw(ctx, "evertinho/point.png", g.playerX, g.playerY, { scale: 0.38, anchorY: 1 });
 
-    // Laço lançado
     if (g.lassoActive) {
       ctx.strokeStyle = "#ffd27a";
       ctx.lineWidth = 4;
@@ -1564,7 +1558,6 @@ export class Game {
       ctx.stroke();
     }
 
-    // Alvos móveis
     g.targets.forEach((t) => {
       ctx.fillStyle = t.kind === "gold_horseshoe" ? "#ffd700" : t.kind === "barrel" ? "#8b4513" : "#e5b778";
       ctx.beginPath();
@@ -1572,7 +1565,6 @@ export class Game {
       ctx.fill();
     });
 
-    // Placar
     ctx.fillStyle = "#ffe9c9";
     ctx.font = "800 24px Outfit, sans-serif";
     ctx.fillText(`Pontos: ${g.score}`, 40, 60);

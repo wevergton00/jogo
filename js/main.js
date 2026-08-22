@@ -1,7 +1,7 @@
-import { SpriteBank } from "./sprites.js";
-import { AudioSystem } from "./audio.js";
-import { InputManager } from "./input.js";
-import { Game } from "./game.js";
+import { SpriteBank } from "./sprites.js?v=35";
+import { AudioSystem } from "./audio.js?v=35";
+import { InputManager } from "./input.js?v=35";
+import { Game } from "./game.js?v=35";
 
 const canvas = document.getElementById("game");
 const fill = document.getElementById("load-fill");
@@ -25,7 +25,7 @@ try {
   });
 } catch (err) {
   console.error(err);
-  if (loadLabel) loadLabel.textContent = "Iniciando o rodeio…";
+  if (loadLabel) loadLabel.textContent = "Iniciando o rodeio de Barretos…";
 }
 
 hideLoad();
@@ -70,7 +70,6 @@ async function toggleFullscreen() {
   const currentlyFs = isFullscreenActive();
 
   if (!currentlyFs) {
-    // Ativa modo tela cheia
     document.body.classList.add("fullscreen-mode");
     updateFullscreenUI(true);
 
@@ -85,13 +84,10 @@ async function toggleFullscreen() {
       if (request) {
         await request.call(el).catch(() => {});
       }
-    } catch {
-      // Fallback para modo janela cheia via CSS
-    }
+    } catch {}
 
     showToast("Tela cheia ativada!");
   } else {
-    // Desativa modo tela cheia
     document.body.classList.remove("fullscreen-mode");
     updateFullscreenUI(false);
 
@@ -126,7 +122,6 @@ if (fsBtn) {
   };
 }
 
-// Sincroniza se sair por ESC do navegador
 document.addEventListener("fullscreenchange", () => {
   const active = !!document.fullscreenElement;
   if (!active) {
@@ -143,10 +138,8 @@ document.addEventListener("webkitfullscreenchange", () => {
   updateFullscreenUI(active || document.body.classList.contains("fullscreen-mode"));
 });
 
-// Tecla de atalho F para alternar tela cheia
 window.addEventListener("keydown", (e) => {
   if (e.key === "f" || e.key === "F") {
-    // Se não estiver em campo de texto
     if (document.activeElement?.tagName !== "INPUT") {
       e.preventDefault();
       toggleFullscreen();
@@ -154,5 +147,5 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// Inicia loop
+// Inicia loop principal
 requestAnimationFrame((t) => game.tick(t));
