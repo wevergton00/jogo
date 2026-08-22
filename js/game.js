@@ -1,6 +1,6 @@
 import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js";
 import { Fighter } from "./player.js";
-import { STAGES, STAGE_IDS } from "./stage.js";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js";
 import { hurtbox, worldHitbox, aabb, applyHit } from "./combat.js";
 import { makeCpuInput } from "./ai.js";
 
@@ -447,7 +447,7 @@ export class Game {
   }
 
   startStoryBattle(ch) {
-    const stage = structuredClone(STAGES[ch.stage] || STAGES.barretos);
+    const stage = cloneStage(STAGES[ch.stage] || STAGES.barretos);
     const p1 = new Fighter(CHARACTERS[ch.playerChar], "p1", stage.spawn[0].x, stage.spawn[0].y, 1);
     const p2 = new Fighter(CHARACTERS[ch.enemyChar], "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
     p2.cpu = true;
@@ -477,7 +477,7 @@ export class Game {
   }
 
   startEightSecFight() {
-    const stage = structuredClone(STAGES.barretos);
+    const stage = cloneStage(STAGES.barretos);
     const p1 = new Fighter(CHARACTERS.evertinho, "p1", stage.spawn[0].x, stage.spawn[0].y, 1);
     const p2 = new Fighter(CHARACTERS.touro_ferro, "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
     p2.cpu = true;
@@ -648,7 +648,7 @@ export class Game {
   startFight() {
     const ids = CHARACTER_IDS;
     const stageKey = STAGE_IDS[this.stagePick] || "barretos";
-    const stage = structuredClone(STAGES[stageKey]);
+    const stage = cloneStage(STAGES[stageKey]);
 
     const p1Char = CHARACTERS[ids[this.p1Pick]] || CHARACTERS.evertinho;
     const p2Char = CHARACTERS[ids[this.p2Pick]] || CHARACTERS.fernanda;

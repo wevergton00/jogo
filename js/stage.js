@@ -1,16 +1,15 @@
 export const STAGES = {
   barretos: {
     id: "barretos",
-    name: "Arena de Rodeio Barretos",
-    subtitle: "A Maior Festa do Peão",
-    bgKey: "stages/rooftop.png",
+    name: "Parque do Peão de Barretos",
+    subtitle: "Arena de Rodeio · Oscar Niemeyer",
     theme: "rodeo",
     width: 1600,
     height: 900,
     ground: { x: 140, y: 560, w: 1320, h: 40 },
     platforms: [
-      { x: 380, y: 390, w: 240, h: 18, pass: true, label: "Feno Oeste" },
-      { x: 980, y: 390, w: 240, h: 18, pass: true, label: "Feno Leste" },
+      { x: 380, y: 390, w: 240, h: 18, pass: true, label: "Feno Oeste (Bretes)" },
+      { x: 980, y: 390, w: 240, h: 18, pass: true, label: "Feno Leste (Juízes)" },
     ],
     ledges: [
       { x: 140, y: 560, dir: -1 },
@@ -22,113 +21,226 @@ export const STAGES = {
       { x: 1120, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      // Céu noturno com holofotes de rodeio
-      const grad = ctx.createLinearGradient(0, 0, 0, 900);
-      grad.addColorStop(0, "#080614");
-      grad.addColorStop(0.5, "#1e1024");
-      grad.addColorStop(0.85, "#3d2215");
+      // 1. Céu noturno do Parque do Peão
+      const grad = ctx.createLinearGradient(0, -100, 0, 800);
+      grad.addColorStop(0, "#05030a");
+      grad.addColorStop(0.4, "#140a1c");
+      grad.addColorStop(0.75, "#2b120c");
+      grad.addColorStop(1, "#3d1b10");
       ctx.fillStyle = grad;
       ctx.fillRect(-100, -200, 1800, 1100);
 
-      // Fachos de luz de holofote animados
+      // 2. Estrelas cintilantes no céu de Barretos
+      ctx.fillStyle = "#fff";
+      for (let s = 0; s < 35; s++) {
+        const sx = ((s * 47) % 1500) + 50;
+        const sy = ((s * 31) % 300) - 50;
+        const sa = 0.3 + Math.sin(frame * 0.05 + s) * 0.25;
+        ctx.globalAlpha = sa;
+        ctx.fillRect(sx, sy, s % 2 === 0 ? 2 : 1, s % 2 === 0 ? 2 : 1);
+      }
+      ctx.globalAlpha = 1.0;
+
+      // 3. Fachos de Holofote Móveis de Barretos
       ctx.save();
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = "#ffe8a3";
-      const beam1 = Math.sin(frame * 0.02) * 120;
-      const beam2 = Math.cos(frame * 0.025) * 140;
+      ctx.globalAlpha = 0.15;
+      const b1 = Math.sin(frame * 0.02) * 160;
+      const b2 = Math.cos(frame * 0.024) * 180;
+      const b3 = Math.sin(frame * 0.018 + 2) * 140;
+
+      // Holofote 1 (Dourado)
+      ctx.fillStyle = "#ffd27a";
       ctx.beginPath();
-      ctx.moveTo(120, -100);
-      ctx.lineTo(400 + beam1, 600);
-      ctx.lineTo(600 + beam1, 600);
+      ctx.moveTo(150, -100);
+      ctx.lineTo(450 + b1, 600);
+      ctx.lineTo(650 + b1, 600);
       ctx.closePath();
       ctx.fill();
 
+      // Holofote 2 (Azul Trovão)
+      ctx.fillStyle = "#6ef0ff";
       ctx.beginPath();
-      ctx.moveTo(1480, -100);
-      ctx.lineTo(1000 + beam2, 600);
-      ctx.lineTo(1200 + beam2, 600);
+      ctx.moveTo(1450, -100);
+      ctx.lineTo(950 + b2, 600);
+      ctx.lineTo(1150 + b2, 600);
+      ctx.closePath();
+      ctx.fill();
+
+      // Holofote Central (Branco)
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.moveTo(800, -120);
+      ctx.lineTo(700 + b3, 600);
+      ctx.lineTo(900 + b3, 600);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
 
-      // Arquibancadas de madeira ao fundo com torcida
-      ctx.fillStyle = "#1d120c";
-      ctx.fillRect(80, 180, 1440, 300);
-      for (let row = 0; row < 5; row++) {
-        const ry = 200 + row * 45;
-        ctx.fillStyle = row % 2 === 0 ? "#2a1a11" : "#22140d";
-        ctx.fillRect(90, ry, 1420, 40);
+      // 4. Fogos de Artifício ao fundo (Festa do Peão)
+      const fwPhase = (frame % 240);
+      if (fwPhase > 180) {
+        const fwProg = (fwPhase - 180) / 60;
+        const fwx = 350 + (frame % 3) * 450;
+        const fwy = 120 + (frame % 2) * 80;
+        ctx.save();
+        ctx.globalAlpha = (1 - fwProg) * 0.8;
+        for (let spark = 0; spark < 12; spark++) {
+          const ang = (spark * Math.PI * 2) / 12;
+          const rad = fwProg * 70;
+          ctx.fillStyle = spark % 2 === 0 ? "#ffd700" : "#ff4fa3";
+          ctx.beginPath();
+          ctx.arc(fwx + Math.cos(ang) * rad, fwy + Math.sin(ang) * rad, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
 
-        // Pessoas com chapéu na torcida (silhuetas animadas)
-        for (let i = 0; i < 28; i++) {
-          const px = 110 + i * 50 + (row % 2) * 20;
-          const bounce = Math.sin(frame * 0.06 + i * 0.7 + row) * 3;
-          ctx.fillStyle = i % 3 === 0 ? "#e5b778" : i % 3 === 1 ? "#d48248" : "#8c5630";
-          // Chapéu de peão
+      // 5. Silhueta do Monumento ao Peão ("Jeromão") de 27 metros ao centro
+      ctx.save();
+      ctx.fillStyle = "#180d08";
+      // Base da estátua
+      ctx.fillRect(740, 160, 120, 140);
+      // Corpo estilizado do Jeromão
+      ctx.beginPath();
+      ctx.moveTo(760, 220);
+      ctx.lineTo(780, 110); // Tronco
+      ctx.lineTo(765, 80);  // Braço esquerdo segurando berrante/laço
+      ctx.lineTo(785, 70);  // Cabeça
+      ctx.lineTo(825, 55);  // Braço direito erguendo o chapéu de peão
+      ctx.lineTo(840, 45);
+      ctx.lineTo(820, 95);
+      ctx.lineTo(840, 220);
+      ctx.closePath();
+      ctx.fill();
+      // Chapéu erguido no alto
+      ctx.beginPath();
+      ctx.ellipse(842, 45, 18, 6, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      // Iluminação cênica dourada no Jeromão
+      ctx.globalAlpha = 0.2;
+      ctx.fillStyle = "#ffd27a";
+      ctx.beginPath();
+      ctx.arc(800, 140, 75, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 6. Arquibancada Curvada Niemeyer em Ferradura
+      ctx.fillStyle = "#22120a";
+      ctx.beginPath();
+      ctx.moveTo(60, 480);
+      ctx.quadraticCurveTo(800, 260, 1540, 480);
+      ctx.lineTo(1540, 560);
+      ctx.lineTo(60, 560);
+      ctx.closePath();
+      ctx.fill();
+
+      // Degraus da arquibancada com milhares de espectadores acenando
+      for (let row = 0; row < 5; row++) {
+        const ry = 320 + row * 38;
+        const curveOffset = Math.sin((row / 5) * Math.PI) * 15;
+        ctx.fillStyle = row % 2 === 0 ? "#331a0e" : "#28140a";
+        ctx.fillRect(80, ry, 1440, 32);
+
+        // Espectadores de chapéu vibrando
+        for (let i = 0; i < 30; i++) {
+          const px = 100 + i * 48 + (row % 2) * 18;
+          const cheerBounce = Math.sin(frame * 0.08 + i * 0.6 + row * 1.5) * 3.5;
+          ctx.fillStyle = i % 4 === 0 ? "#ffd27a" : i % 4 === 1 ? "#e8924a" : i % 4 === 2 ? "#d4b896" : "#ffffff";
+          // Chapéu de boiadeiro
           ctx.beginPath();
-          ctx.ellipse(px, ry + 16 + bounce, 12, 4, 0, 0, Math.PI * 2);
+          ctx.ellipse(px, ry + 12 + cheerBounce, 11, 3.5, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.beginPath();
-          ctx.arc(px, ry + 12 + bounce, 5, Math.PI, 0);
+          ctx.arc(px, ry + 8 + cheerBounce, 4.5, Math.PI, 0);
           ctx.fill();
-          // Cabeça/corpo
-          ctx.fillStyle = "#4a2d1d";
+          // Silhueta da cabeça
+          ctx.fillStyle = "#4a2814";
           ctx.beginPath();
-          ctx.arc(px, ry + 22 + bounce, 5, 0, Math.PI * 2);
+          ctx.arc(px, ry + 18 + cheerBounce, 4, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      // Faixa Central de Barretos
-      ctx.fillStyle = "#8a1b1b";
-      ctx.fillRect(520, 250, 560, 48);
+      // 7. Grande Painel de LED de Barretos
+      ctx.fillStyle = "#0c0603";
+      ctx.fillRect(480, 240, 640, 44);
       ctx.strokeStyle = "#ffd27a";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(520, 250, 560, 48);
-      ctx.fillStyle = "#ffe9c9";
-      ctx.font = "800 20px Outfit, sans-serif";
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(480, 240, 640, 44);
+
+      // Texto de LED
+      ctx.fillStyle = "#ffd27a";
+      ctx.font = "800 16px Outfit, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("⭐ FESTA DO PEÃO DE BARRETOS ⭐", 800, 282);
+      ctx.shadowColor = "#ff9900";
+      ctx.shadowBlur = 8;
+      ctx.fillText("⭐ PARQUE DO PEÃO · BARRETOS - SP ⭐", 800, 268);
+      ctx.shadowBlur = 0;
 
-      // Cercas e porteiras de madeira nas laterais
-      ctx.fillStyle = "#4a2d1d";
-      ctx.fillRect(100, 420, 40, 160);
-      ctx.fillRect(1460, 420, 40, 160);
-      ctx.fillStyle = "#6b422a";
-      for (let b = 0; b < 4; b++) {
-        ctx.fillRect(60, 440 + b * 32, 120, 12);
-        ctx.fillRect(1420, 440 + b * 32, 120, 12);
-      }
+      // 8. Bretes de Saída de Rodeio nas Laterais (Porteiras Oficiais)
+      // Bretes Esquerdos (01 / 02)
+      ctx.fillStyle = "#42220e";
+      ctx.fillRect(80, 420, 110, 140);
+      ctx.strokeStyle = "#b98a52";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(80, 420, 110, 140);
+      // Placa Brete 01
+      ctx.fillStyle = "#8a1b1b";
+      ctx.fillRect(90, 430, 90, 24);
+      ctx.fillStyle = "#ffe9c9";
+      ctx.font = "700 11px Outfit, sans-serif";
+      ctx.fillText("BRETE 01", 135, 447);
+      // Grades de madeira/metal do brete
+      ctx.fillStyle = "#2d1608";
+      for (let g = 0; g < 3; g++) ctx.fillRect(90, 465 + g * 25, 90, 8);
 
-      // Piso de terra e areia de rodeio
-      const groundGrad = ctx.createLinearGradient(0, 560, 0, 680);
-      groundGrad.addColorStop(0, "#8a5832");
-      groundGrad.addColorStop(0.3, "#6b4123");
-      groundGrad.addColorStop(1, "#362011");
+      // Bretes Direitos (03 / 04)
+      ctx.fillStyle = "#42220e";
+      ctx.fillRect(1410, 420, 110, 140);
+      ctx.strokeStyle = "#b98a52";
+      ctx.strokeRect(1410, 420, 110, 140);
+      // Placa Brete 02
+      ctx.fillStyle = "#8a1b1b";
+      ctx.fillRect(1420, 430, 90, 24);
+      ctx.fillStyle = "#ffe9c9";
+      ctx.fillText("BRETE 02", 1465, 447);
+      ctx.fillStyle = "#2d1608";
+      for (let g = 0; g < 3; g++) ctx.fillRect(1420, 465 + g * 25, 90, 8);
+
+      // 9. Solo de Autêntica Terra Vermelha de Barretos
+      const groundGrad = ctx.createLinearGradient(0, 560, 0, 700);
+      groundGrad.addColorStop(0, "#9c4826"); // Terra vermelha de Barretos
+      groundGrad.addColorStop(0.3, "#7a3318");
+      groundGrad.addColorStop(1, "#45190a");
       ctx.fillStyle = groundGrad;
-      ctx.fillRect(140, 560, 1320, 120);
+      ctx.fillRect(140, 560, 1320, 140);
 
-      ctx.fillStyle = "#a87243";
-      ctx.fillRect(140, 560, 1320, 8);
+      // Linha superior de textura da terra batida
+      ctx.fillStyle = "#bd5e33";
+      ctx.fillRect(140, 560, 1320, 6);
 
-      // Detalhes de terra e poeira no solo
-      ctx.fillStyle = "#b88352";
-      for (let d = 0; d < 20; d++) {
-        const dx = 160 + d * 64;
-        ctx.fillRect(dx, 570 + (d % 3) * 6, 24, 4);
+      // Marcas de cascos e poeira no chão de terra vermelha
+      ctx.fillStyle = "#b8562d";
+      for (let d = 0; d < 24; d++) {
+        const dx = 160 + d * 55;
+        ctx.fillRect(dx, 568 + (d % 4) * 6, 20, 3.5);
       }
 
-      // Plataformas de fardo de feno
+      // 10. Plataformas de Fardo de Feno de Barretos
       stage.platforms.forEach((p) => {
-        ctx.fillStyle = "#c99a42";
+        // Fardo de Feno Dourado
+        ctx.fillStyle = "#d4a446";
         ctx.fillRect(p.x, p.y, p.w, p.h);
         ctx.strokeStyle = "#8a6220";
         ctx.lineWidth = 2;
         ctx.strokeRect(p.x, p.y, p.w, p.h);
-        // Cordas do fardo de feno
+        // Amarração das cordas de sisal do feno
         ctx.fillStyle = "#593c12";
-        ctx.fillRect(p.x + 40, p.y, 6, p.h);
-        ctx.fillRect(p.x + p.w - 46, p.y, 6, p.h);
+        ctx.fillRect(p.x + 35, p.y, 6, p.h);
+        ctx.fillRect(p.x + p.w - 41, p.y, 6, p.h);
+        // Brilho superior
+        ctx.fillStyle = "#fae078";
+        ctx.fillRect(p.x + 2, p.y, p.w - 4, 3);
       });
     },
   },
@@ -279,10 +391,8 @@ export const STAGES = {
       { x: 1080, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      // Efeito de relâmpago esporádico
       const flash = frame % 180 > 174;
 
-      // Céu de tempestade
       const grad = ctx.createLinearGradient(0, 0, 0, 900);
       if (flash) {
         grad.addColorStop(0, "#8da4c4");
@@ -296,7 +406,6 @@ export const STAGES = {
       ctx.fillStyle = grad;
       ctx.fillRect(-100, -200, 1800, 1100);
 
-      // Raio riscando o céu durante o flash
       if (flash) {
         ctx.strokeStyle = "#e0f2fe";
         ctx.lineWidth = 4;
@@ -309,7 +418,6 @@ export const STAGES = {
         ctx.stroke();
       }
 
-      // Árvores retorcidas do cerrado ao fundo
       ctx.fillStyle = "#0c1524";
       for (let t = 0; t < 6; t++) {
         const tx = 200 + t * 240;
@@ -319,13 +427,11 @@ export const STAGES = {
         ctx.lineTo(tx + 15, 350);
         ctx.quadraticCurveTo(tx + 20, 440, tx + 30, 560);
         ctx.fill();
-        // Folhagem escura
         ctx.beginPath();
         ctx.ellipse(tx, 320, 60, 40, 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Gotas de chuva caindo
       ctx.strokeStyle = "rgba(186, 230, 253, 0.4)";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -337,7 +443,6 @@ export const STAGES = {
       }
       ctx.stroke();
 
-      // Solo molhado
       ctx.fillStyle = "#1e293b";
       ctx.fillRect(180, 560, 1240, 120);
       ctx.fillStyle = "#38bdf8";
@@ -345,7 +450,6 @@ export const STAGES = {
       ctx.fillRect(180, 560, 1240, 6);
       ctx.globalAlpha = 1.0;
 
-      // Plataformas
       stage.platforms.forEach((p) => {
         ctx.fillStyle = "#334155";
         ctx.fillRect(p.x, p.y, p.w, p.h);
@@ -378,7 +482,6 @@ export const STAGES = {
       { x: 1100, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      // Céu noturno fantasmagórico com luar esmeralda
       const grad = ctx.createLinearGradient(0, 0, 0, 900);
       grad.addColorStop(0, "#041417");
       grad.addColorStop(0.5, "#082f2f");
@@ -386,13 +489,11 @@ export const STAGES = {
       ctx.fillStyle = grad;
       ctx.fillRect(-100, -200, 1800, 1100);
 
-      // Lua fantasmagórica verde
       ctx.fillStyle = "#a7f3d0";
       ctx.beginPath();
       ctx.arc(800, 200, 75, 0, Math.PI * 2);
       ctx.fill();
 
-      // Névoa espectral ondulante no solo
       ctx.save();
       ctx.globalAlpha = 0.25;
       ctx.fillStyle = "#34d399";
@@ -405,7 +506,6 @@ export const STAGES = {
       }
       ctx.restore();
 
-      // Cercas e crânios de gado de rodeio esculpidos
       ctx.fillStyle = "#134e4a";
       ctx.fillRect(160, 560, 1280, 120);
       ctx.fillStyle = "#6ee7b7";
@@ -443,7 +543,6 @@ export const STAGES = {
       { x: 1080, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      // Céu cósmico da Aurora
       const grad = ctx.createLinearGradient(0, 0, 0, 900);
       grad.addColorStop(0, "#090314");
       grad.addColorStop(0.4, "#240b3b");
@@ -452,7 +551,6 @@ export const STAGES = {
       ctx.fillStyle = grad;
       ctx.fillRect(-100, -200, 1800, 1100);
 
-      // Faixas ondulantes de Aurora Borealis cósmica
       ctx.save();
       for (let i = 0; i < 3; i++) {
         ctx.globalAlpha = 0.22;
@@ -471,7 +569,6 @@ export const STAGES = {
       }
       ctx.restore();
 
-      // Ferradura gigante estelar de luz no céu
       ctx.save();
       ctx.strokeStyle = "rgba(254, 240, 138, 0.45)";
       ctx.lineWidth = 14;
@@ -480,7 +577,6 @@ export const STAGES = {
       ctx.stroke();
       ctx.restore();
 
-      // Chão de cristal estelar
       ctx.fillStyle = "#2e1065";
       ctx.fillRect(180, 560, 1240, 120);
       ctx.fillStyle = "#c084fc";
@@ -533,6 +629,17 @@ export const STAGES = {
 };
 
 export const STAGE_IDS = ["barretos", "fazenda", "cerrado_tempestade", "curral_fantasma", "arena_aurora", "rooftop"];
+
+export function cloneStage(s) {
+  return {
+    ...s,
+    ground: { ...s.ground },
+    platforms: s.platforms.map((p) => ({ ...p })),
+    ledges: s.ledges.map((l) => ({ ...l })),
+    blast: { ...s.blast },
+    spawn: s.spawn.map((sp) => ({ ...sp })),
+  };
+}
 
 export function collideStage(p, stage) {
   const boxes = [stage.ground, ...stage.platforms];
