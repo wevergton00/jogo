@@ -517,6 +517,10 @@ export class Game {
       const pct = document.getElementById(`hud-pct-${n}`);
       pct.textContent = `${Math.floor(p.percent)}%`;
       pct.style.color = p.percent > 100 ? "#ff4d4d" : p.char.color;
+      const health = document.getElementById(`hud-health-${n}`);
+      if (health) health.style.width = `${Math.max(0, 100 - Math.min(100, p.percent))}%`;
+      const special = document.getElementById(`hud-special-${n}`);
+      if (special) special.style.width = `${p.state === "special" ? 100 : 72}%`;
       document.getElementById(`hud-face-${n}`).style.backgroundImage = `url(assets/sprites/${p.char.portrait})`;
       const stocks = document.getElementById(`hud-stocks-${n}`);
       const nStocks = Math.min(8, p.stocks);
@@ -550,7 +554,16 @@ export class Game {
     const bg = this.sprites.img("stages/rooftop.png");
     if (bg) {
       const stage = this.world.stage;
+      // O palco é noturno, mas não deve ficar quase preto durante a luta.
+      // O filtro fica restrito ao cenário para preservar as cores dos lutadores.
+      ctx.save();
+      ctx.filter = "brightness(1.28) saturate(1.08)";
       ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
+      ctx.restore();
+    } else {
+      // Fallback visível caso a imagem ainda esteja carregando ou falhe.
+      ctx.fillStyle = "#171638";
+      ctx.fillRect(-200, -100, this.world.stage.width + 400, this.world.stage.height + 300);
     }
 
     for (const f of this.world.fighters) {
