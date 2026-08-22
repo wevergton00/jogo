@@ -392,11 +392,28 @@ html, body {
   display: flex;
   gap: 12px;
   align-items: center;
-  background: rgba(6,6,18,0.72);
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 10px 14px;
-  min-width: 220px;
+  background: linear-gradient(180deg, rgba(8,8,18,.94), rgba(18,12,25,.88));
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 3px;
+  padding: 8px 14px;
+  min-width: 270px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.7), 0 0 16px rgba(0,0,0,.55);
 }
+.fight-bar {
+  width: 190px;
+  height: 13px;
+  margin: 4px 0;
+  padding: 2px;
+  background: #14121a;
+  border: 1px solid #d9d4c8;
+  transform: skewX(-12deg);
+  box-shadow: inset 0 0 0 1px #332d38;
+}
+.fight-bar span { display: block; height: 100%; width: 100%; transition: width .12s linear; }
+.health-bar span { background: linear-gradient(180deg, #fff36b 0%, #f3a928 52%, #c95818 100%); box-shadow: 0 0 8px #ffc928; }
+.special-bar { height: 8px; border-color: #777789; background: #090b16; }
+.special-bar span { background: linear-gradient(90deg, #168fff, #45e8ff); box-shadow: 0 0 7px #20cfff; }
+.hud-card.p2 .fight-bar span { transform: scaleX(-1); transform-origin: center; }
 .hud-card.p1 { border-color: var(--p1); }
 .hud-card.p2 { border-color: var(--p2); text-align: right; }
 .hud-face {

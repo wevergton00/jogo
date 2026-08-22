@@ -25,16 +25,40 @@ export class SpriteBank {
           img.src = src;
           await new Promise((resolve, reject) => {
             const t = setTimeout(() => reject(new Error("timeout " + rel)), 8000);
-            img.onload = () => {
-              clearTimeout(t);
+          img.onload = () => {
+            clearTimeout(t);
+            // Remove o halo claro deixado no recorte dos sprites.
+            // Só pixels quase brancos na borda transparente são removidos;
+            // áreas brancas internas (roupas, olhos e efeitos) permanecem.
+            const c = document.createElement("canvas");
+            c.width = img.naturalWidth;
+            c.height = img.naturalHeight;
+            const cctx = c.getContext("2d", { willReadFrequently: true });
+            cctx.drawImage(img, 0, 0);
+            const data = cctx.getImageData(0, 0, c.width, c.height);
+            const px = data.data;
+            const isTransparent = (x, y) => x < 0 || y < 0 || x >= c.width || y >= c.height || px[(y * c.width + x) * 4 + 3] < 24;
+            for (let y = 1; y < c.height - 1; y++) {
+              for (let x = 1; x < c.width - 1; x++) {
+                const i = (y * c.width + x) * 4;
+                const nearWhite = px[i] > 220 && px[i + 1] > 220 && px[i + 2] > 220;
+                const touchesAlpha = isTransparent(x - 1, y) || isTransparent(x + 1, y) || isTransparent(x, y - 1) || isTransparent(x, y + 1);
+                if (nearWhite && touchesAlpha) px[i + 3] = 0;
+              }
+            }
+            cctx.putImageData(data, 0, 0);
+            const cleaned = new Image();
+            cleaned.src = c.toDataURL("image/png");
+            cleaned.onload = () => {
+              this.images[rel] = cleaned;
               resolve();
             };
+          };
             img.onerror = () => {
               clearTimeout(t);
               reject(new Error("fail " + rel));
             };
           });
-          this.images[rel] = img;
         } catch (err) {
           console.warn(err);
         }

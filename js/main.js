@@ -96,9 +96,11 @@ function showFsToast(msg) {
   fsToastTimer = setTimeout(() => fsToast.classList.remove("show"), 4500);
 }
 function fullscreenAllowed() {
-  if (document.fullscreenEnabled === false) return false;
-  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === false) return false;
-  if (document.fullscreenEnabled === undefined && document.webkitFullscreenEnabled === undefined) return false;
+  // Alguns navegadores não expõem fullscreenEnabled, mas ainda suportam a API.
+  const el = document.documentElement;
+  const request = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (!request) return false;
+  if (document.fullscreenEnabled === false || document.webkitFullscreenEnabled === false) return false;
   return true;
 }
 function updateFsLabel() {
@@ -113,7 +115,13 @@ async function enterFullscreen() {
     el.mozRequestFullScreen ||
     el.msRequestFullscreen;
   if (!req) throw new Error("API de tela cheia indisponível");
-  const r = req.call(el, { navigationUI: "hide" });
+  let r;
+  try {
+    r = req.call(el, { navigationUI: "hide" });
+  } catch {
+    // APIs antigas não aceitam opções.
+    r = req.call(el);
+  }
   if (r && r.then) await r;
 }
 async function exitFullscreen() {
