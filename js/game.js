@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=39";
-import { Fighter } from "./player.js?v=39";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=39";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=39";
-import { makeCpuInput } from "./ai.js?v=39";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=40";
+import { Fighter } from "./player.js?v=40";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=40";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=40";
+import { makeCpuInput } from "./ai.js?v=40";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -143,14 +143,27 @@ export class Game {
   }
 
   setupGlobalEvents() {
-    const btnEnterTitle = document.getElementById("btn-enter-title");
-    if (btnEnterTitle) {
-      btnEnterTitle.onclick = (e) => {
+    const goMenu = (e) => {
+      if (e) {
         e.preventDefault();
+        e.stopPropagation();
+      }
+      try {
         this.audio.unlock();
         this.audio.sfx("confirm");
-        this.setMode("menu");
-      };
+      } catch {}
+      this.setMode("menu");
+    };
+    const btnEnterTitle = document.getElementById("btn-enter-title");
+    if (btnEnterTitle) {
+      btnEnterTitle.addEventListener("click", goMenu);
+    }
+    const title = document.getElementById("screen-title");
+    if (title) {
+      title.addEventListener("click", (e) => {
+        if (e.target.closest("button") || e.target.closest("a")) return;
+        goMenu(e);
+      });
     }
   }
 
@@ -459,10 +472,7 @@ export class Game {
   }
 
   renderEightSecScreen() {
-    const startBtn = document.getElementById("btn-eight-sec-start");
-    if (startBtn) {
-      startBtn.onclick = (e) => {
-        e.preventDefault();
+    const startBtn = document.getElentDefault();
         this.audio.unlock();
         this.audio.sfx("eight_seconds_horn");
         this.startEightSecFight();
@@ -1727,6 +1737,12 @@ function applyProj(owner, victim, pr, world) {
     hitstun: 16,
     hitlag: 6,
     pull: pr.pull,
+    isLasso: pr.isLasso,
+  };
+  owner.facing = pr.facing;
+  applyHit(owner, victim, move, world);
+}
+,
     isLasso: pr.isLasso,
   };
   owner.facing = pr.facing;

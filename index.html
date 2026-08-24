@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=39" />
+  <link rel="stylesheet" href="css/style.css?v=40" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -32,7 +32,7 @@
           <h1 class="logo">BARRETOS<br/>CLASH</h1>
           <p class="logo-tagline">A LENDA DA FERRADURA DA AURORA</p>
           <p class="logo-quote">“O laço é sua arma. O cavalo é seu parceiro.”</p>
-          <button type="button" id="btn-enter-title" class="cta-btn blink-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">🤠 Entrar no Rodeio</button>
+          <button type="button" id="btn-enter-title" class="cta-btn blink-btn">🤠 Entrar no Rodeio</button>
           <p class="blink hint" id="press-start">Clique ou pressione qualquer tecla</p>
         </div>
       </section>
@@ -68,7 +68,14 @@
             </div>
             
             <nav id="main-nav" class="hub-grid" aria-label="Menu principal">
-              <!-- Gerado dinamicamente via js/game.js -->
+              <button type="button" class="hub-btn active" data-hub="versus"><span class="hub-ico">⚔️</span><span class="hub-txt"><strong>Versus</strong><small>2 jogadores ou vs CPU</small></span></button>
+              <button type="button" class="hub-btn" data-hub="historia"><span class="hub-ico">📖</span><span class="hub-txt"><strong>História</strong><small>A Lenda da Aurora</small></span></button>
+              <button type="button" class="hub-btn" data-hub="arcade"><span class="hub-ico">🕹️</span><span class="hub-txt"><strong>Arcade</strong><small>Sequência & Chefes</small></span></button>
+              <button type="button" class="hub-btn" data-hub="eight_sec"><span class="hub-ico">⏱️</span><span class="hub-txt"><strong>8 Segundos</strong><small>Desafio do Rodeio</small></span></button>
+              <button type="button" class="hub-btn" data-hub="lasso_target"><span class="hub-ico">🎯</span><span class="hub-txt"><strong>Tiro de Laço</strong><small>Precisão com Alvos</small></span></button>
+              <button type="button" class="hub-btn" data-hub="treino"><span class="hub-ico">🥊</span><span class="hub-txt"><strong>Treinamento</strong><small>Comandos & Combos</small></span></button>
+              <button type="button" class="hub-btn" data-hub="custom"><span class="hub-ico">🤠</span><span class="hub-txt"><strong>Armário</strong><small>Chapéus & Laços</small></span></button>
+              <button type="button" class="hub-btn" data-hub="opcoes"><span class="hub-ico">⚙️</span><span class="hub-txt"><strong>Opções</strong><small>Controles & Teclas</small></span></button>
             </nav>
             
             <p class="menu-hint-footer">↑ ↓ ← → Navegar · Enter / Clique Selecionar</p>
@@ -292,16 +299,52 @@
     <p id="fs-toast" role="status"></p>
   </div>
   <script>
-    setTimeout(function () {
-      var load = document.getElementById("screen-load");
-      var title = document.getElementById("screen-title");
-      if (load) {
-        load.classList.add("hidden");
-        load.style.display = "none";
+    function hideScreen(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("hidden");
+      el.style.display = "none";
+    }
+    function showScreen(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.style.display = "";
+    }
+    function enterRodeio(ev) {
+      if (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
       }
-      if (title && !window.gameInstance) title.classList.remove("hidden");
-    }, 2800);
+      hideScreen("screen-load");
+      hideScreen("screen-title");
+      showScreen("screen-menu");
+      if (window.gameInstance && typeof window.gameInstance.setMode === "function") {
+        window.gameInstance.setMode("menu");
+      }
+      return false;
+    }
+    window.enterRodeio = enterRodeio;
+
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("#btn-enter-title")) enterRodeio(e);
+      var hub = e.target.closest("[data-hub]");
+      if (hub && window.gameInstance && window.gameInstance.launchMenuChoice) {
+        window.gameInstance.launchMenuChoice(hub.getAttribute("data-hub"));
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      var title = document.getElementById("screen-title");
+      if (!title || title.classList.contains("hidden")) return;
+      if (e.key === "Enter" || e.key === " ") enterRodeio(e);
+    });
+
+    setTimeout(function () {
+      hideScreen("screen-load");
+      var menu = document.getElementById("screen-menu");
+      if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
+    }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=39"></script>
+  <script type="module" src="js/main.js?v=40"></script>
 </body>
 </html>
