@@ -4,7 +4,7 @@ export const STAGES = {
     name: "Parque do Peão de Barretos",
     subtitle: "Arena de Rodeio · Oscar Niemeyer",
     theme: "rodeo",
-    bgKey: "stages/barretos.png",
+    bgKey: "stages/barretos.jpg",
     width: 1600,
     height: 900,
     ground: { x: 70, y: 560, w: 1460, h: 40 },
@@ -22,7 +22,7 @@ export const STAGES = {
       { x: 1120, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      const bg = world.sprites?.img("stages/barretos.png");
+      const bg = world.sprites?.img("stages/barretos.jpg");
       if (bg) {
         ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
       } else {
@@ -451,7 +451,7 @@ export const STAGES = {
     id: "rooftop",
     name: "Terraço Neon",
     subtitle: "Metrópole Futurista",
-    bgKey: "stages/rooftop.png",
+    bgKey: "stages/rooftop.jpg",
     theme: "cyber",
     width: 1600,
     height: 900,
@@ -470,7 +470,7 @@ export const STAGES = {
       { x: 1080, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
-      const bg = world.sprites?.img("stages/rooftop.png");
+      const bg = world.sprites?.img("stages/rooftop.jpg");
       if (bg) {
         ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
       } else {

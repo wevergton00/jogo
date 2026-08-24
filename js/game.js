@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=38";
-import { Fighter } from "./player.js?v=38";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=38";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=38";
-import { makeCpuInput } from "./ai.js?v=38";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=39";
+import { Fighter } from "./player.js?v=39";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=39";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=39";
+import { makeCpuInput } from "./ai.js?v=39";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -1378,7 +1378,7 @@ export class Game {
     if (stage && typeof stage.draw === "function") {
       stage.draw(ctx, stage, this.world.frame, this.world);
     } else {
-      const bg = this.sprites.img("stages/rooftop.png");
+      const bg = this.sprites.img("stages/rooftop.jpg");
       if (bg) ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
     }
 
@@ -1693,8 +1693,8 @@ export class Game {
 
   drawBackdrop() {
     const ctx = this.ctx;
-    const menu = this.sprites.img("ui/menu_barretos.png") || this.sprites.img("ui/menu_cenario.png");
-    const bg = menu || this.sprites.img("stages/barretos.png") || this.sprites.img("stages/rooftop.png");
+    const menu = this.sprites.img("ui/menu_barretos.jpg") || this.sprites.img("ui/menu_cenario.jpg");
+    const bg = menu || this.sprites.img("stages/barretos.jpg") || this.sprites.img("stages/rooftop.jpg");
     if (bg) ctx.drawImage(bg, 0, 0, this.canvas.width, this.canvas.height);
   }
 

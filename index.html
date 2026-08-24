@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=38" />
+  <link rel="stylesheet" href="css/style.css?v=39" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -291,6 +291,17 @@
     </button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=37"></script>
+  <script>
+    setTimeout(function () {
+      var load = document.getElementById("screen-load");
+      var title = document.getElementById("screen-title");
+      if (load) {
+        load.classList.add("hidden");
+        load.style.display = "none";
+      }
+      if (title && !window.gameInstance) title.classList.remove("hidden");
+    }, 2800);
+  </script>
+  <script type="module" src="js/main.js?v=39"></script>
 </body>
 </html>

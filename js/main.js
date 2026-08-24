@@ -1,7 +1,7 @@
-import { SpriteBank } from "./sprites.js?v=38";
-import { AudioSystem } from "./audio.js?v=38";
-import { InputManager } from "./input.js?v=38";
-import { Game } from "./game.js?v=38";
+import { SpriteBank } from "./sprites.js?v=39";
+import { AudioSystem } from "./audio.js?v=39";
+import { InputManager } from "./input.js?v=39";
+import { Game } from "./game.js?v=39";
 
 const canvas = document.getElementById("game");
 const fill = document.getElementById("load-fill");
@@ -19,21 +19,50 @@ function hideLoad() {
   }
 }
 
-try {
-  await sprites.load((p) => {
-    if (fill) fill.style.width = `${Math.floor(p * 100)}%`;
-  });
-} catch (err) {
-  console.error(err);
-  if (loadLabel) loadLabel.textContent = "Iniciando o rodeio de Barretos…";
+function showTitleScreen() {
+  hideLoad();
+  const title = document.getElementById("screen-title");
+  if (title) title.classList.remove("hidden");
 }
 
-hideLoad();
-const game = new Game(canvas, sprites, audio, input);
-window.gameInstance = game;
+function bootGame() {
+  if (window.gameInstance) return;
+  hideLoad();
+  const game = new Game(canvas, sprites, audio, input);
+  window.gameInstance = game;
+  game.setMode("title");
+  requestAnimationFrame((t) => game.tick(t));
+}
 
-// Inicia no modo título
-game.setMode("title");
+// Se algo travar, o título abre mesmo assim
+const failSafe = setTimeout(() => {
+  showTitleScreen();
+  try {
+    bootGame();
+  } catch (err) {
+    console.error(err);
+  }
+}, 2500);
+
+try {
+  if (loadLabel) loadLabel.textContent = "Carregando o rodeio…";
+  await Promise.race([
+    sprites.load((p) => {
+      if (fill) fill.style.width = `${Math.max(8, Math.floor(p * 100))}%`;
+    }),
+    new Promise((resolve) => setTimeout(resolve, 2200)),
+  ]);
+} catch (err) {
+  console.error(err);
+}
+
+clearTimeout(failSafe);
+try {
+  bootGame();
+} catch (err) {
+  console.error(err);
+  showTitleScreen();
+}
 
 // Fullscreen e Janela Cheia
 const fsBtn = document.getElementById("btn-fullscreen");
@@ -146,6 +175,3 @@ window.addEventListener("keydown", (e) => {
     }
   }
 });
-
-// Inicia loop principal
-requestAnimationFrame((t) => game.tick(t));

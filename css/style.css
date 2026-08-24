@@ -88,13 +88,13 @@ body.fullscreen-mode #app {
 #screen-title {
   background:
     radial-gradient(ellipse at 50% 50%, rgba(30, 15, 8, 0.4) 0%, rgba(12, 6, 2, 0.88) 100%),
-    url("../assets/ui/menu_barretos.png") center / cover no-repeat;
+    url("../assets/ui/menu_barretos.jpg") center / cover no-repeat;
 }
 
 #screen-menu {
   background:
     linear-gradient(90deg, rgba(12, 6, 2, 0.94) 0%, rgba(12, 6, 2, 0.75) 55%, rgba(12, 6, 2, 0.35) 100%),
-    url("../assets/ui/menu_barretos.png") center / cover no-repeat;
+    url("../assets/ui/menu_barretos.jpg") center / cover no-repeat;
   padding: clamp(10px, 2vh, 24px);
 }
 
