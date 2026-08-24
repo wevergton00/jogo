@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=42";
-import { Fighter } from "./player.js?v=42";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=42";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=42";
-import { makeCpuInput } from "./ai.js?v=42";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=43";
+import { Fighter } from "./player.js?v=43";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=43";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=43";
+import { makeCpuInput } from "./ai.js?v=43";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -169,6 +169,8 @@ export class Game {
 
   setMode(mode) {
     this.mode = mode;
+    const overlay = document.getElementById("overlay");
+    if (overlay) overlay.style.pointerEvents = mode === "fight" ? "none" : "auto";
     const ids = [
       "screen-load",
       "screen-title",
@@ -236,7 +238,10 @@ export class Game {
       show("screen-results");
     } else if (mode === "fight") {
       hud?.classList.remove("hidden");
+      hud && (hud.style.display = "");
       if (this.training) trainingHud?.classList.remove("hidden");
+      const overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.pointerEvents = "none";
       this.canvas?.focus();
       try {
         const stage = this.world?.stage;
@@ -669,32 +674,44 @@ export class Game {
   }
 
   startFight() {
-    const ids = CHARACTER_IDS;
-    const stageKey = STAGE_IDS[this.stagePick] || "barretos";
-    const stage = cloneStage(STAGES[stageKey] || STAGES.barretos);
+    try {
+      const ids = CHARACTER_IDS;
+      const stageKey = STAGE_IDS[this.stagePick] || "barretos";
+      const stage = cloneStage(STAGES[stageKey] || STAGES.barretos);
 
-    const p1Char = CHARACTERS[ids[this.p1Pick]] || CHARACTERS.evertinho;
-    const p2Char = CHARACTERS[ids[this.p2Pick]] || CHARACTERS.fernanda;
+      const p1Char = CHARACTERS[ids[this.p1Pick]] || CHARACTERS.evertinho;
+      const p2Char = CHARACTERS[ids[this.p2Pick]] || CHARACTERS.fernanda;
 
-    const p1 = new Fighter(p1Char, "p1", stage.spawn[0].x, stage.spawn[0].y, 1);
-    const p2 = new Fighter(p2Char, "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
-    p1.hp = p1.maxHp;
-    p1.percent = 0;
-    p2.hp = p2.maxHp;
-    p2.percent = 0;
-    p2.cpu = this.p2cpu;
+      const p1 = new Fighter(p1Char, "p1", stage.spawn[0].x, stage.spawn[0].y, 1);
+      const p2 = new Fighter(p2Char, "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
+      p1.hp = p1.maxHp || 100;
+      p2.hp = p2.maxHp || 100;
+      p2.cpu = !!this.p2cpu;
 
-    if (this.training) {
-      p1.stocks = 99;
-      p2.stocks = 99;
-      p1.hp = p1.maxHp;
-      p2.hp = p2.maxHp;
+      if (this.training) {
+        p1.stocks = 99;
+        p2.stocks = 99;
+      }
+
+      this.initWorld(stage, p1, p2);
+      this.setMode("fight");
+      document.querySelectorAll(".screen").forEach((el) => {
+        el.classList.add("hidden");
+        el.style.display = "none";
+      });
+      const overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.pointerEvents = "none";
+      const hud = document.getElementById("hud");
+      if (hud) {
+        hud.classList.remove("hidden");
+        hud.style.display = "";
+      }
+      this.updateHud();
+      this.triggerNarratorBanner("LUTEM! SEGUUURA, PEÃO!");
+      this.canvas?.focus();
+    } catch (err) {
+      console.error(err);
     }
-
-    this.initWorld(stage, p1, p2);
-    this.setMode("fight");
-    this.updateHud();
-    this.triggerNarratorBanner("LUTEM! SEGUUURA, PEÃO!");
   }
 
   initWorld(stage, p1, p2) {
@@ -1005,10 +1022,7 @@ export class Game {
         }
       }
 
-      if (this.input.menuOk || this.input.p1.lightPressed) {
-        this.audio.unlock();
-        this.audio.sfx("berrante");
-        this.startFight();
+      if (this.input.menuOk || tthis.startFight();
         return;
       }
 
@@ -1747,6 +1761,12 @@ function applyProj(owner, victim, pr, world) {
     hitstun: 16,
     hitlag: 6,
     pull: pr.pull,
+    isLasso: pr.isLasso,
+  };
+  owner.facing = pr.facing;
+  applyHit(owner, victim, move, world);
+}
+,
     isLasso: pr.isLasso,
   };
   owner.facing = pr.facing;

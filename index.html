@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=42" />
+  <link rel="stylesheet" href="css/style.css?v=43" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -88,52 +88,48 @@
         <div class="charsel-wrap">
           <div class="charsel-header">
             <p class="charsel-kicker">Duelo de Peões</p>
-            <h2>Escolha os lutadores</h2>
+            <h2>Escolha os Lutadores & Arena</h2>
           </div>
 
           <div class="charsel-grid">
             <div class="slot" id="slot-p1">
               <p class="slot-tag p1">JOGADOR 1</p>
-              <img class="portrait-img" id="p1-portrait-img" src="assets/sprites/ui/portrait_evertinho.jpg" alt="Jogador 1" />
-              <div class="portrait" id="p1-portrait" hidden></div>
+              <div class="portrait" id="p1-portrait" title="Clique para trocar lutador">
+                <img id="p1-portrait-img" src="assets/sprites/ui/portrait_evertinho.jpg" alt="P1" />
+              </div>
               <h3 id="p1-name">Everttinho</h3>
               <p class="archetype" id="p1-arch">Peão · O Laçador Lendário</p>
-              <div class="roster" id="roster-p1">
-                <button type="button" class="roster-btn selected" data-pick="p1" data-char="evertinho">Everttinho</button>
-                <button type="button" class="roster-btn" data-pick="p1" data-char="fernanda">Fernanda</button>
-                <button type="button" class="roster-btn" data-pick="p1" data-char="nox">Nox</button>
-              </div>
+              <button type="button" id="btn-p1-swap" class="swap-btn">Trocar Lutador</button>
             </div>
 
             <div class="vs-center-col">
               <div class="vs-badge">VS</div>
               <div class="stage-selector-box">
-                <span class="stage-label">ARENA</span>
+                <span class="stage-label">ARENA DE COMBATE</span>
                 <div class="stage-nav-row">
                   <button type="button" id="btn-stage-prev" class="stage-arrow-btn">◀</button>
                   <div class="stage-info-text">
                     <strong id="stage-name-display">Parque do Peão de Barretos</strong>
-                    <small id="stage-sub-display">Arena de Rodeio</small>
+                    <small id="stage-sub-display">Arena de Rodeio · Oscar Niemeyer</small>
                   </div>
                   <button type="button" id="btn-stage-next" class="stage-arrow-btn">▶</button>
                 </div>
               </div>
-              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ LUTAR</button>
-              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar</button>
+              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ ENTRAR NA ARENA ⚔️</button>
+              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar ao Menu</button>
             </div>
 
             <div class="slot" id="slot-p2">
-              <p class="slot-tag p2">JOGADOR 2</p>
-              <img class="portrait-img" id="p2-portrait-img" src="assets/sprites/ui/portrait_fernanda.jpg" alt="Jogador 2" />
-              <div class="portrait" id="p2-portrait" hidden></div>
+              <p class="slot-tag p2">JOGADOR 2 / CPU</p>
+              <div class="portrait" id="p2-portrait" title="Clique para trocar lutador">
+                <img id="p2-portrait-img" src="assets/sprites/ui/portrait_fernanda.jpg" alt="P2" />
+              </div>
               <h3 id="p2-name">Fernanda</h3>
               <p class="archetype" id="p2-arch">Técnica · Feiticeira Felina</p>
-              <div class="roster" id="roster-p2">
-                <button type="button" class="roster-btn" data-pick="p2" data-char="evertinho">Everttinho</button>
-                <button type="button" class="roster-btn selected" data-pick="p2" data-char="fernanda">Fernanda</button>
-                <button type="button" class="roster-btn" data-pick="p2" data-char="nox">Nox</button>
+              <div class="p2-actions-row">
+                <button type="button" id="btn-p2-swap" class="swap-btn">Trocar Lutador</button>
+                <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
               </div>
-              <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
             </div>
           </div>
         </div>
@@ -358,26 +354,38 @@
       fernanda: { name: "Fernanda", arch: "Técnica · Feiticeira Felina", img: "assets/sprites/ui/portrait_fernanda.jpg" },
       nox: { name: "Nox", arch: "Pesado · Brawler", img: "assets/sprites/ui/portrait_nox.jpg" }
     };
-    function applyPick(side, charId) {
-      var meta = CHAR_META[charId];
-      if (!meta) return;
+    var pick = { p1: 0, p2: 1 };
+    function paintPick(side) {
+      var id = CHAR_ORDER[pick[side]];
+      var meta = CHAR_META[id];
       var img = document.getElementById(side === "p1" ? "p1-portrait-img" : "p2-portrait-img");
       var name = document.getElementById(side === "p1" ? "p1-name" : "p2-name");
       var arch = document.getElementById(side === "p1" ? "p1-arch" : "p2-arch");
       if (img) img.src = meta.img;
       if (name) name.textContent = meta.name;
       if (arch) arch.textContent = meta.arch;
-      document.querySelectorAll(side === "p1" ? "#roster-p1 .roster-btn" : "#roster-p2 .roster-btn").forEach(function (b) {
-        b.classList.toggle("selected", b.getAttribute("data-char") === charId);
-      });
       if (window.gameInstance) {
-        var idx = CHAR_ORDER.indexOf(charId);
-        if (idx >= 0) {
-          if (side === "p1") window.gameInstance.p1Pick = idx;
-          else window.gameInstance.p2Pick = idx;
-        }
+        if (side === "p1") window.gameInstance.p1Pick = pick.p1;
+        else window.gameInstance.p2Pick = pick.p2;
       }
     }
+    function beginFight() {
+      document.querySelectorAll(".screen").forEach(function (el) {
+        el.classList.add("hidden");
+        el.style.display = "none";
+      });
+      var overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.pointerEvents = "none";
+      var hud = document.getElementById("hud");
+      if (hud) {
+        hud.classList.remove("hidden");
+        hud.style.display = "";
+      }
+      if (window.gameInstance && typeof window.gameInstance.startFight === "function") {
+        try { window.gameInstance.startFight(); } catch (err) { console.error(err); }
+      }
+    }
+    window.beginFight = beginFight;
 
     document.addEventListener("click", function (e) {
       if (e.target.closest("#btn-enter-title")) {
@@ -391,15 +399,20 @@
         openMode(hub.getAttribute("data-hub"));
         return;
       }
-      var roster = e.target.closest("[data-pick][data-char]");
-      if (roster) {
-        e.preventDefault();
-        applyPick(roster.getAttribute("data-pick"), roster.getAttribute("data-char"));
+      if (e.target.closest("#btn-p1-swap") || e.target.closest("#p1-portrait")) {
+        pick.p1 = (pick.p1 + 1) % CHAR_ORDER.length;
+        paintPick("p1");
+        return;
+      }
+      if (e.target.closest("#btn-p2-swap") || e.target.closest("#p2-portrait")) {
+        pick.p2 = (pick.p2 + 1) % CHAR_ORDER.length;
+        paintPick("p2");
         return;
       }
       if (e.target.closest("#btn-start")) {
         e.preventDefault();
-        if (window.gameInstance && window.gameInstance.startFight) window.gameInstance.startFight();
+        e.stopPropagation();
+        beginFight();
         return;
       }
       if (e.target.closest("#btn-charsel-back")) {
@@ -436,6 +449,6 @@
       if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
     }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=42"></script>
+  <script type="module" src="js/main.js?v=43"></script>
 </body>
 </html>
