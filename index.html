@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=41" />
+  <link rel="stylesheet" href="css/style.css?v=42" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -88,49 +88,52 @@
         <div class="charsel-wrap">
           <div class="charsel-header">
             <p class="charsel-kicker">Duelo de Peões</p>
-            <h2>Escolha os Lutadores & Arena</h2>
+            <h2>Escolha os lutadores</h2>
           </div>
 
           <div class="charsel-grid">
-            <!-- Slot P1 -->
             <div class="slot" id="slot-p1">
               <p class="slot-tag p1">JOGADOR 1</p>
-              <div class="portrait" id="p1-portrait" title="Clique para trocar lutador"></div>
+              <img class="portrait-img" id="p1-portrait-img" src="assets/sprites/ui/portrait_evertinho.jpg" alt="Jogador 1" />
+              <div class="portrait" id="p1-portrait" hidden></div>
               <h3 id="p1-name">Everttinho</h3>
               <p class="archetype" id="p1-arch">Peão · O Laçador Lendário</p>
-              <button type="button" id="btn-p1-swap" class="swap-btn">Trocar Lutador (A / D)</button>
+              <div class="roster" id="roster-p1">
+                <button type="button" class="roster-btn selected" data-pick="p1" data-char="evertinho">Everttinho</button>
+                <button type="button" class="roster-btn" data-pick="p1" data-char="fernanda">Fernanda</button>
+                <button type="button" class="roster-btn" data-pick="p1" data-char="nox">Nox</button>
+              </div>
             </div>
 
-            <!-- Coluna Central: VS e Seletor de Arena -->
             <div class="vs-center-col">
               <div class="vs-badge">VS</div>
-              
               <div class="stage-selector-box">
-                <span class="stage-label">ARENA DE COMBATE</span>
+                <span class="stage-label">ARENA</span>
                 <div class="stage-nav-row">
-                  <button type="button" id="btn-stage-prev" class="stage-arrow-btn" title="Arena anterior">◀</button>
+                  <button type="button" id="btn-stage-prev" class="stage-arrow-btn">◀</button>
                   <div class="stage-info-text">
                     <strong id="stage-name-display">Parque do Peão de Barretos</strong>
-                    <small id="stage-sub-display">Arena de Rodeio · Oscar Niemeyer</small>
+                    <small id="stage-sub-display">Arena de Rodeio</small>
                   </div>
-                  <button type="button" id="btn-stage-next" class="stage-arrow-btn" title="Próxima arena">▶</button>
+                  <button type="button" id="btn-stage-next" class="stage-arrow-btn">▶</button>
                 </div>
               </div>
-
-              <button type="button" id="btn-start" class="cta-btn start-fight-btn" onclick="window.gameInstance && window.gameInstance.startFight()">⚔️ ENTRAR NA ARENA ⚔️</button>
-              <button type="button" id="btn-charsel-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
+              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ LUTAR</button>
+              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar</button>
             </div>
 
-            <!-- Slot P2 -->
             <div class="slot" id="slot-p2">
-              <p class="slot-tag p2">JOGADOR 2 / CPU</p>
-              <div class="portrait" id="p2-portrait" title="Clique para trocar lutador"></div>
+              <p class="slot-tag p2">JOGADOR 2</p>
+              <img class="portrait-img" id="p2-portrait-img" src="assets/sprites/ui/portrait_fernanda.jpg" alt="Jogador 2" />
+              <div class="portrait" id="p2-portrait" hidden></div>
               <h3 id="p2-name">Fernanda</h3>
               <p class="archetype" id="p2-arch">Técnica · Feiticeira Felina</p>
-              <div class="p2-actions-row">
-                <button type="button" id="btn-p2-swap" class="swap-btn">Trocar (← / →)</button>
-                <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
+              <div class="roster" id="roster-p2">
+                <button type="button" class="roster-btn" data-pick="p2" data-char="evertinho">Everttinho</button>
+                <button type="button" class="roster-btn selected" data-pick="p2" data-char="fernanda">Fernanda</button>
+                <button type="button" class="roster-btn" data-pick="p2" data-char="nox">Nox</button>
               </div>
+              <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
             </div>
           </div>
         </div>
@@ -349,6 +352,33 @@
     }
     window.openMode = openMode;
 
+    var CHAR_ORDER = ["evertinho", "fernanda", "nox"];
+    var CHAR_META = {
+      evertinho: { name: "Everttinho", arch: "Peão · O Laçador Lendário", img: "assets/sprites/ui/portrait_evertinho.jpg" },
+      fernanda: { name: "Fernanda", arch: "Técnica · Feiticeira Felina", img: "assets/sprites/ui/portrait_fernanda.jpg" },
+      nox: { name: "Nox", arch: "Pesado · Brawler", img: "assets/sprites/ui/portrait_nox.jpg" }
+    };
+    function applyPick(side, charId) {
+      var meta = CHAR_META[charId];
+      if (!meta) return;
+      var img = document.getElementById(side === "p1" ? "p1-portrait-img" : "p2-portrait-img");
+      var name = document.getElementById(side === "p1" ? "p1-name" : "p2-name");
+      var arch = document.getElementById(side === "p1" ? "p1-arch" : "p2-arch");
+      if (img) img.src = meta.img;
+      if (name) name.textContent = meta.name;
+      if (arch) arch.textContent = meta.arch;
+      document.querySelectorAll(side === "p1" ? "#roster-p1 .roster-btn" : "#roster-p2 .roster-btn").forEach(function (b) {
+        b.classList.toggle("selected", b.getAttribute("data-char") === charId);
+      });
+      if (window.gameInstance) {
+        var idx = CHAR_ORDER.indexOf(charId);
+        if (idx >= 0) {
+          if (side === "p1") window.gameInstance.p1Pick = idx;
+          else window.gameInstance.p2Pick = idx;
+        }
+      }
+    }
+
     document.addEventListener("click", function (e) {
       if (e.target.closest("#btn-enter-title")) {
         enterRodeio(e);
@@ -359,6 +389,39 @@
         e.preventDefault();
         e.stopPropagation();
         openMode(hub.getAttribute("data-hub"));
+        return;
+      }
+      var roster = e.target.closest("[data-pick][data-char]");
+      if (roster) {
+        e.preventDefault();
+        applyPick(roster.getAttribute("data-pick"), roster.getAttribute("data-char"));
+        return;
+      }
+      if (e.target.closest("#btn-start")) {
+        e.preventDefault();
+        if (window.gameInstance && window.gameInstance.startFight) window.gameInstance.startFight();
+        return;
+      }
+      if (e.target.closest("#btn-charsel-back")) {
+        e.preventDefault();
+        hideScreen("screen-charsel");
+        showScreen("screen-menu");
+        if (window.gameInstance) window.gameInstance.setMode("menu");
+        return;
+      }
+      if (e.target.closest("#btn-cpu") && window.gameInstance) {
+        window.gameInstance.p2cpu = !window.gameInstance.p2cpu;
+        e.target.closest("#btn-cpu").textContent = window.gameInstance.p2cpu ? "P2: CPU" : "P2: Humano";
+        return;
+      }
+      if (e.target.closest("#btn-stage-next") && window.gameInstance) {
+        window.gameInstance.stagePick = (window.gameInstance.stagePick + 1) % 6;
+        if (window.gameInstance.renderCharSel) window.gameInstance.renderCharSel();
+        return;
+      }
+      if (e.target.closest("#btn-stage-prev") && window.gameInstance) {
+        window.gameInstance.stagePick = (window.gameInstance.stagePick + 5) % 6;
+        if (window.gameInstance.renderCharSel) window.gameInstance.renderCharSel();
       }
     });
     document.addEventListener("keydown", function (e) {
@@ -373,6 +436,6 @@
       if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
     }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=41"></script>
+  <script type="module" src="js/main.js?v=42"></script>
 </body>
 </html>

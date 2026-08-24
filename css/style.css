@@ -346,23 +346,59 @@ body.fullscreen-mode #app {
 /* ==========================================================================
    SELEÇÃO DE PERSONAGENS & ARENAS
    ========================================================================== */
+#screen-charsel {
+  overflow: auto;
+  padding: 8px;
+  align-content: center;
+}
 .charsel-wrap {
-  width: min(1060px, 95vw);
+  width: min(980px, 96vw);
   text-align: center;
   pointer-events: auto;
 }
 .charsel-header h2 {
   font-family: "Press Start 2P", monospace;
-  font-size: clamp(11px, 1.4vw, 17px);
-  margin-bottom: clamp(8px, 1.2vw, 16px);
+  font-size: clamp(10px, 1.2vw, 15px);
+  margin-bottom: 8px;
   color: #ffe9c9;
   text-shadow: 2px 2px 0 #3a2210, 0 0 12px rgba(255, 180, 90, 0.5);
 }
 .charsel-grid {
   display: grid;
-  grid-template-columns: 1fr 1.15fr 1fr;
-  gap: clamp(8px, 1.4vw, 18px);
-  align-items: center;
+  grid-template-columns: 1fr 0.9fr 1fr;
+  gap: clamp(6px, 1vw, 12px);
+  align-items: stretch;
+}
+.portrait-img {
+  width: 100%;
+  height: clamp(88px, 16vh, 148px);
+  object-fit: cover;
+  object-position: center 18%;
+  border: 2px solid #b98a52;
+  border-radius: 8px;
+  background: #14090a;
+  display: block;
+}
+.roster {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.roster-btn {
+  background: #351c0d;
+  border: 1px solid #8a5a2e;
+  color: #ffe9c9;
+  border-radius: 5px;
+  padding: 4px 7px;
+  font: 700 11px Outfit, sans-serif;
+  cursor: pointer;
+}
+.roster-btn.selected, .roster-btn:hover {
+  border-color: #ffd27a;
+  color: #ffd27a;
+  background: #573316;
 }
 
 .slot {

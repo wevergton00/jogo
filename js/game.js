@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=40";
-import { Fighter } from "./player.js?v=40";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=40";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=40";
-import { makeCpuInput } from "./ai.js?v=40";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=42";
+import { Fighter } from "./player.js?v=42";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=42";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=42";
+import { makeCpuInput } from "./ai.js?v=42";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -323,23 +323,29 @@ export class Game {
 
   renderCharSel() {
     const ids = CHARACTER_IDS;
-    const p1 = CHARACTERS[ids[this.p1Pick]];
-    const p2 = CHARACTERS[ids[this.p2Pick]];
+    const p1 = CHARACTERS[ids[this.p1Pick]] || CHARACTERS.evertinho;
+    const p2 = CHARACTERS[ids[this.p2Pick]] || CHARACTERS.fernanda;
 
     const p1Name = document.getElementById("p1-name");
     const p2Name = document.getElementById("p2-name");
     const p1Arch = document.getElementById("p1-arch");
     const p2Arch = document.getElementById("p2-arch");
-    const p1Port = document.getElementById("p1-portrait");
-    const p2Port = document.getElementById("p2-portrait");
+    const p1Img = document.getElementById("p1-portrait-img");
+    const p2Img = document.getElementById("p2-portrait-img");
 
     if (p1Name) p1Name.textContent = p1.name;
     if (p2Name) p2Name.textContent = p2.name;
     if (p1Arch) p1Arch.textContent = `${p1.archetype} · ${p1.title}`;
     if (p2Arch) p2Arch.textContent = `${p2.archetype} · ${p2.title}`;
+    if (p1Img) p1Img.src = `assets/sprites/${p1.portrait}`;
+    if (p2Img) p2Img.src = `assets/sprites/${p2.portrait}`;
 
-    if (p1Port) p1Port.style.backgroundImage = `url(assets/sprites/${p1.portrait})`;
-    if (p2Port) p2Port.style.backgroundImage = `url(assets/sprites/${p2.portrait})`;
+    document.querySelectorAll("#roster-p1 .roster-btn").forEach((b) => {
+      b.classList.toggle("selected", b.dataset.char === p1.id);
+    });
+    document.querySelectorAll("#roster-p2 .roster-btn").forEach((b) => {
+      b.classList.toggle("selected", b.dataset.char === p2.id);
+    });
 
     document.getElementById("slot-p1")?.classList.toggle("ready", this.p1Ready);
     document.getElementById("slot-p2")?.classList.toggle("ready", this.p2Ready);
@@ -362,27 +368,18 @@ export class Game {
       };
     }
 
-    const swapP1 = (e) => {
-      e?.preventDefault();
-      this.p1Pick = (this.p1Pick + 1) % ids.length;
-      this.audio.sfx("select");
-      this.renderCharSel();
-    };
-
-    const swapP2 = (e) => {
-      e?.preventDefault();
-      this.p2Pick = (this.p2Pick + 1) % ids.length;
-      this.audio.sfx("select");
-      this.renderCharSel();
-    };
-
-    if (p1Port) p1Port.onclick = swapP1;
-    const btnP1Swap = document.getElementById("btn-p1-swap");
-    if (btnP1Swap) btnP1Swap.onclick = swapP1;
-
-    if (p2Port) p2Port.onclick = swapP2;
-    const btnP2Swap = document.getElementById("btn-p2-swap");
-    if (btnP2Swap) btnP2Swap.onclick = swapP2;
+    document.querySelectorAll("[data-pick][data-char]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        const side = btn.dataset.pick;
+        const idx = ids.indexOf(btn.dataset.char);
+        if (idx < 0) return;
+        if (side === "p1") this.p1Pick = idx;
+        else this.p2Pick = idx;
+        this.audio.sfx("select");
+        this.renderCharSel();
+      };
+    });
 
     const btnStagePrev = document.getElementById("btn-stage-prev");
     if (btnStagePrev) {
