@@ -22,18 +22,17 @@ export const STAGES = {
       { x: 1120, y: 560 },
     ],
     draw(ctx, stage, frame, world) {
+      const grad = ctx.createLinearGradient(0, -100, 0, 800);
+      grad.addColorStop(0, "#2a0c18");
+      grad.addColorStop(0.35, "#8a1f14");
+      grad.addColorStop(0.7, "#d4531a");
+      grad.addColorStop(1, "#9c4826");
+      ctx.fillStyle = grad;
+      ctx.fillRect(-100, -200, 1800, 1100);
+
       const bg = world.sprites?.img("stages/barretos.jpg");
       if (bg) {
         ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
-      } else {
-        // Fallback se o PNG não carregar
-        const grad = ctx.createLinearGradient(0, -100, 0, 800);
-        grad.addColorStop(0, "#2a0c18");
-        grad.addColorStop(0.35, "#8a1f14");
-        grad.addColorStop(0.7, "#d4531a");
-        grad.addColorStop(1, "#9c4826");
-        ctx.fillStyle = grad;
-        ctx.fillRect(-100, -200, 1800, 1100);
       }
 
       // Holofotes e fogos por cima do PNG

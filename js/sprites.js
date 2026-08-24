@@ -16,6 +16,9 @@ export class SpriteBank {
       "stages/barretos.jpg",
       "stages/rooftop.jpg",
       "ui/menu_cenario.jpg",
+      "ui/portrait_evertinho.jpg",
+      "ui/portrait_fernanda.jpg",
+      "ui/portrait_nox.jpg",
     ];
 
     const characterKeys = Object.keys(this.manifest);
@@ -41,7 +44,7 @@ export class SpriteBank {
       const img = new Image();
       img.decoding = "async";
       const src =
-        rel.startsWith("stages/") || rel.startsWith("ui/")
+        rel.startsWith("stages/") || rel.startsWith("ui/menu_")
           ? "assets/" + rel
           : "assets/sprites/" + rel;
       const finish = (ok) => {

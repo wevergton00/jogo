@@ -74,6 +74,7 @@ body.fullscreen-mode #app {
   display: grid;
   place-items: center;
   z-index: 20;
+  background: transparent;
 }
 
 .screen {
@@ -685,11 +686,21 @@ body.fullscreen-mode #app {
 .hud-card.p1 { border-color: #ffd27a; }
 .hud-card.p2 { border-color: #ff74b1; text-align: right; }
 .hud-face {
-  width: 46px;
-  height: 46px;
+  width: 62px;
+  height: 62px;
   background: #1a0e08 center/cover;
   border-radius: 6px;
-  border: 1px solid #b98a52;
+  border: 2px solid #ffd27a;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.hud-card.p2 .hud-face { border-color: #ff74b1; }
+.hud-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
 }
 .hud-name { font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: #d4b896; }
 .hud-pct {

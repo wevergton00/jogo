@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=43";
-import { Fighter } from "./player.js?v=43";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=43";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=43";
-import { makeCpuInput } from "./ai.js?v=43";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=44";
+import { Fighter } from "./player.js?v=44";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=44";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=44";
+import { makeCpuInput } from "./ai.js?v=44";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -238,10 +238,13 @@ export class Game {
       show("screen-results");
     } else if (mode === "fight") {
       hud?.classList.remove("hidden");
-      hud && (hud.style.display = "");
+      if (hud) hud.style.display = "flex";
       if (this.training) trainingHud?.classList.remove("hidden");
       const overlay = document.getElementById("overlay");
-      if (overlay) overlay.style.pointerEvents = "none";
+      if (overlay) {
+        overlay.style.pointerEvents = "none";
+        overlay.style.background = "transparent";
+      }
       this.canvas?.focus();
       try {
         const stage = this.world?.stage;
@@ -401,6 +404,25 @@ export class Game {
       btnStageNext.onclick = (e) => {
         e.preventDefault();
         this.stagePick = (this.stagePick + 1) % STAGE_IDS.length;
+        this.audio.sfx("select");
+        this.renderCharSel();
+      };
+    }
+
+    const swapP1 = document.getElementById("btn-p1-swap");
+    if (swapP1) {
+      swapP1.onclick = (e) => {
+        e.preventDefault();
+        this.p1Pick = (this.p1Pick + 1) % ids.length;
+        this.audio.sfx("select");
+        this.renderCharSel();
+      };
+    }
+    const swapP2 = document.getElementById("btn-p2-swap");
+    if (swapP2) {
+      swapP2.onclick = (e) => {
+        e.preventDefault();
+        this.p2Pick = (this.p2Pick + 1) % ids.length;
         this.audio.sfx("select");
         this.renderCharSel();
       };
@@ -700,15 +722,23 @@ export class Game {
         el.style.display = "none";
       });
       const overlay = document.getElementById("overlay");
-      if (overlay) overlay.style.pointerEvents = "none";
+      if (overlay) {
+        overlay.style.pointerEvents = "none";
+        overlay.style.background = "transparent";
+      }
       const hud = document.getElementById("hud");
       if (hud) {
         hud.classList.remove("hidden");
-        hud.style.display = "";
+        hud.style.display = "flex";
       }
       this.updateHud();
       this.triggerNarratorBanner("LUTEM! SEGUUURA, PEÃO!");
       this.canvas?.focus();
+      try {
+        this.sprites.loadOne("stages/barretos.jpg");
+        this.sprites.loadOne(p1Char.portrait);
+        this.sprites.loadOne(p2Char.portrait);
+      } catch {}
     } catch (err) {
       console.error(err);
     }
@@ -1022,7 +1052,10 @@ export class Game {
         }
       }
 
-      if (this.input.menuOk || tthis.startFight();
+      if (this.input.menuOk || this.input.p1.lightPressed) {
+        this.audio.unlock();
+        this.audio.sfx("berrante");
+        this.startFight();
         return;
       }
 
@@ -1345,10 +1378,11 @@ export class Game {
         hpFill.classList.toggle("mid", ratio <= 0.55 && ratio > 0.28);
         hpFill.classList.toggle("low", ratio <= 0.28);
       }
+      const src = `assets/sprites/${p.char.portrait}`;
       const face = document.getElementById(`hud-face-${n}`);
-      if (face) {
-        face.style.backgroundImage = `url(assets/sprites/${p.char.portrait})`;
-      }
+      const faceImg = document.getElementById(`hud-face-img-${n}`);
+      if (faceImg) faceImg.src = src;
+      if (face) face.style.backgroundImage = `url(${src})`;
       const stocks = document.getElementById(`hud-stocks-${n}`);
       if (stocks) stocks.innerHTML = "";
 
@@ -1387,7 +1421,8 @@ export class Game {
     const w = this.canvas.width;
     const h = this.canvas.height;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#3a1608";
+    ctx.fillRect(0, 0, w, h);
 
     if (this.mode === "lasso_minigame") {
       this.drawLassoMinigame();
@@ -1502,7 +1537,7 @@ export class Game {
     if (this.showHitboxes) this.drawBoxes();
     ctx.restore();
 
-    if (this.mode === "fight" || this.mode === "pause") {
+    if ((this.mode === "fight" || this.mode === "pause") && document.getElementById("hud")?.classList.contains("hidden")) {
       this.drawScreenHpBars(ctx);
     }
 
@@ -1527,26 +1562,45 @@ export class Game {
       const max = f.maxHp || 100;
       const hp = Math.max(0, f.hp ?? max);
       const ratio = hp / max;
-      const barW = 360;
+      const barW = 300;
       const barH = 22;
-      const left = align === "left" ? x : x - barW;
+      const face = 58;
+      const gap = 8;
+      const faceX = align === "left" ? x : x - face;
+      const left = align === "left" ? x + face + gap : x - face - gap - barW;
+      const panelX = align === "left" ? x - 4 : left - 4;
+      const panelW = barW + face + gap + 8;
       ctx.save();
-      ctx.fillStyle = "rgba(10, 6, 3, 0.88)";
-      ctx.fillRect(left - 4, 14, barW + 8, 52);
+      ctx.fillStyle = "rgba(10, 6, 3, 0.9)";
+      ctx.fillRect(panelX, 12, panelW, 66);
       ctx.strokeStyle = f.port === "p1" ? "#ffd27a" : "#ff74b1";
       ctx.lineWidth = 2;
-      ctx.strokeRect(left - 4, 14, barW + 8, 52);
+      ctx.strokeRect(panelX, 12, panelW, 66);
+
+      const portrait = this.sprites.img(f.char.portrait);
+      ctx.fillStyle = "#1a0c08";
+      ctx.fillRect(faceX, 16, face, face);
+      if (portrait) {
+        ctx.drawImage(portrait, faceX, 16, face, face);
+      } else {
+        ctx.fillStyle = f.char.color || "#ffd27a";
+        ctx.fillRect(faceX, 16, face, face);
+      }
+      ctx.strokeStyle = "#ffe9c9";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(faceX, 16, face, face);
+
       ctx.font = "700 13px Outfit, sans-serif";
       ctx.fillStyle = "#ffe9c9";
       ctx.textAlign = align;
-      ctx.fillText(`${f.char.name}  ${Math.ceil(hp)} / ${max}`, align === "left" ? left : left + barW, 32);
+      ctx.fillText(`${f.char.name}  ${Math.ceil(hp)} / ${max}`, align === "left" ? left : left + barW, 34);
       ctx.fillStyle = "#1a0c08";
-      ctx.fillRect(left, 38, barW, barH);
+      ctx.fillRect(left, 40, barW, barH);
       ctx.fillStyle = this.hpColor(ratio);
-      ctx.fillRect(left, 38, Math.max(4, barW * ratio), barH);
+      ctx.fillRect(left, 40, Math.max(4, barW * ratio), barH);
       ctx.strokeStyle = "#ffe9c9";
       ctx.lineWidth = 1;
-      ctx.strokeRect(left, 38, barW, barH);
+      ctx.strokeRect(left, 40, barW, barH);
       ctx.restore();
     };
 
@@ -1761,12 +1815,6 @@ function applyProj(owner, victim, pr, world) {
     hitstun: 16,
     hitlag: 6,
     pull: pr.pull,
-    isLasso: pr.isLasso,
-  };
-  owner.facing = pr.facing;
-  applyHit(owner, victim, move, world);
-}
-,
     isLasso: pr.isLasso,
   };
   owner.facing = pr.facing;

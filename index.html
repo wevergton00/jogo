@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=43" />
+  <link rel="stylesheet" href="css/style.css?v=44" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -238,7 +238,9 @@
       <div id="hud" class="hidden">
         <!-- P1 HUD -->
         <div class="hud-card p1">
-          <div class="hud-face" id="hud-face-1"></div>
+          <div class="hud-face" id="hud-face-1">
+            <img id="hud-face-img-1" src="assets/sprites/ui/portrait_evertinho.jpg" alt="P1" />
+          </div>
           <div class="hud-info">
             <p class="hud-name" id="hud-name-1">Everttinho</p>
             <p class="hud-pct" id="hud-pct-1">100</p>
@@ -275,7 +277,9 @@
             </div>
             <div class="stocks" id="hud-stocks-2"></div>
           </div>
-          <div class="hud-face" id="hud-face-2"></div>
+          <div class="hud-face" id="hud-face-2">
+            <img id="hud-face-img-2" src="assets/sprites/ui/portrait_fernanda.jpg" alt="P2" />
+          </div>
         </div>
       </div>
 
@@ -449,6 +453,6 @@
       if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
     }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=43"></script>
+  <script type="module" src="js/main.js?v=44"></script>
 </body>
 </html>
