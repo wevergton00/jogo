@@ -10,38 +10,58 @@ export class SpriteBank {
     } catch {
       this.manifest = {};
     }
-    const extras = ["stages/rooftop.png", "ui/menu_cenario.png", "ui/menu_barretos.png"];
-    const keys = [...Object.keys(this.manifest), ...extras];
+
+    const extras = [
+      "ui/menu_barretos.jpg",
+      "stages/barretos.jpg",
+      "stages/rooftop.jpg",
+      "ui/menu_cenario.jpg",
+      "ui/portrait_evertinho.jpg",
+      "ui/portrait_fernanda.jpg",
+      "ui/portrait_nox.jpg",
+    ];
+
+    const characterKeys = Object.keys(this.manifest);
+    const all = [...characterKeys, ...extras];
     let done = 0;
-    await Promise.all(
-      keys.map(async (rel) => {
-        try {
-          const img = new Image();
-          img.decoding = "async";
-          const src =
-            rel.startsWith("stages/") || rel.startsWith("ui/")
-              ? "assets/" + rel
-              : "assets/sprites/" + rel;
-          img.src = src;
-          await new Promise((resolve, reject) => {
-            const t = setTimeout(() => reject(new Error("timeout " + rel)), 8000);
-            img.onload = () => {
-              clearTimeout(t);
-              resolve();
-            };
-            img.onerror = () => {
-              clearTimeout(t);
-              reject(new Error("fail " + rel));
-            };
-          });
-          this.images[rel] = img;
-        } catch (err) {
-          console.warn(err);
-        }
-        done++;
-        onProgress?.(done / keys.length);
-      })
-    );
+    const mark = () => {
+      done++;
+      onProgress?.(done / all.length);
+    };
+
+    // Primeiro os sprites de luta — o jogo pode abrir sem os fundos pesados
+    await Promise.all(characterKeys.map((rel) => this.loadOne(rel).finally(mark)));
+
+    // Fundos e menu em paralelo, sem travar o início
+    extras.forEach((rel) => {
+      this.loadOne(rel).finally(mark);
+    });
+  }
+
+  loadOne(rel) {
+    if (this.images[rel]) return Promise.resolve(this.images[rel]);
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.decoding = "async";
+      const src =
+        rel.startsWith("stages/") || rel.startsWith("ui/menu_")
+          ? "assets/" + rel
+          : "assets/sprites/" + rel;
+      const finish = (ok) => {
+        if (ok) this.images[rel] = img;
+        resolve(ok ? img : null);
+      };
+      const t = setTimeout(() => finish(false), 4000);
+      img.onload = () => {
+        clearTimeout(t);
+        finish(true);
+      };
+      img.onerror = () => {
+        clearTimeout(t);
+        finish(false);
+      };
+      img.src = src;
+    });
   }
 
   img(rel) {

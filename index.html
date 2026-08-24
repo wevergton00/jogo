@@ -3,96 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Barretos Clash</title>
-  <link rel="stylesheet" href="css/style.css?v=28" />
+  <title>Barretos Clash: A Lenda do Laço</title>
+  <link rel="stylesheet" href="css/style.css?v=44" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div id="app">
     <canvas id="game" width="1280" height="720" tabindex="0"></canvas>
 
     <div id="overlay">
+      <!-- Tela de Carregamento -->
       <section class="screen" id="screen-load">
         <div class="logo-wrap">
-          <p class="logo-kicker">platform fighter</p>
-          <h1 class="logo">AURORA<br/>CLASH</h1>
-          <p class="load-bar-label">Carregando arena…</p>
+          <p class="logo-kicker">Platform Fighter Brasileiro</p>
+          <h1 class="logo">BARRETOS<br/>CLASH</h1>
+          <p class="logo-sub">“Onde o laço é sua arma e o cavalo é seu parceiro.”</p>
+          <p class="load-bar-label">Carregando a arena de rodeio…</p>
           <div class="load-bar"><div id="load-fill"></div></div>
         </div>
       </section>
 
+      <!-- Tela de Título -->
       <section class="screen hidden" id="screen-title">
         <div class="logo-wrap">
-          <p class="logo-kicker">versus · protótipo</p>
-          <h1 class="logo">AURORA<br/>CLASH</h1>
-          <p class="blink" id="press-start">Pressione qualquer tecla</p>
+          <p class="logo-kicker">Platform Fighter Brasileiro</p>
+          <h1 class="logo">BARRETOS<br/>CLASH</h1>
+          <p class="logo-tagline">A LENDA DA FERRADURA DA AURORA</p>
+          <p class="logo-quote">“O laço é sua arma. O cavalo é seu parceiro.”</p>
+          <button type="button" id="btn-enter-title" class="cta-btn blink-btn">🤠 Entrar no Rodeio</button>
+          <p class="blink hint" id="press-start">Clique ou pressione qualquer tecla</p>
         </div>
       </section>
 
+      <!-- Menu Principal Bem Proporcionado -->
       <section class="screen hidden" id="screen-menu">
-        <div class="hub-panel">
-          <p class="hub-kicker">platform fighter</p>
-          <h2 class="hub-title">Menu Principal</h2>
-          <nav id="main-nav" class="hub-nav" aria-label="Menu principal">
-            <button type="button" class="hub-btn" data-hub="versus">
-              <span class="hub-ico">⚔️</span>
-              <span class="hub-txt"><strong>Versus</strong><small>2 jogadores locais</small></span>
-            </button>
-            <button type="button" class="hub-btn" data-hub="treino">
-              <span class="hub-ico">🥊</span>
-              <span class="hub-txt"><strong>Treinamento</strong><small>pratique seus golpes</small></span>
-            </button>
-            <button type="button" class="hub-btn" data-hub="arcade">
-              <span class="hub-ico">🕹️</span>
-              <span class="hub-txt"><strong>Arcade</strong><small>enfrente a CPU</small></span>
-            </button>
-            <button type="button" class="hub-btn" data-hub="opcoes">
-              <span class="hub-ico">⚙️</span>
-              <span class="hub-txt"><strong>Opções</strong><small>controles e teclas</small></span>
-            </button>
-          </nav>
-          <p class="hint">↑ ↓ navegar · Enter confirmar</p>
-        </div>
-      </section>
-
-      <section class="screen hidden" id="screen-charsel">
-        <div class="charsel">
-          <p class="charsel-kicker">quem vai lutar?</p>
-          <h2>Escolha os lutadores</h2>
-          <div class="charsel-grid">
-            <div class="slot" id="slot-p1">
-              <p class="slot-tag p1">P1</p>
-              <div class="portrait" id="p1-portrait" title="Clique para trocar"></div>
-              <h3 id="p1-name">Fernanda</h3>
-              <p class="archetype" id="p1-arch">Técnica</p>
-              <p class="slot-ctrl">A D trocar · J confirmar</p>
-            </div>
-            <div class="vs-badge">VS</div>
-            <div class="slot" id="slot-p2">
-              <p class="slot-tag p2">P2</p>
-              <div class="portrait" id="p2-portrait" title="Clique para trocar"></div>
-              <h3 id="p2-name">Evertinho</h3>
-              <p class="archetype" id="p2-arch">Peão</p>
-              <p class="slot-ctrl">← → trocar · 1 confirmar</p>
-              <button type="button" id="btn-cpu">P2: Humano</button>
+        <div class="menu-layout">
+          <!-- Coluna Esquerda: Apresentação e Identidade -->
+          <div class="menu-hero-card">
+            <div class="hero-badge">⭐ PLATFORM FIGHTER BRASILEIRO ⭐</div>
+            <h1 class="menu-hero-logo">BARRETOS<br/>CLASH</h1>
+            <p class="menu-hero-sub">A LENDA DO LAÇO</p>
+            <p class="menu-hero-quote">“O jogo de luta brasileiro em que o laço é sua arma e o cavalo é seu parceiro.”</p>
+            
+            <div class="menu-quick-ctrls">
+              <p class="ctrls-title">COMANDOS RÁPIDOS (P1)</p>
+              <div class="ctrls-grid">
+                <span><strong>WASD</strong> Mover / Pular</span>
+                <span><strong>J</strong> Laço / Ataque Leve</span>
+                <span><strong>L</strong> Tiro de Laço Forte</span>
+                <span><strong>K</strong> Laço Mágico</span>
+                <span><strong>O</strong> Cavalo Assistência</span>
+                <span><strong>H</strong> Super Golpe da Aurora</span>
+              </div>
             </div>
           </div>
-          <button type="button" id="btn-start" class="cta-btn">⚔️ Começar luta</button>
-          <p class="hint">Clique no retrato para trocar de lutador · Esc volta ao menu</p>
+
+          <!-- Coluna Direita: Grid de Opções de Jogo -->
+          <div class="menu-nav-card">
+            <div class="nav-card-header">
+              <p class="hub-kicker">Festa do Peão</p>
+              <h2 class="hub-title">Selecione o Modo</h2>
+            </div>
+            
+            <nav id="main-nav" class="hub-grid" aria-label="Menu principal">
+              <button type="button" class="hub-btn active" data-hub="versus"><span class="hub-ico">⚔️</span><span class="hub-txt"><strong>Versus</strong><small>2 jogadores ou vs CPU</small></span></button>
+              <button type="button" class="hub-btn" data-hub="historia"><span class="hub-ico">📖</span><span class="hub-txt"><strong>História</strong><small>A Lenda da Aurora</small></span></button>
+              <button type="button" class="hub-btn" data-hub="arcade"><span class="hub-ico">🕹️</span><span class="hub-txt"><strong>Arcade</strong><small>Sequência & Chefes</small></span></button>
+              <button type="button" class="hub-btn" data-hub="eight_sec"><span class="hub-ico">⏱️</span><span class="hub-txt"><strong>8 Segundos</strong><small>Desafio do Rodeio</small></span></button>
+              <button type="button" class="hub-btn" data-hub="lasso_target"><span class="hub-ico">🎯</span><span class="hub-txt"><strong>Tiro de Laço</strong><small>Precisão com Alvos</small></span></button>
+              <button type="button" class="hub-btn" data-hub="treino"><span class="hub-ico">🥊</span><span class="hub-txt"><strong>Treinamento</strong><small>Comandos & Combos</small></span></button>
+              <button type="button" class="hub-btn" data-hub="custom"><span class="hub-ico">🤠</span><span class="hub-txt"><strong>Armário</strong><small>Chapéus & Laços</small></span></button>
+              <button type="button" class="hub-btn" data-hub="opcoes"><span class="hub-ico">⚙️</span><span class="hub-txt"><strong>Opções</strong><small>Controles & Teclas</small></span></button>
+            </nav>
+            
+            <p class="menu-hint-footer">↑ ↓ ← → Navegar · Enter / Clique Selecionar</p>
+          </div>
         </div>
       </section>
 
+      <!-- Seleção de Personagens e Arenas -->
+      <section class="screen hidden" id="screen-charsel">
+        <div class="charsel-wrap">
+          <div class="charsel-header">
+            <p class="charsel-kicker">Duelo de Peões</p>
+            <h2>Escolha os Lutadores & Arena</h2>
+          </div>
+
+          <div class="charsel-grid">
+            <div class="slot" id="slot-p1">
+              <p class="slot-tag p1">JOGADOR 1</p>
+              <div class="portrait" id="p1-portrait" title="Clique para trocar lutador">
+                <img id="p1-portrait-img" src="assets/sprites/ui/portrait_evertinho.jpg" alt="P1" />
+              </div>
+              <h3 id="p1-name">Everttinho</h3>
+              <p class="archetype" id="p1-arch">Peão · O Laçador Lendário</p>
+              <button type="button" id="btn-p1-swap" class="swap-btn">Trocar Lutador</button>
+            </div>
+
+            <div class="vs-center-col">
+              <div class="vs-badge">VS</div>
+              <div class="stage-selector-box">
+                <span class="stage-label">ARENA DE COMBATE</span>
+                <div class="stage-nav-row">
+                  <button type="button" id="btn-stage-prev" class="stage-arrow-btn">◀</button>
+                  <div class="stage-info-text">
+                    <strong id="stage-name-display">Parque do Peão de Barretos</strong>
+                    <small id="stage-sub-display">Arena de Rodeio · Oscar Niemeyer</small>
+                  </div>
+                  <button type="button" id="btn-stage-next" class="stage-arrow-btn">▶</button>
+                </div>
+              </div>
+              <button type="button" id="btn-start" class="cta-btn start-fight-btn">⚔️ ENTRAR NA ARENA ⚔️</button>
+              <button type="button" id="btn-charsel-back" class="ghost-btn">Voltar ao Menu</button>
+            </div>
+
+            <div class="slot" id="slot-p2">
+              <p class="slot-tag p2">JOGADOR 2 / CPU</p>
+              <div class="portrait" id="p2-portrait" title="Clique para trocar lutador">
+                <img id="p2-portrait-img" src="assets/sprites/ui/portrait_fernanda.jpg" alt="P2" />
+              </div>
+              <h3 id="p2-name">Fernanda</h3>
+              <p class="archetype" id="p2-arch">Técnica · Feiticeira Felina</p>
+              <div class="p2-actions-row">
+                <button type="button" id="btn-p2-swap" class="swap-btn">Trocar Lutador</button>
+                <button type="button" id="btn-cpu" class="cpu-toggle-btn">P2: Humano</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modo História -->
+      <section class="screen hidden" id="screen-story">
+        <div class="story-card">
+          <p class="story-kicker">Modo História · A Lenda da Ferradura da Aurora</p>
+          <h2 id="story-title">Capítulo 1: O Desafio em Barretos</h2>
+          <p id="story-desc" class="story-desc"></p>
+          <div id="story-dialogue-box" class="story-dialogue-box"></div>
+          <div class="card-btn-row">
+            <button type="button" id="btn-story-start" class="cta-btn">🤠 Iniciar Batalha</button>
+            <button type="button" id="btn-story-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modo 8 Segundos -->
+      <section class="screen hidden" id="screen-eight-sec">
+        <div class="story-card">
+          <p class="story-kicker">Desafio do Rodeio Oficial</p>
+          <h2>⏱️ Os 8 Segundos de Glória</h2>
+          <p class="story-desc">
+            No rodeio brasileiro, aguentar 8 segundos sobre a fera é o que separa um peão comum de uma lenda viva!<br/><br/>
+            <strong>Regras:</strong> Sobreviva a todas as investidas furiosas do <strong>Touro de Ferro</strong> por exatamente <strong>8.00 segundos</strong> sem zerar a barra de vida.<br/>
+            Ao soar a buzina dos 8 segundos, você receberá a <strong>Super Fúria da Aurora</strong> para o contra-ataque da vitória!
+          </p>
+          <div class="card-btn-row">
+            <button type="button" id="btn-eight-sec-start" class="cta-btn" onclick="window.gameInstance && window.gameInstance.startEightSecFight()">🐂 Montar e Sobreviver!</button>
+            <button type="button" id="btn-eight-sec-back" class="ghost-btn" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modo Tiro de Laço Minigame -->
+      <section class="screen hidden" id="screen-lasso-game">
+        <div class="lasso-game-hud">
+          <p class="hint">Aperte <strong>J</strong> ou <strong>Ataque Leve</strong> para atirar o laço nos alvos que cruzam a pista!</p>
+        </div>
+      </section>
+
+      <!-- Armário do Peão (Personalização) -->
+      <section class="screen hidden" id="screen-custom">
+        <div class="menu-card wide">
+          <h2>🤠 Armário do Peão</h2>
+          <p class="kicker">Personalize o estilo e efeitos de Everttinho</p>
+          
+          <div class="custom-grid">
+            <div class="custom-sec">
+              <h3>Chapéus de Rodeio</h3>
+              <div class="custom-opts">
+                <button type="button" class="opt-btn active" data-hat="default">Tradicional de Barretos</button>
+                <button type="button" class="opt-btn" data-hat="black">Couro Preto Noturno</button>
+                <button type="button" class="opt-btn" data-hat="gold">Dourado da Aurora</button>
+                <button type="button" class="opt-btn" data-hat="straw">Palha do Cerrado</button>
+              </div>
+            </div>
+
+            <div class="custom-sec">
+              <h3>Cor e Efeito do Laço</h3>
+              <div class="custom-opts">
+                <button type="button" class="opt-btn active" data-lasso="gold">Laço Dourado da Aurora</button>
+                <button type="button" class="opt-btn" data-lasso="thunder">Laço Azul Elétrico</button>
+                <button type="button" class="opt-btn" data-lasso="fire">Laço Carmesim de Fogo</button>
+                <button type="button" class="opt-btn" data-lasso="leather">Laço Clássico de Couro</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-custom-back" class="cta-btn" style="margin-top:20px;" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Salvar e Voltar</button>
+        </div>
+      </section>
+
+      <!-- Opções -->
       <section class="screen hidden" id="screen-options">
         <div class="menu-card wide">
-          <h2>Opções</h2>
+          <h2>Configuração de Controles</h2>
+          <p class="kicker">Mapeamento de Teclas</p>
           <div id="options-body"></div>
-          <p class="hint">Clique uma ação e pressione a nova tecla</p>
-          <button type="button" id="opt-back" class="menu-item active">Voltar ao menu</button>
+          <p class="hint">Clique em uma ação e pressione a nova tecla no teclado</p>
+          <button type="button" id="opt-back" class="cta-btn" style="margin-top:16px;" onclick="window.gameInstance && window.gameInstance.setMode('menu')">Voltar ao Menu</button>
         </div>
       </section>
 
+      <!-- Pausa -->
       <section class="screen hidden" id="screen-pause">
         <div class="menu-card">
           <h2>Pausa</h2>
@@ -100,60 +224,235 @@
         </div>
       </section>
 
+      <!-- Resultados -->
       <section class="screen hidden" id="screen-results">
         <div class="menu-card">
           <p class="kicker" id="result-kicker">K.O.</p>
-          <h2 id="result-title">Vitória</h2>
-          <p id="result-sub"></p>
+          <h2 id="result-title">Vitória!</h2>
+          <p id="result-sub" class="result-sub"></p>
           <nav id="result-nav" class="menu-list"></nav>
         </div>
       </section>
 
+      <!-- HUD de Combate -->
       <div id="hud" class="hidden">
+        <!-- P1 HUD -->
         <div class="hud-card p1">
-          <div class="hud-face" id="hud-face-1"></div>
-          <div>
-            <p class="hud-name" id="hud-name-1">Fernanda</p>
-            <p class="hud-pct" id="hud-pct-1">0%</p>
+          <div class="hud-face" id="hud-face-1">
+            <img id="hud-face-img-1" src="assets/sprites/ui/portrait_evertinho.jpg" alt="P1" />
+          </div>
+          <div class="hud-info">
+            <p class="hud-name" id="hud-name-1">Everttinho</p>
+            <p class="hud-pct" id="hud-pct-1">100</p>
+            <div class="hp-bar-wrap">
+              <span class="hp-label">VIDA</span>
+              <div class="hp-bar"><div id="hud-hp-1" class="hp-fill" style="width:100%"></div></div>
+            </div>
+            <div class="super-bar-wrap">
+              <span class="super-label">AURORA</span>
+              <div class="super-bar"><div id="hud-super-1" class="super-fill"></div></div>
+            </div>
             <div class="stocks" id="hud-stocks-1"></div>
           </div>
         </div>
+
+        <!-- Centro: Combo e Timer -->
         <div class="hud-center">
           <p id="hud-combo"></p>
           <p id="hud-timer">∞</p>
         </div>
+
+        <!-- P2 HUD -->
         <div class="hud-card p2">
-          <div>
-            <p class="hud-name" id="hud-name-2">Evertinho</p>
-            <p class="hud-pct" id="hud-pct-2">0%</p>
+          <div class="hud-info">
+            <p class="hud-name" id="hud-name-2">Fernanda</p>
+            <p class="hud-pct" id="hud-pct-2">100</p>
+            <div class="hp-bar-wrap">
+              <span class="hp-label">VIDA</span>
+              <div class="hp-bar"><div id="hud-hp-2" class="hp-fill" style="width:100%"></div></div>
+            </div>
+            <div class="super-bar-wrap">
+              <span class="super-label">AURORA</span>
+              <div class="super-bar"><div id="hud-super-2" class="super-fill"></div></div>
+            </div>
             <div class="stocks" id="hud-stocks-2"></div>
           </div>
-          <div class="hud-face" id="hud-face-2"></div>
+          <div class="hud-face" id="hud-face-2">
+            <img id="hud-face-img-2" src="assets/sprites/ui/portrait_fernanda.jpg" alt="P2" />
+          </div>
         </div>
       </div>
 
-      <p id="help" class="hidden" style="display:none!important">
-        P1: WASD mover · J leve · K especial · L forte · I defesa · U agarrão · Esc pausa
-      </p>
-
-      <div id="pads" class="hidden" style="display:none!important;visibility:hidden!important;opacity:0;pointer-events:none" hidden>
-        <div class="pad-col">
-          <button type="button" data-act="left">◀</button>
-          <button type="button" data-act="up">▲ pulo</button>
-          <button type="button" data-act="right">▶</button>
-          <button type="button" data-act="down">▼</button>
-        </div>
-        <div class="pad-col">
-          <button type="button" data-act="light">leve</button>
-          <button type="button" data-act="special">especial</button>
-          <button type="button" data-act="strong">forte</button>
-          <button type="button" data-act="shield">defesa</button>
+      <!-- Painel de Dicas de Treinamento -->
+      <div id="training-hud" class="hidden">
+        <div class="training-card">
+          <h4>Comandos do Everttinho</h4>
+          <p><strong>J:</strong> Laço Chicote / Puxão · <strong>L:</strong> Tiro de Laço · <strong>K:</strong> Laço Mágico</p>
+          <p><strong>↓ + K ou O:</strong> Invocação do Cavalo "Trovão" (Assistência)</p>
+          <p><strong>H ou K+L (100% Aurora):</strong> Super Golpe "Grande Rodeio da Aurora"</p>
+          <p><strong>Duelo de Laços:</strong> Ativa ao colidir 2 laços — Esmague [J] para puxar!</p>
         </div>
       </div>
     </div>
-    <button type="button" id="btn-fullscreen" title="Alternar tela cheia" aria-label="Tela cheia">⛶ <span id="fs-label">Tela cheia</span></button>
+
+    <!-- Botão de Tela Cheia / Maximizar -->
+    <button type="button" id="btn-fullscreen" title="Alternar tela cheia (F)" aria-label="Tela cheia">
+      <span id="fs-icon">⛶</span> <span id="fs-label">Tela cheia</span>
+    </button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=28"></script>
+  <script>
+    function hideScreen(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("hidden");
+      el.style.display = "none";
+    }
+    function showScreen(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.style.display = "";
+    }
+    function enterRodeio(ev) {
+      if (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      hideScreen("screen-load");
+      hideScreen("screen-title");
+      showScreen("screen-menu");
+      if (window.gameInstance && typeof window.gameInstance.setMode === "function") {
+        window.gameInstance.setMode("menu");
+      }
+      return false;
+    }
+    window.enterRodeio = enterRodeio;
+
+    function openMode(id) {
+      hideScreen("screen-load");
+      hideScreen("screen-title");
+      hideScreen("screen-menu");
+      hideScreen("screen-charsel");
+      hideScreen("screen-story");
+      hideScreen("screen-eight-sec");
+      hideScreen("screen-lasso-game");
+      hideScreen("screen-custom");
+      hideScreen("screen-options");
+      if (id === "versus" || id === "arcade" || id === "treino") showScreen("screen-charsel");
+      else if (id === "historia") showScreen("screen-story");
+      else if (id === "eight_sec") showScreen("screen-eight-sec");
+      else if (id === "lasso_target") showScreen("screen-lasso-game");
+      else if (id === "custom") showScreen("screen-custom");
+      else if (id === "opcoes") showScreen("screen-options");
+      else showScreen("screen-menu");
+      if (window.gameInstance && typeof window.gameInstance.launchMenuChoice === "function") {
+        window.gameInstance.launchMenuChoice(id);
+      }
+    }
+    window.openMode = openMode;
+
+    var CHAR_ORDER = ["evertinho", "fernanda", "nox"];
+    var CHAR_META = {
+      evertinho: { name: "Everttinho", arch: "Peão · O Laçador Lendário", img: "assets/sprites/ui/portrait_evertinho.jpg" },
+      fernanda: { name: "Fernanda", arch: "Técnica · Feiticeira Felina", img: "assets/sprites/ui/portrait_fernanda.jpg" },
+      nox: { name: "Nox", arch: "Pesado · Brawler", img: "assets/sprites/ui/portrait_nox.jpg" }
+    };
+    var pick = { p1: 0, p2: 1 };
+    function paintPick(side) {
+      var id = CHAR_ORDER[pick[side]];
+      var meta = CHAR_META[id];
+      var img = document.getElementById(side === "p1" ? "p1-portrait-img" : "p2-portrait-img");
+      var name = document.getElementById(side === "p1" ? "p1-name" : "p2-name");
+      var arch = document.getElementById(side === "p1" ? "p1-arch" : "p2-arch");
+      if (img) img.src = meta.img;
+      if (name) name.textContent = meta.name;
+      if (arch) arch.textContent = meta.arch;
+      if (window.gameInstance) {
+        if (side === "p1") window.gameInstance.p1Pick = pick.p1;
+        else window.gameInstance.p2Pick = pick.p2;
+      }
+    }
+    function beginFight() {
+      document.querySelectorAll(".screen").forEach(function (el) {
+        el.classList.add("hidden");
+        el.style.display = "none";
+      });
+      var overlay = document.getElementById("overlay");
+      if (overlay) overlay.style.pointerEvents = "none";
+      var hud = document.getElementById("hud");
+      if (hud) {
+        hud.classList.remove("hidden");
+        hud.style.display = "";
+      }
+      if (window.gameInstance && typeof window.gameInstance.startFight === "function") {
+        try { window.gameInstance.startFight(); } catch (err) { console.error(err); }
+      }
+    }
+    window.beginFight = beginFight;
+
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("#btn-enter-title")) {
+        enterRodeio(e);
+        return;
+      }
+      var hub = e.target.closest("[data-hub]");
+      if (hub) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMode(hub.getAttribute("data-hub"));
+        return;
+      }
+      if (e.target.closest("#btn-p1-swap") || e.target.closest("#p1-portrait")) {
+        pick.p1 = (pick.p1 + 1) % CHAR_ORDER.length;
+        paintPick("p1");
+        return;
+      }
+      if (e.target.closest("#btn-p2-swap") || e.target.closest("#p2-portrait")) {
+        pick.p2 = (pick.p2 + 1) % CHAR_ORDER.length;
+        paintPick("p2");
+        return;
+      }
+      if (e.target.closest("#btn-start")) {
+        e.preventDefault();
+        e.stopPropagation();
+        beginFight();
+        return;
+      }
+      if (e.target.closest("#btn-charsel-back")) {
+        e.preventDefault();
+        hideScreen("screen-charsel");
+        showScreen("screen-menu");
+        if (window.gameInstance) window.gameInstance.setMode("menu");
+        return;
+      }
+      if (e.target.closest("#btn-cpu") && window.gameInstance) {
+        window.gameInstance.p2cpu = !window.gameInstance.p2cpu;
+        e.target.closest("#btn-cpu").textContent = window.gameInstance.p2cpu ? "P2: CPU" : "P2: Humano";
+        return;
+      }
+      if (e.target.closest("#btn-stage-next") && window.gameInstance) {
+        window.gameInstance.stagePick = (window.gameInstance.stagePick + 1) % 6;
+        if (window.gameInstance.renderCharSel) window.gameInstance.renderCharSel();
+        return;
+      }
+      if (e.target.closest("#btn-stage-prev") && window.gameInstance) {
+        window.gameInstance.stagePick = (window.gameInstance.stagePick + 5) % 6;
+        if (window.gameInstance.renderCharSel) window.gameInstance.renderCharSel();
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      var title = document.getElementById("screen-title");
+      if (!title || title.classList.contains("hidden")) return;
+      if (e.key === "Enter" || e.key === " ") enterRodeio(e);
+    });
+
+    setTimeout(function () {
+      hideScreen("screen-load");
+      var menu = document.getElementById("screen-menu");
+      if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
+    }, 1500);
+  </script>
+  <script type="module" src="js/main.js?v=44"></script>
 </body>
 </html>

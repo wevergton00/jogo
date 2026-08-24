@@ -1,5 +1,5 @@
 import { applyHit, hurtbox, worldHitbox } from "./combat.js";
-import { collideStage, tryLedge } from "./stage.js";
+import { collideStage, containInArena } from "./stage.js";
 
 let nextId = 1;
 
@@ -19,8 +19,12 @@ export class Fighter {
     this.stateDur = 0;
     this.grounded = true;
     this.jumpsLeft = char.jumps;
+    this.maxHp = 100;
+    this.hp = 100;
     this.percent = 0;
-    this.stocks = 3;
+    this.stocks = 1;
+    this.specialMeter = 25; // Começa com 25% para permitir assistência rápida
+    this.assistCooldown = 0;
     this.hitlag = 0;
     this.intangible = 0;
     this.shieldHp = 60;
@@ -38,6 +42,8 @@ export class Fighter {
     this.alive = true;
     this.cpu = false;
     this.grabTarget = null;
+    this.hatStyle = "default";
+    this.lassoSkin = "gold";
   }
 
   enter(state, dur = 0) {
@@ -50,16 +56,33 @@ export class Fighter {
   startMove(key, world) {
     const mv = this.char.moves[key];
     if (!mv) return;
+
+    if (mv.superMove) {
+      if (this.specialMeter < 100) return;
+      this.specialMeter = 0;
+      world.audio.sfx("super_activate");
+      world.shake = 14;
+      world.spawnFx("burst", this.x, this.y - 45, this.facing);
+    }
+
     this.move = { ...mv, key, hitDone: false };
     this.hitConnected = false;
-    this.enter(mv.projectile ? "special" : "attack", mv.startup + mv.active + mv.recovery);
+    this.enter(mv.projectile || mv.assist || mv.superMove ? "special" : "attack", mv.startup + mv.active + mv.recovery);
+
     if (mv.invuln) this.intangible = mv.invuln;
     if (mv.vy) {
       this.vy = mv.vy;
       this.grounded = false;
       if (key === "uspecial") this.usedUpSpecial = true;
     }
-    world.audio.sfx(mv.projectile ? "special" : "whoosh");
+
+    if (mv.isLasso) {
+      world.audio.sfx("lasso_throw");
+    } else if (mv.assist) {
+      world.audio.sfx(mv.assist.sound || "special");
+    } else {
+      world.audio.sfx(mv.projectile ? "special" : "whoosh");
+    }
   }
 
   canAct() {
@@ -72,9 +95,11 @@ export class Fighter {
       this.hitlag--;
       return;
     }
+
     this.prevY = this.y;
     if (this.intangible > 0) this.intangible--;
     if (this.dropThrough > 0) this.dropThrough--;
+    if (this.assistCooldown > 0) this.assistCooldown--;
     this.stateTime++;
     this.animTime++;
 
@@ -82,6 +107,7 @@ export class Fighter {
       if (this.stateTime > 50) this.respawn(world);
       return;
     }
+
     if (this.state === "respawn") {
       this.intangible = 90;
       this.vy = 3.2;
@@ -90,20 +116,12 @@ export class Fighter {
       this.physics(world);
       return;
     }
-    if (this.state === "win") return;
+
+    if (this.state === "lassoDuel" || this.state === "win") return;
 
     if (this.state === "ledge") {
-      if (input.jumpPressed || input.upPressed) {
-        this.vy = -this.char.jump;
-        this.jumpsLeft = this.char.jumps - 1;
-        this.enter("jump");
-      } else if (input.downPressed) {
-        this.enter("fall");
-      } else if (input.lightPressed) {
-        this.y = world.stage.ground.y;
-        this.enter("idle");
-        this.startMove("jab", world);
-      } else if (this.stateTime > 180) this.enter("fall");
+      this.y = world.stage.ground.y;
+      this.enter("idle");
       return;
     }
 
@@ -189,7 +207,6 @@ export class Fighter {
         this.facing = dir;
         const running = Math.abs(this.vx) > c.speed * 0.85;
         this.vx += dir * c.accel;
-        const cap = running || input.right && input.left ? c.runSpeed : Math.abs(this.vx) > 3.2 ? c.runSpeed : c.speed;
         this.vx = Math.max(-c.runSpeed, Math.min(c.runSpeed, this.vx));
         this.enter(Math.abs(this.vx) > 5.2 ? "run" : "walk");
       } else {
@@ -234,9 +251,23 @@ export class Fighter {
       world.audio.sfx("shield");
       return;
     }
+
     if (input.grabPressed) {
       this.startMove("throw", world);
       this.tryGrab(world);
+      return;
+    }
+
+    // Super Golpe (Barra de Aurora cheia)
+    if (this.specialMeter >= 100 && (input.superPressed || (input.strongPressed && input.specialPressed))) {
+      this.startMove("super", world);
+      return;
+    }
+
+    // Assistência dedicada de cavalo / companheiro
+    if (input.assistPressed && this.assistCooldown === 0) {
+      this.assistCooldown = 180;
+      this.startMove("dspecial", world);
       return;
     }
 
@@ -248,10 +279,12 @@ export class Fighter {
       else this.startMove("nspecial", world);
       return;
     }
+
     if (input.strongPressed) {
       this.startMove(aerial ? (input.down ? "dair" : input.up ? "uair" : "nair") : "strong", world);
       return;
     }
+
     if (input.lightPressed) {
       this.startMove(aerial ? (input.down ? "dair" : input.up ? "uair" : "nair") : "jab", world);
     }
@@ -263,16 +296,24 @@ export class Fighter {
       this.enter(this.grounded ? "idle" : "fall");
       return;
     }
+
     const t = this.stateTime;
     if (mv.vx && t >= mv.startup && t < mv.startup + mv.active) {
       this.vx = mv.vx * this.facing;
-    } else this.vx *= this.grounded ? 0.82 : 0.96;
+    } else {
+      this.vx *= this.grounded ? 0.82 : 0.96;
+    }
+
     if (!this.grounded) this.vy += this.char.gravity * 0.85;
     this.integrate();
     this.physics(world);
 
     if (t === mv.startup && mv.projectile) {
       world.spawnProjectile(this, mv.projectile);
+    }
+
+    if (t === mv.startup && mv.assist) {
+      world.spawnAssist(this, mv.assist);
     }
 
     if (t >= mv.startup && t < mv.startup + mv.active && mv.hitbox && !mv.hitDone) {
@@ -300,18 +341,23 @@ export class Fighter {
 
   tryGrab(world) {
     const box = {
-      x: this.facing === 1 ? this.x : this.x - 50,
+      x: this.facing === 1 ? this.x : this.x - 60,
       y: this.y - 70,
-      w: 50,
+      w: 60,
       h: 40,
     };
     for (const o of world.fighters) {
       if (o.id === this.id) continue;
       const h = hurtbox(o);
-      if (aabbOverlap(box, h) && o.state !== "launched") {
-        o.x = this.x + this.facing * 42;
+      if (aabbOverlap(box, h) && o.state !== "launched" && o.state !== "knockedOut") {
+        // Se ambos tentarem agarrão/laço quase simultaneamente, dispara Duelo de Laços!
+        if (o.state === "attack" && o.move && (o.move.isLasso || o.move.key === "throw")) {
+          world.triggerLassoDuel(this, o);
+          return;
+        }
+        o.x = this.x + this.facing * 44;
         o.y = this.y;
-        o.enter("hurt", 20);
+        o.enter("hurt", 22);
         applyHit(this, o, this.char.moves.throw, world);
       }
     }
@@ -319,7 +365,7 @@ export class Fighter {
 
   physics(world) {
     collideStage(this, world.stage);
-    tryLedge(this, world.stage);
+    containInArena(this, world.stage);
     if (this.grounded && this.state === "jump" && this.vy >= 0) {
       this.enter("idle");
       world.audio.sfx("land");
@@ -332,47 +378,51 @@ export class Fighter {
   }
 
   checkKo(world) {
-    const b = world.stage.blast;
-    if (this.x < b.l || this.x > b.r || this.y > b.b || this.y < b.t) {
-      this.stocks--;
-      this.enter("knockedOut", 50);
-      this.intangible = 999;
-      world.audio.sfx("ko");
-      world.shake = 16;
-      world.spawnFx("explode", this.x, Math.min(this.y, b.b - 20), this.facing);
-      if (this.stocks <= 0) {
-        this.alive = false;
-        world.onKo?.(this);
-      }
+    if (!this.alive) return;
+    if ((this.hp ?? 100) > 0) return;
+    if (world.training) {
+      this.hp = this.maxHp;
+      return;
     }
+    this.hp = 0;
+    this.stocks = 0;
+    this.alive = false;
+    this.enter("knockedOut", 70);
+    this.intangible = 999;
+    world.audio.sfx("ko");
+    world.shake = 16;
+    world.spawnFx("explode", this.x, this.y - 40, this.facing);
+    world.onKo?.(this);
   }
 
   respawn(world) {
-    if (this.stocks <= 0) {
+    if (this.stocks <= 0 || this.hp <= 0) {
       this.alive = false;
       return;
     }
     const s = world.stage.spawn[this.port === "p1" ? 0 : 1];
     this.x = s.x;
-    this.y = 80;
+    this.y = world.stage.ground.y;
     this.vx = 0;
     this.vy = 0;
+    this.hp = this.maxHp;
     this.percent = 0;
     this.combo = 0;
     this.shieldHp = 60;
     this.usedUpSpecial = false;
-    this.enter("respawn", 70);
-    this.intangible = 90;
+    this.enter("idle");
+    this.intangible = 50;
   }
 
   currentSprite() {
     const a = this.char.anim;
     if (this.state === "win") return a.win[0];
-    if (this.state === "knockedOut") return a.down[0];
+    if (this.state === "knockedOut") return a.down ? a.down[0] : a.hurt[0];
     if (this.state === "hurt" || this.state === "launched") return a.hurt[0];
     if (this.state === "shield" || this.state === "crouch") return a.crouch[0];
-    if (this.state === "dodge") return a.jump[0];
-    if (this.state === "ledge") return a.jump[0];
+    if (this.state === "dodge" || this.state === "ledge") return a.jump[0];
+    if (this.state === "lassoDuel") return a.special ? a.special[0] : a.punch[0];
+
     if (this.move) {
       const key = this.move.sprite || "punch";
       return (a[key] || a.punch)[0];

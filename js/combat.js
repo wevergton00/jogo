@@ -19,49 +19,79 @@ export function worldHitbox(p, hb) {
 export function applyHit(attacker, victim, move, world) {
   if (victim.intangible > 0 || victim.state === "knockedOut" || victim.state === "respawn") return false;
   if (victim.state === "dodge") return false;
+
+  // Escudo
   if (victim.state === "shield") {
     victim.shieldHp -= move.shieldDamage ?? 4;
     world.audio.sfx("shield");
     world.spawnFx("burst", victim.x, victim.y - 40, attacker.facing);
+    attacker.specialMeter = Math.min(100, (attacker.specialMeter || 0) + 2);
     if (victim.shieldHp <= 0) {
       victim.enter("hurt", 40);
       victim.vx = 3.5 * attacker.facing;
-      victim.percent += 6;
+      applyLifeDamage(victim, 6);
     }
     return true;
   }
 
+  // Dano na barra de vida e medidor de especial
   const dmg = move.damage;
-  victim.percent += dmg;
+  applyLifeDamage(victim, dmg);
   victim.hitBy = attacker.id;
+
+  attacker.specialMeter = Math.min(100, (attacker.specialMeter || 0) + dmg * 0.8 + 3);
+  victim.specialMeter = Math.min(100, (victim.specialMeter || 0) + dmg * 0.4 + 2);
+
+  // Knockback mais curto — a arena tem paredes e ninguém cai
   const kb =
-    ((victim.percent / 10 + dmg * 0.55) * (move.kbScale ?? 0.4) + (move.kbBase ?? 8)) *
+    (dmg * 0.45 * (move.kbScale ?? 0.4) + (move.kbBase ?? 8) * 0.55) *
     (180 / (victim.char.weight + 100));
   const ang = ((move.angle ?? 45) * Math.PI) / 180;
   const dir = attacker.facing;
-  victim.vx = Math.cos(ang) * kb * 0.42 * dir;
-  victim.vy = -Math.sin(ang) * kb * 0.42;
+  victim.vx = Math.cos(ang) * kb * 0.32 * dir;
+  victim.vy = -Math.sin(ang) * kb * 0.28;
+
   if (move.angle === 270) {
     victim.vx = 1.2 * dir;
     victim.vy = Math.max(8, kb * 0.35);
   }
+
   if (move.pull) {
-    victim.x = attacker.x + attacker.facing * 46;
+    victim.x = attacker.x + attacker.facing * 48;
     victim.vx = 3.2 * attacker.facing;
     victim.vy = -4;
   }
-  const stun = Math.min(64, (move.hitstun ?? 12) + victim.percent * 0.12);
-  victim.hitlag = move.hitlag ?? 6;
+
+  const stun = Math.min(48, (move.hitstun ?? 12) + dmg * 0.35);
+  victim.hitlag = move.hitlag ?? (move.superMove ? 14 : 6);
   attacker.hitlag = Math.max(0, (move.hitlag ?? 6) - 2);
+
   victim.combo = (attacker.lastHitVictim === victim.id ? victim.combo : 0) + 1;
   attacker.lastHitVictim = victim.id;
   attacker.comboHits = victim.combo;
   world.combo = { owner: attacker.port, count: victim.combo, timer: 90 };
-  if (kb > 11 || victim.percent > 70) victim.enter("launched", stun);
-  else victim.enter("hurt", stun);
-  world.audio.sfx(dmg >= 12 ? "strong" : "hit");
-  world.shake = Math.min(14, 3 + dmg * 0.35);
+
+  if (victim.hp <= 0) {
+    victim.enter("launched", 24);
+  } else if (kb > 14 || move.superMove) {
+    victim.enter("launched", stun);
+  } else {
+    victim.enter("hurt", stun);
+  }
+
+  world.audio.sfx(move.superMove ? "super_activate" : dmg >= 12 ? "strong" : "hit");
+  world.shake = Math.min(18, (move.superMove ? 12 : 3) + dmg * 0.4);
   world.spawnFx("burst", victim.x, victim.y - 46, dir);
-  if (dmg >= 12) world.spawnFx("explode", victim.x, victim.y - 40, dir);
+  if (dmg >= 12 || move.superMove) {
+    world.spawnFx("explode", victim.x, victim.y - 40, dir);
+  }
+
   return true;
+}
+
+export function applyLifeDamage(fighter, amount) {
+  const max = fighter.maxHp || 100;
+  if (fighter.hp == null) fighter.hp = max;
+  fighter.hp = Math.max(0, fighter.hp - amount);
+  fighter.percent = Math.min(100, max - fighter.hp);
 }
