@@ -10,7 +10,12 @@ export class SpriteBank {
     } catch {
       this.manifest = {};
     }
-    const extras = ["stages/rooftop.png", "ui/menu_cenario.png", "ui/menu_barretos.png"];
+    const extras = [
+      "stages/barretos.png",
+      "stages/rooftop.png",
+      "ui/menu_cenario.png",
+      "ui/menu_barretos.png",
+    ];
     const keys = [...Object.keys(this.manifest), ...extras];
     let done = 0;
     await Promise.all(

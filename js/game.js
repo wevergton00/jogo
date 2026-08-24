@@ -671,6 +671,7 @@ export class Game {
     this.cam = { x: (p1.x + p2.x) / 2, y: 480, z: 1 };
     this.world = {
       stage,
+      sprites: this.sprites,
       fighters: [p1, p2],
       projectiles: [],
       assists: [],
@@ -1575,7 +1576,7 @@ export class Game {
   drawBackdrop() {
     const ctx = this.ctx;
     const menu = this.sprites.img("ui/menu_barretos.png") || this.sprites.img("ui/menu_cenario.png");
-    const bg = menu || this.sprites.img("stages/rooftop.png");
+    const bg = menu || this.sprites.img("stages/barretos.png") || this.sprites.img("stages/rooftop.png");
     if (bg) ctx.drawImage(bg, 0, 0, this.canvas.width, this.canvas.height);
   }
 
