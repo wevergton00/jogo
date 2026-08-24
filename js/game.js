@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=37";
-import { Fighter } from "./player.js?v=37";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=37";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=37";
-import { makeCpuInput } from "./ai.js?v=37";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=38";
+import { Fighter } from "./player.js?v=38";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=38";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=38";
+import { makeCpuInput } from "./ai.js?v=38";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -454,6 +454,7 @@ export class Game {
 
     this.initWorld(stage, p1, p2);
     this.setMode("fight");
+    this.updateHud();
     this.triggerNarratorBanner(`CAPÍTULO ${ch.num}: ${ch.title.toUpperCase()}`);
   }
 
@@ -490,6 +491,7 @@ export class Game {
 
     this.initWorld(stage, p1, p2);
     this.setMode("fight");
+    this.updateHud();
     this.triggerNarratorBanner("SEGUUURA OS 8 SEGUNDOS, PEÃO!");
   }
 
@@ -656,6 +658,10 @@ export class Game {
 
     const p1 = new Fighter(p1Char, "p1", stage.spawn[0].x, stage.spawn[0].y, 1);
     const p2 = new Fighter(p2Char, "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
+    p1.hp = p1.maxHp;
+    p1.percent = 0;
+    p2.hp = p2.maxHp;
+    p2.percent = 0;
     p2.cpu = this.p2cpu;
 
     if (this.training) {
@@ -667,6 +673,7 @@ export class Game {
 
     this.initWorld(stage, p1, p2);
     this.setMode("fight");
+    this.updateHud();
     this.triggerNarratorBanner("LUTEM! SEGUUURA, PEÃO!");
   }
 
@@ -1461,6 +1468,10 @@ export class Game {
     if (this.showHitboxes) this.drawBoxes();
     ctx.restore();
 
+    if (this.mode === "fight" || this.mode === "pause") {
+      this.drawScreenHpBars(ctx);
+    }
+
     // Narrador / Banner de Rodeio no topo
     if (this.narratorTimer > 0 && this.narratorBanner) {
       this.drawNarratorBanner(ctx);
@@ -1470,6 +1481,43 @@ export class Game {
     if (this.world.lassoDuel && this.world.lassoDuel.active) {
       this.drawLassoDuelHud(ctx);
     }
+  }
+
+  drawScreenHpBars(ctx) {
+    const fighters = this.world?.fighters;
+    if (!fighters || fighters.length < 2) return;
+    const [p1, p2] = fighters;
+    const W = this.canvas.width;
+
+    const draw = (f, x, align) => {
+      const max = f.maxHp || 100;
+      const hp = Math.max(0, f.hp ?? max);
+      const ratio = hp / max;
+      const barW = 360;
+      const barH = 22;
+      const left = align === "left" ? x : x - barW;
+      ctx.save();
+      ctx.fillStyle = "rgba(10, 6, 3, 0.88)";
+      ctx.fillRect(left - 4, 14, barW + 8, 52);
+      ctx.strokeStyle = f.port === "p1" ? "#ffd27a" : "#ff74b1";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(left - 4, 14, barW + 8, 52);
+      ctx.font = "700 13px Outfit, sans-serif";
+      ctx.fillStyle = "#ffe9c9";
+      ctx.textAlign = align;
+      ctx.fillText(`${f.char.name}  ${Math.ceil(hp)} / ${max}`, align === "left" ? left : left + barW, 32);
+      ctx.fillStyle = "#1a0c08";
+      ctx.fillRect(left, 38, barW, barH);
+      ctx.fillStyle = this.hpColor(ratio);
+      ctx.fillRect(left, 38, Math.max(4, barW * ratio), barH);
+      ctx.strokeStyle = "#ffe9c9";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left, 38, barW, barH);
+      ctx.restore();
+    };
+
+    draw(p1, 24, "left");
+    draw(p2, W - 24, "right");
   }
 
   hpColor(ratio) {
