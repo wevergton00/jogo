@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=35";
-import { Fighter } from "./player.js?v=35";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=35";
-import { hurtbox, worldHitbox, aabb, applyHit } from "./combat.js?v=35";
-import { makeCpuInput } from "./ai.js?v=35";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=36";
+import { Fighter } from "./player.js?v=36";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=36";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=36";
+import { makeCpuInput } from "./ai.js?v=36";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -482,6 +482,7 @@ export class Game {
     const p2 = new Fighter(CHARACTERS.touro_ferro, "p2", stage.spawn[1].x, stage.spawn[1].y, -1);
     p2.cpu = true;
     this.p2cpu = true;
+    p2.hp = p2.maxHp;
     p2.percent = 0;
 
     this.eightSecTimer = 8.0;
@@ -660,6 +661,8 @@ export class Game {
     if (this.training) {
       p1.stocks = 99;
       p2.stocks = 99;
+      p1.hp = p1.maxHp;
+      p2.hp = p2.maxHp;
     }
 
     this.initWorld(stage, p1, p2);
@@ -672,6 +675,7 @@ export class Game {
     this.world = {
       stage,
       sprites: this.sprites,
+      training: this.training,
       fighters: [p1, p2],
       projectiles: [],
       assists: [],
@@ -771,7 +775,7 @@ export class Game {
     w.lassoDuel = null;
 
     winner.specialMeter = Math.min(100, winner.specialMeter + 40);
-    loser.percent += 16;
+    applyLifeDamage(loser, 16);
     loser.x = winner.x + winner.facing * 50;
     loser.enter("launched", 45);
     loser.vy = -8;
@@ -837,7 +841,7 @@ export class Game {
           <button class="menu-item" data-res="menu">Menu Principal</button>`;
       }
     } else {
-      if (sub) sub.textContent = winner ? `Dano acumulado: ${Math.floor(winner.percent)}%` : "";
+      if (sub) sub.textContent = winner ? `Vida restante: ${Math.ceil(winner.hp)} / ${winner.maxHp}` : "";
       if (nav) {
         nav.innerHTML = `
           <button class="menu-item active" data-res="rematch">Revanche</button>
@@ -1286,23 +1290,26 @@ export class Game {
       if (nameEl) {
         nameEl.textContent = p.char.name + (p.cpu ? " (CPU)" : "");
       }
+      const maxHp = p.maxHp || 100;
+      const hp = Math.max(0, p.hp ?? maxHp);
+      const ratio = hp / maxHp;
       const pct = document.getElementById(`hud-pct-${n}`);
       if (pct) {
-        pct.textContent = `${Math.floor(p.percent)}%`;
-        pct.style.color = p.percent > 100 ? "#ff4d4d" : p.char.color;
+        pct.textContent = `${Math.ceil(hp)}`;
+        pct.style.color = ratio <= 0.25 ? "#ff4d4d" : p.char.color;
+      }
+      const hpFill = document.getElementById(`hud-hp-${n}`);
+      if (hpFill) {
+        hpFill.style.width = `${Math.max(0, ratio * 100)}%`;
+        hpFill.classList.toggle("mid", ratio <= 0.55 && ratio > 0.28);
+        hpFill.classList.toggle("low", ratio <= 0.28);
       }
       const face = document.getElementById(`hud-face-${n}`);
       if (face) {
         face.style.backgroundImage = `url(assets/sprites/${p.char.portrait})`;
       }
       const stocks = document.getElementById(`hud-stocks-${n}`);
-      if (stocks) {
-        const nStocks = Math.min(8, p.stocks);
-        stocks.innerHTML = Array.from(
-          { length: nStocks },
-          () => `<span class="stock" style="background:${p.char.color}"></span>`
-        ).join("");
-      }
+      if (stocks) stocks.innerHTML = "";
 
       // Barra de Especial / Aurora
       const meterEl = document.getElementById(`hud-super-${n}`);

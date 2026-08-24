@@ -1,5 +1,5 @@
 import { applyHit, hurtbox, worldHitbox } from "./combat.js";
-import { collideStage, tryLedge } from "./stage.js";
+import { collideStage, containInArena } from "./stage.js";
 
 let nextId = 1;
 
@@ -19,8 +19,10 @@ export class Fighter {
     this.stateDur = 0;
     this.grounded = true;
     this.jumpsLeft = char.jumps;
+    this.maxHp = 100;
+    this.hp = 100;
     this.percent = 0;
-    this.stocks = 3;
+    this.stocks = 1;
     this.specialMeter = 25; // Começa com 25% para permitir assistência rápida
     this.assistCooldown = 0;
     this.hitlag = 0;
@@ -118,17 +120,8 @@ export class Fighter {
     if (this.state === "lassoDuel" || this.state === "win") return;
 
     if (this.state === "ledge") {
-      if (input.jumpPressed || input.upPressed) {
-        this.vy = -this.char.jump;
-        this.jumpsLeft = this.char.jumps - 1;
-        this.enter("jump");
-      } else if (input.downPressed) {
-        this.enter("fall");
-      } else if (input.lightPressed) {
-        this.y = world.stage.ground.y;
-        this.enter("idle");
-        this.startMove("jab", world);
-      } else if (this.stateTime > 180) this.enter("fall");
+      this.y = world.stage.ground.y;
+      this.enter("idle");
       return;
     }
 
@@ -372,7 +365,7 @@ export class Fighter {
 
   physics(world) {
     collideStage(this, world.stage);
-    tryLedge(this, world.stage);
+    containInArena(this, world.stage);
     if (this.grounded && this.state === "jump" && this.vy >= 0) {
       this.enter("idle");
       world.audio.sfx("land");
@@ -385,37 +378,40 @@ export class Fighter {
   }
 
   checkKo(world) {
-    const b = world.stage.blast;
-    if (this.x < b.l || this.x > b.r || this.y > b.b || this.y < b.t) {
-      this.stocks--;
-      this.enter("knockedOut", 50);
-      this.intangible = 999;
-      world.audio.sfx("ko");
-      world.shake = 16;
-      world.spawnFx("explode", this.x, Math.min(this.y, b.b - 20), this.facing);
-      if (this.stocks <= 0) {
-        this.alive = false;
-        world.onKo?.(this);
-      }
+    if (!this.alive) return;
+    if ((this.hp ?? 100) > 0) return;
+    if (world.training) {
+      this.hp = this.maxHp;
+      return;
     }
+    this.hp = 0;
+    this.stocks = 0;
+    this.alive = false;
+    this.enter("knockedOut", 70);
+    this.intangible = 999;
+    world.audio.sfx("ko");
+    world.shake = 16;
+    world.spawnFx("explode", this.x, this.y - 40, this.facing);
+    world.onKo?.(this);
   }
 
   respawn(world) {
-    if (this.stocks <= 0) {
+    if (this.stocks <= 0 || this.hp <= 0) {
       this.alive = false;
       return;
     }
     const s = world.stage.spawn[this.port === "p1" ? 0 : 1];
     this.x = s.x;
-    this.y = 80;
+    this.y = world.stage.ground.y;
     this.vx = 0;
     this.vy = 0;
+    this.hp = this.maxHp;
     this.percent = 0;
     this.combo = 0;
     this.shieldHp = 60;
     this.usedUpSpecial = false;
-    this.enter("respawn", 70);
-    this.intangible = 90;
+    this.enter("idle");
+    this.intangible = 50;
   }
 
   currentSprite() {

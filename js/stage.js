@@ -7,7 +7,7 @@ export const STAGES = {
     bgKey: "stages/barretos.png",
     width: 1600,
     height: 900,
-    ground: { x: 140, y: 560, w: 1320, h: 40 },
+    ground: { x: 70, y: 560, w: 1460, h: 40 },
     platforms: [
       { x: 280, y: 430, w: 280, h: 22, pass: true, label: "Feno Oeste (Bretes)" },
       { x: 1040, y: 430, w: 280, h: 22, pass: true, label: "Feno Leste (Juízes)" },
@@ -494,6 +494,36 @@ export function cloneStage(s) {
     blast: { ...s.blast },
     spawn: s.spawn.map((sp) => ({ ...sp })),
   };
+}
+
+/** Impede cair da arena: chão sólido e paredes laterais. */
+export function containInArena(p, stage) {
+  const g = stage.ground;
+  const pad = 22;
+  const left = g.x + pad;
+  const right = g.x + g.w - pad;
+  if (p.x < left) {
+    p.x = left;
+    if (p.vx < 0) p.vx *= -0.28;
+  } else if (p.x > right) {
+    p.x = right;
+    if (p.vx > 0) p.vx *= -0.28;
+  }
+
+  if (p.y > g.y) {
+    p.y = g.y;
+    if (p.vy > 0) p.vy = 0;
+    p.grounded = true;
+    p.jumpsLeft = p.char.jumps;
+    p.fastFall = false;
+    p.usedUpSpecial = false;
+  }
+
+  const ceiling = g.y - 430;
+  if (p.y < ceiling) {
+    p.y = ceiling;
+    if (p.vy < 0) p.vy *= -0.15;
+  }
 }
 
 export function collideStage(p, stage) {

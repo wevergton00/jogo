@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=35" />
+  <link rel="stylesheet" href="css/style.css?v=36" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -150,7 +150,7 @@
           <h2>⏱️ Os 8 Segundos de Glória</h2>
           <p class="story-desc">
             No rodeio brasileiro, aguentar 8 segundos sobre a fera é o que separa um peão comum de uma lenda viva!<br/><br/>
-            <strong>Regras:</strong> Sobreviva a todas as investidas furiosas do <strong>Touro de Ferro</strong> por exatamente <strong>8.00 segundos</strong> sem cair da arena.<br/>
+            <strong>Regras:</strong> Sobreviva a todas as investidas furiosas do <strong>Touro de Ferro</strong> por exatamente <strong>8.00 segundos</strong> sem zerar a barra de vida.<br/>
             Ao soar a buzina dos 8 segundos, você receberá a <strong>Super Fúria da Aurora</strong> para o contra-ataque da vitória!
           </p>
           <div class="card-btn-row">
@@ -235,7 +235,11 @@
           <div class="hud-face" id="hud-face-1"></div>
           <div class="hud-info">
             <p class="hud-name" id="hud-name-1">Everttinho</p>
-            <p class="hud-pct" id="hud-pct-1">0%</p>
+            <p class="hud-pct" id="hud-pct-1">100</p>
+            <div class="hp-bar-wrap">
+              <span class="hp-label">VIDA</span>
+              <div class="hp-bar"><div id="hud-hp-1" class="hp-fill"></div></div>
+            </div>
             <div class="super-bar-wrap">
               <span class="super-label">AURORA</span>
               <div class="super-bar"><div id="hud-super-1" class="super-fill"></div></div>
@@ -254,7 +258,11 @@
         <div class="hud-card p2">
           <div class="hud-info">
             <p class="hud-name" id="hud-name-2">Fernanda</p>
-            <p class="hud-pct" id="hud-pct-2">0%</p>
+            <p class="hud-pct" id="hud-pct-2">100</p>
+            <div class="hp-bar-wrap">
+              <span class="hp-label">VIDA</span>
+              <div class="hp-bar"><div id="hud-hp-2" class="hp-fill"></div></div>
+            </div>
             <div class="super-bar-wrap">
               <span class="super-label">AURORA</span>
               <div class="super-bar"><div id="hud-super-2" class="super-fill"></div></div>
@@ -283,6 +291,6 @@
     </button>
     <p id="fs-toast" role="status"></p>
   </div>
-  <script type="module" src="js/main.js?v=35"></script>
+  <script type="module" src="js/main.js?v=36"></script>
 </body>
 </html>
