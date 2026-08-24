@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Barretos Clash: A Lenda do Laço</title>
-  <link rel="stylesheet" href="css/style.css?v=40" />
+  <link rel="stylesheet" href="css/style.css?v=41" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -326,11 +326,39 @@
     }
     window.enterRodeio = enterRodeio;
 
+    function openMode(id) {
+      hideScreen("screen-load");
+      hideScreen("screen-title");
+      hideScreen("screen-menu");
+      hideScreen("screen-charsel");
+      hideScreen("screen-story");
+      hideScreen("screen-eight-sec");
+      hideScreen("screen-lasso-game");
+      hideScreen("screen-custom");
+      hideScreen("screen-options");
+      if (id === "versus" || id === "arcade" || id === "treino") showScreen("screen-charsel");
+      else if (id === "historia") showScreen("screen-story");
+      else if (id === "eight_sec") showScreen("screen-eight-sec");
+      else if (id === "lasso_target") showScreen("screen-lasso-game");
+      else if (id === "custom") showScreen("screen-custom");
+      else if (id === "opcoes") showScreen("screen-options");
+      else showScreen("screen-menu");
+      if (window.gameInstance && typeof window.gameInstance.launchMenuChoice === "function") {
+        window.gameInstance.launchMenuChoice(id);
+      }
+    }
+    window.openMode = openMode;
+
     document.addEventListener("click", function (e) {
-      if (e.target.closest("#btn-enter-title")) enterRodeio(e);
+      if (e.target.closest("#btn-enter-title")) {
+        enterRodeio(e);
+        return;
+      }
       var hub = e.target.closest("[data-hub]");
-      if (hub && window.gameInstance && window.gameInstance.launchMenuChoice) {
-        window.gameInstance.launchMenuChoice(hub.getAttribute("data-hub"));
+      if (hub) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMode(hub.getAttribute("data-hub"));
       }
     });
     document.addEventListener("keydown", function (e) {
@@ -345,6 +373,6 @@
       if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
     }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=40"></script>
+  <script type="module" src="js/main.js?v=41"></script>
 </body>
 </html>

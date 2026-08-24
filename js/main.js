@@ -1,7 +1,7 @@
-import { SpriteBank } from "./sprites.js?v=40";
-import { AudioSystem } from "./audio.js?v=40";
-import { InputManager } from "./input.js?v=40";
-import { Game } from "./game.js?v=40";
+import { SpriteBank } from "./sprites.js?v=41";
+import { AudioSystem } from "./audio.js?v=41";
+import { InputManager } from "./input.js?v=41";
+import { Game } from "./game.js?v=41";
 
 const canvas = document.getElementById("game");
 const fill = document.getElementById("load-fill");

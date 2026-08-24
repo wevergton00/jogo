@@ -184,7 +184,10 @@ export class Game {
     ];
     for (const id of ids) {
       const el = document.getElementById(id);
-      if (el) el.classList.add("hidden");
+      if (el) {
+        el.classList.add("hidden");
+        el.style.display = "none";
+      }
     }
 
     const hud = document.getElementById("hud");
@@ -193,37 +196,44 @@ export class Game {
     hud?.classList.add("hidden");
     trainingHud?.classList.add("hidden");
 
+    const show = (id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.style.display = "";
+    };
+
     if (mode === "title") {
-      document.getElementById("screen-title")?.classList.remove("hidden");
+      show("screen-title");
     } else if (mode === "menu") {
-      document.getElementById("screen-menu")?.classList.remove("hidden");
+      show("screen-menu");
       this.renderMenu();
       this.audio.playMusic("menu");
     } else if (mode === "charsel") {
-      document.getElementById("screen-charsel")?.classList.remove("hidden");
+      show("screen-charsel");
       this.p1Ready = false;
       this.p2Ready = this.p2cpu;
       this.renderCharSel();
     } else if (mode === "story_intro" || mode === "story_dialogue") {
-      document.getElementById("screen-story")?.classList.remove("hidden");
+      show("screen-story");
       this.renderStoryScreen();
     } else if (mode === "eight_sec_intro") {
-      document.getElementById("screen-eight-sec")?.classList.remove("hidden");
+      show("screen-eight-sec");
       this.renderEightSecScreen();
     } else if (mode === "lasso_minigame") {
-      document.getElementById("screen-lasso-game")?.classList.remove("hidden");
+      show("screen-lasso-game");
       this.startLassoMinigame();
     } else if (mode === "custom") {
-      document.getElementById("screen-custom")?.classList.remove("hidden");
+      show("screen-custom");
       this.renderCustomScreen();
     } else if (mode === "options") {
-      document.getElementById("screen-options")?.classList.remove("hidden");
+      show("screen-options");
       this.renderOptions();
     } else if (mode === "pause") {
-      document.getElementById("screen-pause")?.classList.remove("hidden");
+      show("screen-pause");
       this.renderPause();
     } else if (mode === "results") {
-      document.getElementById("screen-results")?.classList.remove("hidden");
+      show("screen-results");
     } else if (mode === "fight") {
       hud?.classList.remove("hidden");
       if (this.training) trainingHud?.classList.remove("hidden");
@@ -472,7 +482,10 @@ export class Game {
   }
 
   renderEightSecScreen() {
-    const startBtn = document.getElentDefault();
+    const startBtn = document.getElementById("btn-eight-sec-start");
+    if (startBtn) {
+      startBtn.onclick = (e) => {
+        e.preventDefault();
         this.audio.unlock();
         this.audio.sfx("eight_seconds_horn");
         this.startEightSecFight();
@@ -1737,12 +1750,6 @@ function applyProj(owner, victim, pr, world) {
     hitstun: 16,
     hitlag: 6,
     pull: pr.pull,
-    isLasso: pr.isLasso,
-  };
-  owner.facing = pr.facing;
-  applyHit(owner, victim, move, world);
-}
-,
     isLasso: pr.isLasso,
   };
   owner.facing = pr.facing;
