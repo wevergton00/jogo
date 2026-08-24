@@ -485,6 +485,14 @@ export const STAGES = {
 
 export const STAGE_IDS = ["barretos", "fazenda", "cerrado_tempestade", "curral_fantasma", "arena_aurora", "rooftop"];
 
+for (const stage of Object.values(STAGES)) {
+  stage.ground = { x: 40, y: 560, w: 1520, h: 48 };
+  stage.ledges = [
+    { x: 40, y: 560, dir: -1 },
+    { x: 1560, y: 560, dir: 1 },
+  ];
+}
+
 export function cloneStage(s) {
   return {
     ...s,

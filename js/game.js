@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=36";
-import { Fighter } from "./player.js?v=36";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=36";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=36";
-import { makeCpuInput } from "./ai.js?v=36";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=37";
+import { Fighter } from "./player.js?v=37";
+import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=37";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=37";
+import { makeCpuInput } from "./ai.js?v=37";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -1375,6 +1375,8 @@ export class Game {
       if (bg) ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
     }
 
+    this.drawLifeFloor(ctx);
+
     // Sombras dos lutadores
     for (const f of this.world.fighters) {
       if (!f.alive && f.state !== "knockedOut") continue;
@@ -1442,6 +1444,8 @@ export class Game {
         ctx.stroke();
         ctx.restore();
       }
+
+      this.drawFighterHpBar(ctx, f);
     }
 
     // Partículas de impacto
@@ -1466,6 +1470,65 @@ export class Game {
     if (this.world.lassoDuel && this.world.lassoDuel.active) {
       this.drawLassoDuelHud(ctx);
     }
+  }
+
+  hpColor(ratio) {
+    if (ratio <= 0.28) return "#ff3b3b";
+    if (ratio <= 0.55) return "#ffd027";
+    return "#3dff7a";
+  }
+
+  drawLifeFloor(ctx) {
+    const g = this.world.stage.ground;
+    const [p1, p2] = this.world.fighters;
+    const y = g.y + 8;
+    const h = 16;
+    const gap = 18;
+    const half = (g.w - gap) / 2;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(12, 6, 3, 0.78)";
+    ctx.fillRect(g.x, g.y + 2, g.w, 28);
+    ctx.strokeStyle = "#b98a52";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(g.x, g.y + 2, g.w, 28);
+
+    const drawStrip = (fighter, x, w, label) => {
+      const max = fighter.maxHp || 100;
+      const ratio = Math.max(0, (fighter.hp ?? max) / max);
+      ctx.fillStyle = "#1a0c08";
+      ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = this.hpColor(ratio);
+      ctx.fillRect(x, y, w * ratio, h);
+      ctx.strokeStyle = "#ffe9c9";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, w, h);
+      ctx.font = "700 11px Outfit, sans-serif";
+      ctx.fillStyle = "#fff4e3";
+      ctx.textAlign = "left";
+      ctx.fillText(`${label} ${Math.ceil(fighter.hp ?? max)}`, x + 6, y + 12);
+    };
+
+    drawStrip(p1, g.x + 8, half - 8, "P1");
+    drawStrip(p2, g.x + half + gap, half - 8, "P2");
+    ctx.restore();
+  }
+
+  drawFighterHpBar(ctx, f) {
+    const max = f.maxHp || 100;
+    const ratio = Math.max(0, (f.hp ?? max) / max);
+    const w = 64;
+    const x = f.x - w / 2;
+    const y = f.y - 98;
+    ctx.save();
+    ctx.fillStyle = "rgba(10, 6, 3, 0.8)";
+    ctx.fillRect(x - 1, y - 1, w + 2, 9);
+    ctx.fillStyle = this.hpColor(ratio);
+    ctx.fillRect(x, y, w * ratio, 7);
+    ctx.strokeStyle = "#ffe9c9";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, w, 7);
+    ctx.restore();
   }
 
   drawLassoRope(ctx) {
