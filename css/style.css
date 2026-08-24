@@ -52,8 +52,8 @@ body.fullscreen-mode #app {
   width: min(100vw, calc(100vh * 16 / 9));
   height: min(100vh, calc(100vw * 9 / 16));
   background:
-    url("../assets/ui/menu_barretos.png") center / cover no-repeat,
-    url("../assets/ui/menu_cenario.png") center / cover no-repeat,
+    url("../assets/ui/menu_barretos.jpg") center / cover no-repeat,
+    url("../assets/ui/menu_cenario.jpg") center / cover no-repeat,
     #120806;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
   overflow: hidden;
@@ -350,6 +350,9 @@ body.fullscreen-mode #app {
 #screen-charsel {
   overflow: auto;
   padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(14, 8, 4, 0.55) 0%, rgba(10, 5, 2, 0.82) 100%),
+    url("../assets/ui/menu_cenario.jpg") center / cover no-repeat;
 }
 .charsel-wrap {
   width: min(1060px, 95vw);
