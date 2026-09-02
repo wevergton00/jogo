@@ -1451,7 +1451,7 @@ export class Game {
       if (bg) ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
     }
 
-    this.drawLifeFloor(ctx);
+    // (barra de vida do chão removida — HUD do topo é a referência)
 
     // Sombras dos lutadores
     for (const f of this.world.fighters) {
