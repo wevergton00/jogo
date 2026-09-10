@@ -1,4 +1,16 @@
-const ACTIONS = ["left", "right", "up", "down", "light", "special", "strong", "shield", "grab"];
+const ACTIONS = [
+  "left",
+  "right",
+  "up",
+  "down",
+  "light",
+  "special",
+  "strong",
+  "shield",
+  "grab",
+  "assist",
+  "super",
+];
 
 export const DEFAULT_BINDS = {
   p1: {
@@ -11,6 +23,8 @@ export const DEFAULT_BINDS = {
     strong: "KeyL",
     shield: "KeyI",
     grab: "KeyU",
+    assist: "KeyO",
+    super: "KeyH",
   },
   p2: {
     left: "ArrowLeft",
@@ -22,6 +36,8 @@ export const DEFAULT_BINDS = {
     strong: "Digit3",
     shield: "Digit4",
     grab: "Digit0",
+    assist: "Digit5",
+    super: "Digit6",
   },
 };
 
@@ -35,6 +51,8 @@ const PAD_MAP = {
   strong: 3, // Y / triangle
   shield: 6, // LT
   grab: 5, // RB
+  assist: 4, // LB
+  super: 7, // RT
   jump: 0, // A
 };
 
@@ -66,6 +84,8 @@ export class InputManager {
     this.waiting = null;
     this.menuUp = false;
     this.menuDown = false;
+    this.menuLeft = false;
+    this.menuRight = false;
     this.menuOk = false;
     this.menuBack = false;
     this.pausePressed = false;
@@ -102,7 +122,9 @@ export class InputManager {
     this.anyPressed = this.pressedThisFrame.size > 0 || this.virtual.size > 0;
     this.menuUp = this.just("ArrowUp") || this.just("KeyW");
     this.menuDown = this.just("ArrowDown") || this.just("KeyS");
-    this.menuOk = this.just("Enter") || this.just("Space") || this.just("KeyJ");
+    this.menuLeft = this.just("ArrowLeft") || this.just("KeyA");
+    this.menuRight = this.just("ArrowRight") || this.just("KeyD");
+    this.menuOk = this.just("Enter") || this.just("Space") || this.just("KeyJ") || this.just("Digit1");
     this.menuBack = this.just("Escape") || this.just("Backspace");
     this.pausePressed = this.just("Escape") || this.just("KeyP");
 
@@ -120,8 +142,9 @@ export class InputManager {
     const binds = this.binds[port];
     const pad = navigator.getGamepads ? navigator.getGamepads()[padIndex] : null;
     for (const a of ACTIONS) {
+      const bind = binds[a] || DEFAULT_BINDS[port][a];
       const down =
-        this.keys.has(binds[a]) || this.padDown(pad, a) || (port === "p1" && this.virtual.has(a));
+        this.keys.has(bind) || this.padDown(pad, a) || (port === "p1" && this.virtual.has(a));
       state[a + "Pressed"] = down && !state[a];
       state[a + "Released"] = !down && state[a];
       state[a] = down;

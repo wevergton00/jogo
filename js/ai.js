@@ -1,8 +1,8 @@
 const DIFFICULTY = {
-  easy: { reaction: 22, aggro: 0.35, shield: 0.08, jump: 0.04 },
-  normal: { reaction: 12, aggro: 0.55, shield: 0.16, jump: 0.07 },
-  hard: { reaction: 6, aggro: 0.72, shield: 0.28, jump: 0.1 },
-  expert: { reaction: 3, aggro: 0.88, shield: 0.4, jump: 0.14 },
+  easy: { reaction: 24, aggro: 0.35, shield: 0.08, jump: 0.04, duelMash: 0.4, superFreq: 0.4 },
+  normal: { reaction: 12, aggro: 0.6, shield: 0.2, jump: 0.08, duelMash: 0.65, superFreq: 0.7 },
+  hard: { reaction: 6, aggro: 0.78, shield: 0.32, jump: 0.12, duelMash: 0.85, superFreq: 0.9 },
+  expert: { reaction: 2, aggro: 0.92, shield: 0.45, jump: 0.16, duelMash: 0.95, superFreq: 0.98 },
 };
 
 export function emptyInput() {
@@ -16,6 +16,8 @@ export function emptyInput() {
     strong: false,
     shield: false,
     grab: false,
+    assist: false,
+    super: false,
     jump: false,
     leftPressed: false,
     rightPressed: false,
@@ -26,15 +28,37 @@ export function emptyInput() {
     strongPressed: false,
     shieldPressed: false,
     grabPressed: false,
+    assistPressed: false,
+    superPressed: false,
     jumpPressed: false,
   };
+}
+
+function press(input, key) {
+  input[key] = true;
+  input[key + "Pressed"] = true;
 }
 
 export function makeCpuInput(self, foe, world, level = "normal", opts = {}) {
   const input = emptyInput();
   if (!foe || !foe.alive) return input;
 
+  // Modo Duelo de Laço
+  if (world.lassoDuel && world.lassoDuel.active) {
+    const d = DIFFICULTY[level] || DIFFICULTY.normal;
+    if (Math.random() < d.duelMash) {
+      press(input, "light");
+    }
+    return input;
+  }
+
+  // Modo Treinamento (Dummy)
   if (opts.dummy) {
+    if (opts.dummyMode === "jump") {
+      if (self.grounded && Math.random() < 0.1) press(input, "jump");
+    } else if (opts.dummyMode === "shield") {
+      input.shield = true;
+    }
     const offstage =
       self.x < world.stage.ground.x + 40 || self.x > world.stage.ground.x + world.stage.ground.w - 40;
     if (offstage || self.y > world.stage.ground.y + 40) {
@@ -47,51 +71,90 @@ export function makeCpuInput(self, foe, world, level = "normal", opts = {}) {
 
   const d = DIFFICULTY[level] || DIFFICULTY.normal;
   self._aiWait = (self._aiWait || 0) + 1;
-  if (self._aiWait < d.reaction && Math.random() > 0.2) return input;
+  if (self._aiWait < d.reaction && Math.random() > 0.25) return input;
+  self._aiWait = 0;
 
   const dx = foe.x - self.x;
-  const dist = Math.abs(dx);
+  const dy = foe.y - self.y;
+  const dist = Math.hypot(dx, dy);
+  const dir = Math.sign(dx);
+
+  // Recuperação quando fora do palco
   const offstage =
-    self.x < world.stage.ground.x + 40 || self.x > world.stage.ground.x + world.stage.ground.w - 40;
+    self.x < world.stage.ground.x - 20 ||
+    self.x > world.stage.ground.x + world.stage.ground.w + 20 ||
+    self.y > world.stage.ground.y + 20;
 
-  if (offstage || self.y > world.stage.ground.y + 30) {
+  if (offstage) {
     const mid = world.stage.ground.x + world.stage.ground.w / 2;
-    if (self.x < mid) press(input, "right");
-    else press(input, "left");
-    if (self.y > world.stage.ground.y && !self.usedUpSpecial) press(input, "special"), press(input, "up");
-    else press(input, "jump");
+    press(input, self.x < mid ? "right" : "left");
+    if (self.y > world.stage.ground.y - 40) {
+      if (self.jumpsLeft > 0) press(input, "jump");
+      else if (!self.usedUpSpecial) {
+        press(input, "up");
+        press(input, "special");
+      }
+    }
     return input;
   }
 
-  if (dx < -24) press(input, "left");
-  else if (dx > 24) press(input, "right");
-
-  if (foe.state === "attack" && Math.random() < d.shield) press(input, "shield");
-
-  if (dist > 280 && Math.random() < d.aggro * 0.4) {
+  // Super Golpe da Aurora quando barra cheia
+  if (self.specialMeter >= 100 && dist < 220 && Math.random() < d.superFreq) {
+    press(input, "super");
+    press(input, "strong");
     press(input, "special");
     return input;
   }
 
-  if (dist < 70 && Math.random() < d.aggro) {
-    if (Math.random() < 0.2) press(input, "grab");
-    else if (Math.random() < 0.35) press(input, "strong");
-    else press(input, "light");
-  } else if (dist < 140 && Math.random() < d.aggro * 0.5) {
+  // Invocação da Assistência do Cavalo em média distância
+  if (self.assistCooldown === 0 && dist > 140 && dist < 480 && Math.random() < 0.4) {
+    press(input, "assist");
+    press(input, "down");
     press(input, "special");
-    if (dx !== 0) press(input, dx > 0 ? "right" : "left");
+    return input;
   }
 
-  if (!self.grounded && Math.random() < 0.2) press(input, "light");
-  if (Math.random() < d.jump && self.grounded) press(input, "jump");
+  // Defesa / Esquiva se oponente atacar próximo
+  if (foe.state === "attack" && dist < 90 && Math.random() < d.shield) {
+    input.shield = true;
+    if (Math.random() < 0.3) {
+      press(input, dir > 0 ? "left" : "right");
+    }
+    return input;
+  }
+
+  // Movimento em direção ao oponente
+  if (dist > 110) {
+    press(input, dir > 0 ? "right" : "left");
+    if (Math.random() < d.jump && self.grounded) press(input, "jump");
+  } else if (dist < 40 && Math.random() < 0.3) {
+    press(input, dir > 0 ? "left" : "right");
+  }
+
+  // Combate e seleção de golpes
+  if (dist < 80) {
+    const r = Math.random();
+    if (r < 0.4) {
+      press(input, "light");
+    } else if (r < 0.7) {
+      press(input, "strong");
+    } else if (r < 0.88) {
+      press(input, "grab");
+    } else {
+      press(input, "special");
+    }
+  } else if (dist < 260) {
+    // Distância de Laço / Projéteis
+    const r = Math.random();
+    if (r < 0.4) {
+      press(input, "special"); // Laço Mágico ou Projétil
+    } else if (r < 0.7) {
+      press(input, dir > 0 ? "right" : "left");
+      press(input, "special"); // Laço do Trovão
+    } else if (r < 0.9) {
+      press(input, "strong"); // Tiro de Laço
+    }
+  }
+
   return input;
-}
-
-function press(input, name) {
-  input[name] = true;
-  input[name + "Pressed"] = true;
-  if (name === "jump") {
-    input.up = true;
-    input.upPressed = true;
-  }
 }
