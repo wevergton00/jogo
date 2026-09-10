@@ -2,9 +2,14 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#070714" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Barretos Clash: A Lenda do Laço</title>
   <link rel="stylesheet" href="css/style.css?v=44" />
+  <link rel="stylesheet" href="css/mobile.css?v=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -12,6 +17,14 @@
 <body>
   <div id="app">
     <canvas id="game" width="1280" height="720" tabindex="0"></canvas>
+
+    <div id="portrait-warning" role="status" aria-live="polite">
+      <div class="portrait-warning-card">
+        <span class="portrait-warning-icon" aria-hidden="true">↻</span>
+        <strong>Gire o celular</strong>
+        <span>Barretos Clash foi feito para jogar na horizontal.</span>
+      </div>
+    </div>
 
     <div id="overlay">
       <!-- Tela de Carregamento -->
@@ -300,6 +313,25 @@
       <span id="fs-icon">⛶</span> <span id="fs-label">Tela cheia</span>
     </button>
     <p id="fs-toast" role="status"></p>
+
+    <div id="touch-controls" aria-label="Controles de toque do jogador 1">
+      <div class="touch-dpad" aria-label="Movimento">
+        <button type="button" class="touch-btn touch-up" data-action="up" aria-label="Pular">▲</button>
+        <button type="button" class="touch-btn touch-left" data-action="left" aria-label="Mover para a esquerda">◀</button>
+        <button type="button" class="touch-btn touch-down" data-action="down" aria-label="Agachar">▼</button>
+        <button type="button" class="touch-btn touch-right" data-action="right" aria-label="Mover para a direita">▶</button>
+      </div>
+      <div class="touch-actions" aria-label="Ações">
+        <button type="button" class="touch-btn touch-action touch-shield" data-action="shield" aria-label="Defender">DEF</button>
+        <button type="button" class="touch-btn touch-action touch-grab" data-action="grab" aria-label="Agarrar">AG</button>
+        <button type="button" class="touch-btn touch-action touch-assist" data-action="assist" aria-label="Invocar o cavalo">🐎</button>
+        <button type="button" class="touch-btn touch-action touch-special" data-action="special" aria-label="Ataque especial">ESP</button>
+        <button type="button" class="touch-btn touch-action touch-strong" data-action="strong" aria-label="Ataque forte">FOR</button>
+        <button type="button" class="touch-btn touch-action touch-light" data-action="light" aria-label="Ataque leve">LAÇO</button>
+        <button type="button" class="touch-btn touch-action touch-super" data-action="super" aria-label="Super golpe">SUPER</button>
+      </div>
+      <button type="button" id="touch-pause" class="touch-btn touch-pause" aria-label="Pausar">Ⅱ</button>
+    </div>
   </div>
   <script>
     function hideScreen(id) {
@@ -453,6 +485,6 @@
       if (menu && menu.classList.contains("hidden")) showScreen("screen-title");
     }, 1500);
   </script>
-  <script type="module" src="js/main.js?v=44"></script>
+  <script type="module" src="js/main.js?v=45"></script>
 </body>
 </html>

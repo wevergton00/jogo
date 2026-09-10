@@ -11,6 +11,65 @@ const sprites = new SpriteBank();
 const audio = new AudioSystem();
 const input = new InputManager();
 
+const touchDevice =
+  navigator.maxTouchPoints > 0 || window.matchMedia?.("(pointer: coarse)").matches;
+if (touchDevice) document.body.classList.add("touch-device");
+
+function setupTouchControls() {
+  const controls = document.getElementById("touch-controls");
+  if (!controls) return;
+
+  const pressed = new Map();
+  const release = (button) => {
+    const action = button?.dataset.action;
+    if (!action) return;
+    input.setVirtualAction(action, false);
+    button.classList.remove("pressed");
+    if (button.hasPointerCapture?.(pressed.get(button))) {
+      button.releasePointerCapture(pressed.get(button));
+    }
+    pressed.delete(button);
+  };
+
+  controls.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const action = button.dataset.action;
+      input.setVirtualAction(action, true);
+      button.classList.add("pressed");
+      pressed.set(button, event.pointerId);
+      button.setPointerCapture?.(event.pointerId);
+    });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach((type) => {
+      button.addEventListener(type, (event) => {
+        event.preventDefault();
+        release(button);
+      });
+    });
+  });
+
+  window.addEventListener("pointerup", () => {
+    [...pressed.keys()].forEach(release);
+  });
+
+  const pause = document.getElementById("touch-pause");
+  pause?.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    input.pressVirtualPause();
+    pause.classList.add("pressed");
+  });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach((type) => {
+    pause?.addEventListener(type, (event) => {
+      event.preventDefault();
+      pause.classList.remove("pressed");
+    });
+  });
+}
+
+setupTouchControls();
+
 function hideLoad() {
   const load = document.getElementById("screen-load");
   if (load) {

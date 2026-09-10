@@ -76,3 +76,36 @@ python3 -m http.server 8080
 ```
 
 Abra no navegador em `http://localhost:8080` e prepare-se para o rodeio!
+
+## 📱 Versão Mobile (Android e iOS)
+
+O jogo agora usa **Capacitor** para reaproveitar a mesma versão HTML5 em um app nativo Android e iOS, sem reescrever a lógica de combate. No celular, a partida abre em modo horizontal e mostra controles virtuais de toque; teclado e gamepad continuam funcionando na versão web.
+
+### Pré-requisitos
+
+- **Android:** Node.js, Android Studio e Android SDK configurados. O projeto está configurado para **Android 6.0 (API 23) ou superior**.
+- **iOS:** macOS, Xcode e CocoaPods configurados. O projeto está configurado para **iOS 14 ou superior**. A geração do projeto pode ser feita em qualquer sistema, mas a compilação e assinatura do iPhone precisam ser feitas no Xcode em um Mac.
+
+### Sincronizar o jogo
+
+```bash
+npm install
+npm run cap:sync
+```
+
+### Abrir no Android Studio ou Xcode
+
+```bash
+npm run cap:open:android
+npm run cap:open:ios
+```
+
+No Android Studio, escolha um celular ou emulador e pressione **Run** para gerar um APK de teste. No Xcode, selecione um iPhone ou simulador, escolha a assinatura da equipe e pressione **Run**. Para distribuir o app, use **Build > Generate Signed Bundle / APK** no Android Studio ou **Product > Archive** no Xcode.
+
+Para gerar rapidamente o APK de debug pela linha de comando:
+
+```bash
+npm run build:android
+```
+
+O identificador configurado para as duas plataformas é `br.com.barretosclash.game`. Depois de alterar arquivos do jogo, execute `npm run cap:sync` novamente antes de testar o app nativo.

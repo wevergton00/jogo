@@ -169,6 +169,8 @@ export class Game {
 
   setMode(mode) {
     this.mode = mode;
+    document.body.classList.toggle("mode-fight", mode === "fight");
+    document.body.classList.toggle("mode-lasso-minigame", mode === "lasso_minigame");
     const overlay = document.getElementById("overlay");
     if (overlay) overlay.style.pointerEvents = mode === "fight" ? "none" : "auto";
     const ids = [
