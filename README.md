@@ -84,7 +84,7 @@ O jogo agora usa **Capacitor** para reaproveitar a mesma versão HTML5 em um app
 ### Pré-requisitos
 
 - **Android:** Node.js, Android Studio e Android SDK configurados. O projeto está configurado para **Android 6.0 (API 23) ou superior**.
-- **iOS:** macOS, Xcode e CocoaPods configurados. O projeto está configurado para **iOS 14 ou superior**. A geração do projeto pode ser feita em qualquer sistema, mas a compilação e assinatura do iPhone precisam ser feitas no Xcode em um Mac.
+- **iOS:** macOS e **Xcode 26 ou superior**. O projeto usa **Capacitor 8.5.2** e está configurado para **iOS 15 ou superior**. A geração do projeto pode ser feita em qualquer sistema, mas a compilação e assinatura do iPhone precisam ser feitas no Xcode em um Mac. O projeto existente mantém CocoaPods; projetos novos do Capacitor 8 podem usar Swift Package Manager.
 
 ### Sincronizar o jogo
 
