@@ -17,7 +17,8 @@
     "check:js": "node --check js/ai.js && node --check js/audio.js && node --check js/characters.js && node --check js/combat.js && node --check js/game.js && node --check js/input.js && node --check js/main.js && node --check js/player.js && node --check js/sprites.js",
     "check:config": "node --check scripts/build-web.mjs && node --check scripts/verify-config.mjs && node scripts/verify-config.mjs",
     "start": "python3 -m http.server 8080",
-    "build:android": "npm run cap:sync && cd android && ./gradlew assembleDebug"
+    "build:android": "npm run cap:sync && cd android && ./gradlew assembleDebug",
+    "build:ios:release": "bash scripts/build-ios-release.sh"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

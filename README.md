@@ -109,3 +109,14 @@ npm run build:android
 ```
 
 O identificador configurado para as duas plataformas é `br.com.barretosclash.game`. Depois de alterar arquivos do jogo, execute `npm run cap:sync` novamente antes de testar o app nativo.
+
+### Publicar na App Store
+
+O projeto inclui o manifesto de privacidade da Apple e um script de Release que gera um arquivo `.xcarchive` e exporta o `.ipa` com assinatura automática. No Mac, depois de instalar o Xcode 26+, CocoaPods e iniciar sessão na sua conta Apple Developer, execute:
+
+```bash
+export APPLE_TEAM_ID="SEU_TEAM_ID_DA_APPLE"
+npm run build:ios:release
+```
+
+O arquivo exportado será salvo em `build/AppStore/`. O `APPLE_TEAM_ID` não deve ser gravado no repositório. Antes do primeiro upload, crie no App Store Connect um registro para o Bundle ID `br.com.barretosclash.game`, confira o nome, ícone, classificação etária, privacidade e screenshots, e então envie o build pelo Organizer do Xcode ou pelo Transporter.
