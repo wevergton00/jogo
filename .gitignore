@@ -10,3 +10,7 @@ android/capacitor-cordova-android-plugins/
 android/local.properties
 ios/App/App/public/
 ios/App/Pods/
+
+# Python tooling
+__pycache__/
+*.pyc

@@ -1,5 +1,5 @@
-import { applyHit, hurtbox, worldHitbox } from "./combat.js";
-import { collideStage, containInArena } from "./stage.js";
+import { applyHit, hurtbox, worldHitbox } from "./combat.js?v=44";
+import { collideStage, containInArena } from "./stage.js?v=44";
 
 let nextId = 1;
 
