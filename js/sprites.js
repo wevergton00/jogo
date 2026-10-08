@@ -45,7 +45,7 @@ export class SpriteBank {
       img.decoding = "async";
       const src =
         rel.startsWith("stages/") || rel.startsWith("ui/menu_")
-          ? "assets/" + rel
+          ? "assets/" + rel + "?v=2"
           : "assets/sprites/" + rel;
       const finish = (ok) => {
         if (ok) this.images[rel] = img;

@@ -1,8 +1,8 @@
-import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=44";
-import { Fighter } from "./player.js?v=44";
-import { STAGES, STAGE_IDS, cloneStage } from "./stage.js?v=44";
-import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=44";
-import { makeCpuInput } from "./ai.js?v=44";
+import { CHARACTERS, CHARACTER_IDS, ALL_CHARACTER_IDS } from "./characters.js?v=46";
+import { Fighter } from "./player.js?v=46";
+import { STAGES, STAGE_IDS, cloneStage, makeStageEvent, stepStageEvent } from "./stage.js?v=46";
+import { hurtbox, worldHitbox, aabb, applyHit, applyLifeDamage } from "./combat.js?v=46";
+import { makeCpuInput } from "./ai.js?v=46";
 
 const MENU = [
   { id: "versus", label: "Versus", icon: "⚔️", sub: "2 jogadores ou vs CPU" },
@@ -138,6 +138,7 @@ export class Game {
 
     this.narratorBanner = "";
     this.narratorTimer = 0;
+    this.koAlarmFor = null;
 
     this.setupGlobalEvents();
   }
@@ -746,6 +747,7 @@ export class Game {
 
   initWorld(stage, p1, p2) {
     this.cam = { x: (p1.x + p2.x) / 2, y: 480, z: 1 };
+    this.koAlarmFor = null;
     this.world = {
       stage,
       sprites: this.sprites,
@@ -760,6 +762,10 @@ export class Game {
       frame: 0,
       finished: false,
       lassoDuel: null,
+      stageEvent: makeStageEvent(stage),
+      banner: (t) => this.triggerNarratorBanner(t),
+      camX: 800,
+      camY: 420,
       spawnFx: (kind, x, y, dir) => this.spawnFx(kind, x, y, dir),
       spawnProjectile: (owner, spec) => this.spawnProjectile(owner, spec),
       spawnAssist: (owner, spec) => this.spawnAssist(owner, spec),
@@ -1106,6 +1112,8 @@ export class Game {
 
     const w = this.world;
     w.frame++;
+    w.camX = this.cam.x;
+    w.camY = this.cam.y;
 
     if (this.narratorTimer > 0) this.narratorTimer--;
 
@@ -1144,6 +1152,8 @@ export class Game {
     this.updateProjectiles();
     this.updateAssists();
     this.updateParticles();
+    stepStageEvent(w);
+    this.updateKoAlarm(w);
 
     if (w.shake > 0) w.shake *= 0.84;
     if (w.combo) {
@@ -1283,6 +1293,8 @@ export class Game {
     w.projectiles = w.projectiles.filter((pr) => {
       pr.age++;
       pr.x += pr.vx;
+      // Terraço Neon: "Hora do Show" acelera os projéteis
+      if (w.stageEvent?.kind === "neon" && w.stageEvent.active > 0) pr.x += pr.vx * 0.15;
       const box = { x: pr.x - pr.w / 2, y: pr.y - pr.h / 2, w: pr.w, h: pr.h };
 
       for (const f of w.fighters) {
@@ -1451,6 +1463,11 @@ export class Game {
       if (bg) ctx.drawImage(bg, -80, -40, stage.width + 80, stage.height);
     }
 
+    // Arenas Vivas: camada de fundo do evento (ex. piso neon pulsando)
+    if (stage && typeof stage.eventDrawBg === "function") {
+      stage.eventDrawBg(ctx, stage, this.world.frame, this.world);
+    }
+
     this.drawLifeFloor(ctx);
 
     // Sombras dos lutadores
@@ -1534,8 +1551,20 @@ export class Game {
       });
     }
 
+    // Arenas Vivas: camada frontal do evento (ex. ferradura, rajada, névoa, onda)
+    if (stage && typeof stage.eventDrawFg === "function") {
+      stage.eventDrawFg(ctx, stage, this.world.frame, this.world);
+    }
+
+    // Alarma de KO: holofotes convergindo no peão no limite
+    const koFighter = this.lowHpFighter();
+    if (koFighter) this.drawKoSpotlights(ctx, koFighter);
+
     if (this.showHitboxes) this.drawBoxes();
     ctx.restore();
+
+    // Alarma de KO: vinheta vermelha pulsando na tela
+    if (koFighter) this.drawKoVignette(ctx);
 
     if ((this.mode === "fight" || this.mode === "pause") && document.getElementById("hud")?.classList.contains("hidden")) {
       this.drawScreenHpBars(ctx);
@@ -1550,6 +1579,66 @@ export class Game {
     if (this.world.lassoDuel && this.world.lassoDuel.active) {
       this.drawLassoDuelHud(ctx);
     }
+  }
+
+  lowHpFighter() {
+    if (this.training || !this.world || this.world.finished) return null;
+    let low = null;
+    let lowRatio = 1;
+    for (const f of this.world.fighters) {
+      if (!f.alive) continue;
+      const ratio = (f.hp ?? f.maxHp) / (f.maxHp || 100);
+      if (ratio <= 0.28 && ratio < lowRatio) {
+        low = f;
+        lowRatio = ratio;
+      }
+    }
+    return low;
+  }
+
+  updateKoAlarm(w) {
+    const low = this.lowHpFighter();
+    if (low && this.koAlarmFor !== low.port) {
+      this.koAlarmFor = low.port;
+      this.audio.sfx("berrante");
+      this.audio.sfx("cheer");
+      this.triggerNarratorBanner(`VAAAAI! ${low.char.name.toUpperCase()} ESTÁ NO LIMITE!`);
+    } else if (!low) {
+      this.koAlarmFor = null;
+    }
+  }
+
+  drawKoSpotlights(ctx, f) {
+    const fr = this.world.frame;
+    ctx.save();
+    const pulse = 0.22 + 0.18 * Math.sin(fr * 0.18);
+    for (let i = 0; i < 3; i++) {
+      const bx = f.x + Math.sin(fr * 0.05 + i * 2.1) * 130 + (i - 1) * 40;
+      ctx.globalAlpha = pulse;
+      ctx.fillStyle = i === 1 ? "#ff6a3d" : "#ffd27a";
+      ctx.beginPath();
+      ctx.moveTo(bx, -180);
+      ctx.lineTo(f.x - 34 + (i - 1) * 10, f.y - 20);
+      ctx.lineTo(f.x + 34 + (i - 1) * 10, f.y - 20);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  drawKoVignette(ctx) {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+    const pulse = 0.14 + 0.1 * Math.sin(this.world.frame * 0.15);
+    const g = ctx.createRadialGradient(cx, cy, h * 0.3, cx, cy, h * 0.72);
+    g.addColorStop(0, "rgba(180,10,10,0)");
+    g.addColorStop(1, `rgba(190,15,15,${pulse})`);
+    ctx.save();
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
   }
 
   drawScreenHpBars(ctx) {

@@ -56,6 +56,21 @@ Carregue sua barra de Aurora acertando golpes e vencendo Duelos de Laço para de
 
 ---
 
+## 🏟️ Arenas Vivas
+
+Cada arena tem um **evento ambiente com hora marcada** que afeta a luta, além de parallax multilayer e um **alarme de KO** (holofotes + vinheta vermelha + grito da torcida) quando um peão fica no limite:
+
+| Arena | Evento |
+| :--- | :--- |
+| **Parque do Peão de Barretos** | 🧲 *Ferradura da Sorte* dourada cai do teto — quem pega ganha **+25 de barra da Aurora** |
+| **Fazenda ao Pôr do Sol** | 🌾 O moinho gira rápido e **sopla uma rajada quente** que empurra os lutadores |
+| **Cerrado da Tempestade** | ⚡ *Rajada da Tempestade* em direção aleatória, anunciada por relâmpago e trovão |
+| **Curral Fantasma** | 👻 *Mares de Névoa* espectral fecham o curral, forçando o centro da arena |
+| **Arena da Aurora** | 🌌 *Onda da Aurora* cruza a arena e **restaura a vida** de quem estiver no caminho |
+| **Terraço Neon** | 🎶 *Hora do Show*: o piso pisca no beat e **projéteis ficam 15% mais rápidos** |
+
+---
+
 ## 🏟️ Arenas
 
 - **Arena de Rodeio Barretos:** Holofotes móveis, fardos de feno e torcida animada com chapéus de peão.
@@ -73,6 +88,13 @@ Abra o terminal e inicie um servidor HTTP local:
 
 ```bash
 python3 -m http.server 8080
+```
+
+Ou use o atalho:
+
+```bash
+./tools/run-server.sh        # porta padrão 8080
+./tools/run-server.sh 9000   # porta personalizada
 ```
 
 Abra no navegador em `http://localhost:8080` e prepare-se para o rodeio!
