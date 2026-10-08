@@ -70,10 +70,16 @@ function emptyState() {
 
 export class InputManager {
   constructor() {
-    this.binds = structuredClone(DEFAULT_BINDS);
+    this.binds = JSON.parse(JSON.stringify(DEFAULT_BINDS));
     try {
       const saved = localStorage.getItem("aurora-binds");
-      if (saved) this.binds = { ...DEFAULT_BINDS, ...JSON.parse(saved) };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        this.binds = {
+          p1: { ...DEFAULT_BINDS.p1, ...(parsed.p1 || {}) },
+          p2: { ...DEFAULT_BINDS.p2, ...(parsed.p2 || {}) },
+        };
+      }
     } catch {}
     this.keys = new Set();
     this.prev = new Set();
@@ -119,7 +125,9 @@ export class InputManager {
   }
 
   save() {
-    localStorage.setItem("aurora-binds", JSON.stringify(this.binds));
+    try {
+      localStorage.setItem("aurora-binds", JSON.stringify(this.binds));
+    } catch {}
   }
 
   remap(port, action) {

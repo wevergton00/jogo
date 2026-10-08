@@ -77,13 +77,28 @@ python3 -m http.server 8080
 
 Abra no navegador em `http://localhost:8080` e prepare-se para o rodeio!
 
-## 📱 Versão Mobile (Android e iOS)
+Para gerar o bundle web compartilhado entre computador, Android e iOS:
 
-O jogo agora usa **Capacitor** para reaproveitar a mesma versão HTML5 em um app nativo Android e iOS, sem reescrever a lógica de combate. No celular, a partida abre em modo horizontal e mostra controles virtuais de toque; teclado e gamepad continuam funcionando na versão web.
+```bash
+npm install
+npm run build:web
+```
+
+## 🖥️📱 Compatibilidade entre computador, Android e iOS
+
+O jogo usa uma única versão HTML5/JavaScript para os três ambientes. A mesma lógica de combate, fases, personagens, controles e assets é reaproveitada no navegador do computador, no app Android e no app iOS. No celular, a partida abre em modo horizontal e mostra controles virtuais de toque; teclado e gamepad continuam funcionando no computador e nos celulares compatíveis.
+
+| Ambiente | Entrega | Compatibilidade mínima | Entrada |
+| :--- | :--- | :--- | :--- |
+| Computador | Navegador moderno | Chrome, Edge, Firefox ou Safari atual | Teclado, mouse e gamepad USB/Bluetooth |
+| Android | Capacitor 8 | Android 7.0 (API 24) ou superior | Toque, teclado e gamepad |
+| iOS | Capacitor 8 | iOS 15 ou superior | Toque e gamepad compatível |
+
+O jogo mantém retrocompatibilidade de dados de controles salvos e usa detecção progressiva de recursos: quando um navegador ou WebView não oferece gamepad, tela cheia ou armazenamento local, os demais controles continuam disponíveis.
 
 ### Pré-requisitos
 
-- **Android:** Node.js, Android Studio e Android SDK configurados. O projeto está configurado para **Android 6.0 (API 23) ou superior**.
+- **Android:** Node.js 22+, Android Studio Otter 2025.2.1 ou superior e Android SDK 36. O projeto está configurado para **Android 7.0 (API 24) ou superior**.
 - **iOS:** macOS e **Xcode 26 ou superior**. O projeto usa **Capacitor 8.5.2** e está configurado para **iOS 15 ou superior**. A geração do projeto pode ser feita em qualquer sistema, mas a compilação e assinatura do iPhone precisam ser feitas no Xcode em um Mac. O projeto existente mantém CocoaPods; projetos novos do Capacitor 8 podem usar Swift Package Manager.
 
 ### Sincronizar o jogo
@@ -107,6 +122,14 @@ Para gerar rapidamente o APK de debug pela linha de comando:
 ```bash
 npm run build:android
 ```
+
+Para gerar o pacote Android Release:
+
+```bash
+npm run build:android:release
+```
+
+O APK/AAB Release ainda precisa ser assinado com uma chave da sua conta Google Play. Faça a assinatura pelo Android Studio ou configure um keystore privado; nunca coloque a senha ou o keystore no GitHub.
 
 O identificador configurado para as duas plataformas é `br.com.barretosclash.game`. Depois de alterar arquivos do jogo, execute `npm run cap:sync` novamente antes de testar o app nativo.
 

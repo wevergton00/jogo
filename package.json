@@ -18,6 +18,7 @@
     "check:config": "node --check scripts/build-web.mjs && node --check scripts/verify-config.mjs && node scripts/verify-config.mjs",
     "start": "python3 -m http.server 8080",
     "build:android": "npm run cap:sync && cd android && ./gradlew assembleDebug",
+    "build:android:release": "npm run cap:sync && cd android && ./gradlew assembleRelease",
     "build:ios:release": "bash scripts/build-ios-release.sh"
   },
   "dependencies": {
