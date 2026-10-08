@@ -1,5 +1,7 @@
 # 🤠 Barretos Clash: A Lenda do Laço
 
+**Versão atual: 1.2.0**
+
 > **“O jogo de luta brasileiro em que o laço é sua arma e o cavalo é seu parceiro.”**
 
 *Barretos Clash* é um jogo de luta e plataforma 2D (*platform fighter*) ambientado no universo dos rodeios e folclore brasileiro, combinando mecânicas profundas de combate, o inovador **Duelo de Laços**, **Assistência de Montaria** com o Cavalo Trovão, e a busca pela sagrada **Ferradura da Aurora**.
