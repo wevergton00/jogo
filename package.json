@@ -19,12 +19,46 @@
     "start": "python3 -m http.server 8080",
     "build:android": "npm run cap:sync && cd android && ./gradlew assembleDebug",
     "build:android:release": "npm run cap:sync && cd android && ./gradlew assembleRelease",
-    "build:ios:release": "bash scripts/build-ios-release.sh"
+    "build:ios:release": "bash scripts/build-ios-release.sh",
+    "build:windows": "electron-builder --win nsis --x64 --publish never"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",
     "@capacitor/cli": "^8.5.2",
     "@capacitor/core": "^8.5.2",
     "@capacitor/ios": "^8.5.2"
+  },
+  "devDependencies": {
+    "electron": "^38.8.6",
+    "electron-builder": "^26.15.3"
+  },
+  "main": "desktop/main.cjs",
+  "build": {
+    "appId": "br.com.barretosclash.game.desktop",
+    "productName": "Barretos Clash",
+    "artifactName": "Barretos-Clash-Setup-${version}-${arch}.${ext}",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/**/*",
+      "index.html",
+      "css/**/*",
+      "js/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Barretos Clash"
+    }
   }
 }
