@@ -1,5 +1,7 @@
 # 🤠 Barretos Clash: A Lenda do Laço
 
+**Versão atual: 1.2.0**
+
 > **“O jogo de luta brasileiro em que o laço é sua arma e o cavalo é seu parceiro.”**
 
 *Barretos Clash* é um jogo de luta e plataforma 2D (*platform fighter*) ambientado no universo dos rodeios e folclore brasileiro, combinando mecânicas profundas de combate, o inovador **Duelo de Laços**, **Assistência de Montaria** com o Cavalo Trovão, e a busca pela sagrada **Ferradura da Aurora**.
@@ -98,3 +100,70 @@ Ou use o atalho:
 ```
 
 Abra no navegador em `http://localhost:8080` e prepare-se para o rodeio!
+
+Para gerar o bundle web compartilhado entre computador, Android e iOS:
+
+```bash
+npm install
+npm run build:web
+```
+
+## 🖥️📱 Compatibilidade entre computador, Android e iOS
+
+O jogo usa uma única versão HTML5/JavaScript para os três ambientes. A mesma lógica de combate, fases, personagens, controles e assets é reaproveitada no navegador do computador, no app Android e no app iOS. No celular, a partida abre em modo horizontal e mostra controles virtuais de toque; teclado e gamepad continuam funcionando no computador e nos celulares compatíveis.
+
+| Ambiente | Entrega | Compatibilidade mínima | Entrada |
+| :--- | :--- | :--- | :--- |
+| Computador | Navegador moderno | Chrome, Edge, Firefox ou Safari atual | Teclado, mouse e gamepad USB/Bluetooth |
+| Android | Capacitor 8 | Android 7.0 (API 24) ou superior | Toque, teclado e gamepad |
+| iOS | Capacitor 8 | iOS 15 ou superior | Toque e gamepad compatível |
+
+O jogo mantém retrocompatibilidade de dados de controles salvos e usa detecção progressiva de recursos: quando um navegador ou WebView não oferece gamepad, tela cheia ou armazenamento local, os demais controles continuam disponíveis.
+
+### Pré-requisitos
+
+- **Android:** Node.js 22+, Android Studio Otter 2025.2.1 ou superior e Android SDK 36. O projeto está configurado para **Android 7.0 (API 24) ou superior**.
+- **iOS:** macOS e **Xcode 26 ou superior**. O projeto usa **Capacitor 8.5.2** e está configurado para **iOS 15 ou superior**. A geração do projeto pode ser feita em qualquer sistema, mas a compilação e assinatura do iPhone precisam ser feitas no Xcode em um Mac. O projeto existente mantém CocoaPods; projetos novos do Capacitor 8 podem usar Swift Package Manager.
+
+### Sincronizar o jogo
+
+```bash
+npm install
+npm run cap:sync
+```
+
+### Abrir no Android Studio ou Xcode
+
+```bash
+npm run cap:open:android
+npm run cap:open:ios
+```
+
+No Android Studio, escolha um celular ou emulador e pressione **Run** para gerar um APK de teste. No Xcode, selecione um iPhone ou simulador, escolha a assinatura da equipe e pressione **Run**. Para distribuir o app, use **Build > Generate Signed Bundle / APK** no Android Studio ou **Product > Archive** no Xcode.
+
+Para gerar rapidamente o APK de debug pela linha de comando:
+
+```bash
+npm run build:android
+```
+
+Para gerar o pacote Android Release:
+
+```bash
+npm run build:android:release
+```
+
+O APK/AAB Release ainda precisa ser assinado com uma chave da sua conta Google Play. Faça a assinatura pelo Android Studio ou configure um keystore privado; nunca coloque a senha ou o keystore no GitHub.
+
+O identificador configurado para as duas plataformas é `br.com.barretosclash.game`. Depois de alterar arquivos do jogo, execute `npm run cap:sync` novamente antes de testar o app nativo.
+
+### Publicar na App Store
+
+O projeto inclui o manifesto de privacidade da Apple e um script de Release que gera um arquivo `.xcarchive` e exporta o `.ipa` com assinatura automática. No Mac, depois de instalar o Xcode 26+, CocoaPods e iniciar sessão na sua conta Apple Developer, execute:
+
+```bash
+export APPLE_TEAM_ID="SEU_TEAM_ID_DA_APPLE"
+npm run build:ios:release
+```
+
+O arquivo exportado será salvo em `build/AppStore/`. O `APPLE_TEAM_ID` não deve ser gravado no repositório. Antes do primeiro upload, crie no App Store Connect um registro para o Bundle ID `br.com.barretosclash.game`, confira o nome, ícone, classificação etária, privacidade e screenshots, e então envie o build pelo Organizer do Xcode ou pelo Transporter.

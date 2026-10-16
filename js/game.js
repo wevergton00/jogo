@@ -170,6 +170,8 @@ export class Game {
 
   setMode(mode) {
     this.mode = mode;
+    document.body.classList.toggle("mode-fight", mode === "fight");
+    document.body.classList.toggle("mode-lasso-minigame", mode === "lasso_minigame");
     const overlay = document.getElementById("overlay");
     if (overlay) overlay.style.pointerEvents = mode === "fight" ? "none" : "auto";
     const ids = [
@@ -1468,7 +1470,7 @@ export class Game {
       stage.eventDrawBg(ctx, stage, this.world.frame, this.world);
     }
 
-    this.drawLifeFloor(ctx);
+    // (barra de vida do chao removida - HUD do topo e a referencia)
 
     // Sombras dos lutadores
     for (const f of this.world.fighters) {

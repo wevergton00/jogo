@@ -70,10 +70,16 @@ function emptyState() {
 
 export class InputManager {
   constructor() {
-    this.binds = structuredClone(DEFAULT_BINDS);
+    this.binds = JSON.parse(JSON.stringify(DEFAULT_BINDS));
     try {
       const saved = localStorage.getItem("aurora-binds");
-      if (saved) this.binds = { ...DEFAULT_BINDS, ...JSON.parse(saved) };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        this.binds = {
+          p1: { ...DEFAULT_BINDS.p1, ...(parsed.p1 || {}) },
+          p2: { ...DEFAULT_BINDS.p2, ...(parsed.p2 || {}) },
+        };
+      }
     } catch {}
     this.keys = new Set();
     this.prev = new Set();
@@ -90,6 +96,7 @@ export class InputManager {
     this.menuBack = false;
     this.pausePressed = false;
     this.virtual = new Set();
+    this.virtualPause = false;
 
     window.addEventListener("keydown", (e) => {
       if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
@@ -106,15 +113,35 @@ export class InputManager {
       this.keys.add(e.code);
     });
     window.addEventListener("keyup", (e) => this.keys.delete(e.code));
-    window.addEventListener("blur", () => this.keys.clear());
+    const clearInput = () => {
+      this.keys.clear();
+      this.virtual.clear();
+      this.virtualPause = false;
+    };
+    window.addEventListener("blur", clearInput);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearInput();
+    });
   }
 
   save() {
-    localStorage.setItem("aurora-binds", JSON.stringify(this.binds));
+    try {
+      localStorage.setItem("aurora-binds", JSON.stringify(this.binds));
+    } catch {}
   }
 
   remap(port, action) {
     this.waiting = { port, action };
+  }
+
+  setVirtualAction(action, down) {
+    if (!ACTIONS.includes(action)) return;
+    if (down) this.virtual.add(action);
+    else this.virtual.delete(action);
+  }
+
+  pressVirtualPause() {
+    this.virtualPause = true;
   }
 
   poll() {
@@ -126,7 +153,8 @@ export class InputManager {
     this.menuRight = this.just("ArrowRight") || this.just("KeyD");
     this.menuOk = this.just("Enter") || this.just("Space") || this.just("KeyJ") || this.just("Digit1");
     this.menuBack = this.just("Escape") || this.just("Backspace");
-    this.pausePressed = this.just("Escape") || this.just("KeyP");
+    this.pausePressed = this.just("Escape") || this.just("KeyP") || this.virtualPause;
+    this.virtualPause = false;
 
     this.fillPort("p1", this.p1, 0);
     this.fillPort("p2", this.p2, 1);
