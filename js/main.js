@@ -1,7 +1,7 @@
-import { SpriteBank } from "./sprites.js";
-import { AudioSystem } from "./audio.js";
-import { InputManager } from "./input.js";
-import { Game } from "./game.js";
+import { SpriteBank } from "./sprites.js?v=46";
+import { AudioSystem } from "./audio.js?v=46";
+import { InputManager } from "./input.js?v=46";
+import { Game } from "./game.js?v=46";
 
 const canvas = document.getElementById("game");
 const fill = document.getElementById("load-fill");
@@ -11,6 +11,65 @@ const sprites = new SpriteBank();
 const audio = new AudioSystem();
 const input = new InputManager();
 
+const touchDevice =
+  navigator.maxTouchPoints > 0 || window.matchMedia?.("(pointer: coarse)").matches;
+if (touchDevice) document.body.classList.add("touch-device");
+
+function setupTouchControls() {
+  const controls = document.getElementById("touch-controls");
+  if (!controls) return;
+
+  const pressed = new Map();
+  const release = (button) => {
+    const action = button?.dataset.action;
+    if (!action) return;
+    input.setVirtualAction(action, false);
+    button.classList.remove("pressed");
+    if (button.hasPointerCapture?.(pressed.get(button))) {
+      button.releasePointerCapture(pressed.get(button));
+    }
+    pressed.delete(button);
+  };
+
+  controls.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const action = button.dataset.action;
+      input.setVirtualAction(action, true);
+      button.classList.add("pressed");
+      pressed.set(button, event.pointerId);
+      button.setPointerCapture?.(event.pointerId);
+    });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach((type) => {
+      button.addEventListener(type, (event) => {
+        event.preventDefault();
+        release(button);
+      });
+    });
+  });
+
+  window.addEventListener("pointerup", () => {
+    [...pressed.keys()].forEach(release);
+  });
+
+  const pause = document.getElementById("touch-pause");
+  pause?.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    input.pressVirtualPause();
+    pause.classList.add("pressed");
+  });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach((type) => {
+    pause?.addEventListener(type, (event) => {
+      event.preventDefault();
+      pause.classList.remove("pressed");
+    });
+  });
+}
+
+setupTouchControls();
+
 function hideLoad() {
   const load = document.getElementById("screen-load");
   if (load) {
@@ -19,66 +78,159 @@ function hideLoad() {
   }
 }
 
+function showTitleScreen() {
+  hideLoad();
+  const title = document.getElementById("screen-title");
+  if (title) title.classList.remove("hidden");
+}
+
+function bootGame() {
+  if (window.gameInstance) return;
+  hideLoad();
+  const game = new Game(canvas, sprites, audio, input);
+  window.gameInstance = game;
+  game.setMode("title");
+  requestAnimationFrame((t) => game.tick(t));
+}
+
+// Se algo travar, o título abre mesmo assim
+const failSafe = setTimeout(() => {
+  showTitleScreen();
+  try {
+    bootGame();
+  } catch (err) {
+    console.error(err);
+  }
+}, 2500);
+
 try {
-  await sprites.load((p) => {
-    if (fill) fill.style.width = `${Math.floor(p * 100)}%`;
-  });
+  if (loadLabel) loadLabel.textContent = "Carregando o rodeio…";
+  await Promise.race([
+    sprites.load((p) => {
+      if (fill) fill.style.width = `${Math.max(8, Math.floor(p * 100))}%`;
+    }),
+    new Promise((resolve) => setTimeout(resolve, 2200)),
+  ]);
 } catch (err) {
   console.error(err);
-  if (loadLabel) loadLabel.textContent = "Alguns assets falharam — iniciando mesmo assim";
 }
 
-hideLoad();
-const game = new Game(canvas, sprites, audio, input);
+clearTimeout(failSafe);
+try {
+  bootGame();
+} catch (err) {
+  console.error(err);
+  showTitleScreen();
+}
 
-const pads = document.getElementById("pads");
-const hold = (act, down) => {
-  if (down) input.virtual.add(act);
-  else input.virtual.delete(act);
-};
-pads.querySelectorAll("button").forEach((btn) => {
-  const act = btn.dataset.act;
-  btn.addEventListener("pointerdown", (e) => {
-    e.preventDefault();
-    btn.setPointerCapture(e.pointerId);
-    audio.unlock();
-    hold(act, true);
-  });
-  btn.addEventListener("pointerup", () => hold(act, false));
-  btn.addEventListener("pointercancel", () => hold(act, false));
-  btn.addEventListener("lostpointercapture", () => hold(act, false));
-});
+// Fullscreen e Janela Cheia
+const fsBtn = document.getElementById("btn-fullscreen");
+const fsIcon = document.getElementById("fs-icon");
+const fsLabel = document.getElementById("fs-label");
+const fsToast = document.getElementById("fs-toast");
 
-document.getElementById("screen-title").addEventListener("pointerdown", () => {
+function showToast(msg) {
+  if (!fsToast) return;
+  fsToast.textContent = msg;
+  fsToast.classList.add("show");
+  setTimeout(() => fsToast.classList.remove("show"), 2200);
+}
+
+function isFullscreenActive() {
+  return (
+    document.body.classList.contains("fullscreen-mode") ||
+    !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    )
+  );
+}
+
+function updateFullscreenUI(active) {
+  if (fsIcon) fsIcon.textContent = active ? "🗗" : "⛶";
+  if (fsLabel) fsLabel.textContent = active ? "Janela" : "Tela cheia";
+}
+
+async function toggleFullscreen() {
   audio.unlock();
-  game.setMode("menu");
-});
+  const currentlyFs = isFullscreenActive();
 
-game.p1Pick = 0;
-game.p2Pick = 1;
-game.setMode("menu");
+  if (!currentlyFs) {
+    document.body.classList.add("fullscreen-mode");
+    updateFullscreenUI(true);
 
-document.querySelectorAll("[data-hub]").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
+    try {
+      const el = document.documentElement;
+      const request =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen ||
+        el.mozRequestFullScreen ||
+        el.msRequestFullscreen;
+
+      if (request) {
+        await request.call(el).catch(() => {});
+      }
+    } catch {}
+
+    showToast("Tela cheia ativada!");
+  } else {
+    document.body.classList.remove("fullscreen-mode");
+    updateFullscreenUI(false);
+
+    try {
+      if (
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      ) {
+        const exit =
+          document.exitFullscreen ||
+          document.webkitExitFullscreen ||
+          document.mozCancelFullScreen ||
+          document.msExitFullscreen;
+
+        if (exit) {
+          await exit.call(document).catch(() => {});
+        }
+      }
+    } catch {}
+
+    showToast("Modo janela restaurado.");
+  }
+}
+
+if (fsBtn) {
+  fsBtn.onclick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    audio.unlock();
-    game.launch(btn.getAttribute("data-hub"));
-  });
-});
-const optBack = document.getElementById("opt-back");
-if (optBack) {
-  optBack.addEventListener("click", () => {
-    audio.unlock();
-    game.setMode("menu");
-  });
+    toggleFullscreen();
+  };
 }
 
-requestAnimationFrame((t) => game.tick(t));
-
-window.addEventListener("pointerdown", () => {
-  audio.unlock();
-  canvas.focus();
+document.addEventListener("fullscreenchange", () => {
+  const active = !!document.fullscreenElement;
+  if (!active) {
+    document.body.classList.remove("fullscreen-mode");
+  }
+  updateFullscreenUI(active || document.body.classList.contains("fullscreen-mode"));
 });
-window.addEventListener("keydown", () => audio.unlock(), { once: true });
-canvas.focus();
+
+document.addEventListener("webkitfullscreenchange", () => {
+  const active = !!document.webkitFullscreenElement;
+  if (!active) {
+    document.body.classList.remove("fullscreen-mode");
+  }
+  updateFullscreenUI(active || document.body.classList.contains("fullscreen-mode"));
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "f" || e.key === "F") {
+    if (document.activeElement?.tagName !== "INPUT") {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  }
+});

@@ -1,0 +1,178 @@
+/* Ajustes específicos para celulares e para o app Capacitor. */
+html,
+body,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.touch-device {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.touch-device #app {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+}
+
+#portrait-warning {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  place-items: center;
+  padding: 24px;
+  background: #070714;
+  text-align: center;
+}
+
+.portrait-warning-card {
+  display: grid;
+  gap: 10px;
+  max-width: 280px;
+  padding: 24px;
+  color: #ffe9c9;
+  background: linear-gradient(180deg, rgba(62, 38, 18, 0.98), rgba(35, 18, 8, 0.99));
+  border: 2px solid #b98a52;
+  border-radius: 14px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.portrait-warning-card strong {
+  color: #ffd27a;
+  font: 800 18px Outfit, sans-serif;
+}
+
+.portrait-warning-card span:last-child {
+  color: #d9b285;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.portrait-warning-icon {
+  color: #6ef0ff;
+  font-size: 52px;
+  line-height: 1;
+}
+
+#touch-controls {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 65;
+  pointer-events: none;
+}
+
+body.touch-device.mode-fight #touch-controls,
+body.touch-device.mode-lasso-minigame #touch-controls {
+  display: block;
+}
+
+.touch-btn {
+  pointer-events: auto;
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(42px, 7.4vh, 66px);
+  height: clamp(42px, 7.4vh, 66px);
+  padding: 0;
+  border: 2px solid rgba(255, 232, 196, 0.8);
+  border-radius: 50%;
+  color: #fff7e8;
+  background: rgba(43, 23, 12, 0.76);
+  box-shadow: inset 0 0 12px rgba(255, 185, 90, 0.16), 0 3px 10px rgba(0, 0, 0, 0.5);
+  font: 800 clamp(10px, 1.7vh, 14px) Outfit, sans-serif;
+  line-height: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-btn.pressed,
+.touch-btn:active {
+  border-color: #ffd27a;
+  color: #3a2210;
+  background: #ffd27a;
+  transform: scale(0.94);
+}
+
+.touch-dpad {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  width: clamp(126px, 23vh, 188px);
+  height: clamp(126px, 23vh, 188px);
+  pointer-events: none;
+}
+
+.touch-dpad .touch-btn {
+  width: clamp(42px, 7.4vh, 66px);
+  height: clamp(42px, 7.4vh, 66px);
+  border-radius: 13px;
+}
+
+.touch-up { left: 50%; top: 0; transform: translateX(-50%); }
+.touch-left { left: 0; top: 50%; transform: translateY(-50%); }
+.touch-down { left: 50%; bottom: 0; transform: translateX(-50%); }
+.touch-right { right: 0; top: 50%; transform: translateY(-50%); }
+.touch-up.pressed, .touch-up:active { transform: translateX(-50%) scale(0.94); }
+.touch-left.pressed, .touch-left:active,
+.touch-right.pressed, .touch-right:active { transform: translateY(-50%) scale(0.94); }
+.touch-down.pressed, .touch-down:active { transform: translateX(-50%) scale(0.94); }
+
+.touch-actions {
+  position: absolute;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  width: clamp(220px, 39vh, 320px);
+  height: clamp(144px, 26vh, 212px);
+  pointer-events: none;
+}
+
+.touch-actions .touch-btn { width: clamp(42px, 7vh, 62px); height: clamp(42px, 7vh, 62px); }
+.touch-light { right: 0; bottom: 15%; width: clamp(52px, 9vh, 76px) !important; height: clamp(52px, 9vh, 76px) !important; color: #3a2210; background: rgba(255, 210, 122, 0.88); }
+.touch-strong { right: 20%; bottom: 0; }
+.touch-special { right: 20%; top: 0; color: #07151a; background: rgba(110, 240, 255, 0.82); }
+.touch-super { right: 43%; top: 21%; width: clamp(48px, 8vh, 70px) !important; height: clamp(48px, 8vh, 70px) !important; color: #3a2210; background: rgba(255, 215, 0, 0.88); }
+.touch-assist { right: 43%; bottom: 0; color: #301205; background: rgba(255, 116, 177, 0.82); }
+.touch-grab { left: 6%; bottom: 2%; }
+.touch-shield { left: 6%; top: 2%; }
+.touch-pause {
+  top: max(78px, calc(env(safe-area-inset-top) + 60px));
+  right: max(14px, env(safe-area-inset-right));
+  width: 36px;
+  height: 36px;
+  border-width: 1px;
+  border-radius: 10px;
+  font-size: 18px;
+  opacity: 0.78;
+}
+
+@media (max-width: 760px) and (orientation: landscape) {
+  #btn-fullscreen { display: none; }
+  #hud { top: max(4px, env(safe-area-inset-top)); left: 8px; right: 8px; }
+  .hud-card { min-width: 0; padding: 3px 5px; gap: 4px; transform: scale(0.78); transform-origin: top left; }
+  .hud-card.p2 { transform-origin: top right; }
+  .hud-face { width: 42px; height: 42px; }
+  .hud-name { font-size: 8px; }
+  .hud-pct { font-size: 11px; }
+  .hp-bar { width: 90px; height: 8px; }
+  .super-bar { width: 60px; height: 5px; }
+  .hud-center { transform: scale(0.8); transform-origin: top center; }
+  .training-card { max-width: 300px; padding: 5px 8px; font-size: 9px; }
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+  #portrait-warning { display: grid; }
+  #overlay, #btn-fullscreen, #fs-toast, #touch-controls { visibility: hidden; }
+}
+
+@media (max-height: 420px) and (orientation: landscape) {
+  .touch-dpad { left: max(8px, env(safe-area-inset-left)); bottom: max(8px, env(safe-area-inset-bottom)); }
+  .touch-actions { right: max(8px, env(safe-area-inset-right)); bottom: max(8px, env(safe-area-inset-bottom)); }
+}

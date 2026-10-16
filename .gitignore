@@ -1,0 +1,16 @@
+node_modules/
+www/
+.DS_Store
+*.log
+
+# Capacitor generated web assets
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/capacitor-cordova-android-plugins/
+android/local.properties
+ios/App/App/public/
+ios/App/Pods/
+
+# Python tooling
+__pycache__/
+*.pyc
